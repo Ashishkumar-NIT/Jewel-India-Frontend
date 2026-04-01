@@ -56,8 +56,9 @@ export default withSentryConfig(nextConfig, {
 
   project: "jwellery-frontend",
 
-  // Only print logs for uploading source maps in CI
-  silent: !process.env.CI,
+  // Suppress Sentry source map upload warnings when no auth token is set
+  silent: true,
+  disableSourceMapUpload: !process.env.SENTRY_AUTH_TOKEN,
 
   // For all available options, see:
   // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
