@@ -15,6 +15,60 @@ export function Step3Footer({ isFormValid, onSubmitAttempt }) {
     setSubmitError,
   } = useOnboard();
 
+// Helper to compress an image file before upload
+const compressImage = async (file) => {
+  if (!file || !file.type.startsWith("image/")) return file;
+  
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
+      const img = new self.Image();
+      img.src = event.target.result;
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+        
+        // Max dimensions
+        const MAX_WIDTH = 1200;
+        const MAX_HEIGHT = 1200;
+        let width = img.width;
+        let height = img.height;
+        
+        if (width > height) {
+          if (width > MAX_WIDTH) {
+            height *= MAX_WIDTH / width;
+            width = MAX_WIDTH;
+          }
+        } else {
+          if (height > MAX_HEIGHT) {
+            width *= MAX_HEIGHT / height;
+            height = MAX_HEIGHT;
+          }
+        }
+        
+        canvas.width = width;
+        canvas.height = height;
+        ctx.drawImage(img, 0, 0, width, height);
+        
+        canvas.toBlob((blob) => {
+          if (!blob) {
+            resolve(file); // fallback
+            return;
+          }
+          const compressedFile = new File([blob], file.name, {
+            type: "image/jpeg",
+            lastModified: Date.now(),
+          });
+          resolve(compressedFile);
+        }, "image/jpeg", 0.7); // 70% quality
+      };
+      img.onerror = () => resolve(file);
+    };
+    reader.onerror = () => resolve(file);
+  });
+};
+
   const handleSubmit = async () => {
     if (!isFormValid) {
       onSubmitAttempt();
@@ -42,12 +96,12 @@ export function Step3Footer({ isFormValid, onSubmitAttempt }) {
       formData.append("state", selectedState);
       formData.append("city", selectedCity);
 
-      // File uploads
-      if (frontImage) formData.append("aadharFront", frontImage);
-      if (backImage) formData.append("aadharBack", backImage);
-      if (panFile) formData.append("panCard", panFile);
-      if (gstFile) formData.append("gstCertificate", gstFile);
-      if (logoImage) formData.append("businessLogo", logoImage);
+      // Compress and append file uploads
+      if (frontImage) formData.append("aadharFront", await compressImage(frontImage));
+      if (backImage) formData.append("aadharBack", await compressImage(backImage));
+      if (panFile) formData.append("panCard", await compressImage(panFile));
+      if (gstFile) formData.append("gstCertificate", await compressImage(gstFile));
+      if (logoImage) formData.append("businessLogo", await compressImage(logoImage));
 
       const res = await fetch("/api/onboard/submit", {
         method: "POST",
@@ -56,6 +110,12 @@ export function Step3Footer({ isFormValid, onSubmitAttempt }) {
         },
         body: formData,
       });
+
+      // Handle plain-text HTML errors (like 413 Payload Too Large) gracefully
+      const isHtml = res.headers.get("content-type")?.includes("text/html");
+      if (isHtml) {
+        throw new Error(`Server returned error status ${res.status}. Files might still be too large.`);
+      }
 
       const result = await res.json();
 
