@@ -23,7 +23,7 @@ const nextConfig = {
       {
         // Railway backend — in case it ever serves images directly
         protocol: 'https',
-        hostname: 'ai-pipeline-production-daac.up.railway.app',
+        hostname: 'ai-pipeline-production-60ea.up.railway.app',
       },
     ],
   },
