@@ -1,6 +1,6 @@
 "use client";
 import { useTransition } from "react";
-import { terminalUserExit } from "../../../../lib/actions/auth";
+import { terminalUserExit } from "../../../lib/actions/auth";
 
 export function SubmittedFooter({ label = "I understand", actionRoute = "/entry_page/signup" }) {
   const [isPending, startTransition] = useTransition();
