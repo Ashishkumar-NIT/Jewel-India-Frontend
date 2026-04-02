@@ -218,7 +218,7 @@ export default function CatalogueClient({
 
         {/* ── Category Row ── */}
         <div className="relative mb-[28px] flex items-center pr-24">
-          <div className="flex items-center gap-[12px] overflow-x-auto whitespace-nowrap scroll-smooth pb-4 pt-2 px-1 custom-scrollbar">
+          <div className="flex items-center gap-6 overflow-x-auto whitespace-nowrap scroll-smooth pb-4 pt-2 px-2 custom-scrollbar">
             {dynamicCategories?.map((cat) => {
               const isActive = activeCategory === cat.slug;
               return (
