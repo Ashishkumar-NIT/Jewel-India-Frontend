@@ -1,6 +1,7 @@
 import { createClient } from "../../../lib/supabase/server";
 import { supabaseAdmin } from "../../../lib/supabase/admin";
 import { NextResponse } from "next/server";
+import { getWholesalerDestination } from "../../../lib/actions/auth";
 
 export async function GET(request) {
   const { searchParams, origin } = new URL(request.url);
@@ -35,8 +36,12 @@ export async function GET(request) {
             .maybeSingle();
 
           if (profile) {
-            // User exists → navigate to dashboard/wholesaler
-            return NextResponse.redirect(`${origin}/dashboard/wholesaler`);
+            // User exists → navigate using precise destination logic
+            const dest = await getWholesalerDestination(user.id);
+            if (dest.includes("error=banned")) {
+              await supabase.auth.signOut();
+            }
+            return NextResponse.redirect(`${origin}${dest}`);
           } else {
             // User does not exist → navigate to onboard
             return NextResponse.redirect(`${origin}/onboard`);
@@ -59,7 +64,11 @@ export async function GET(request) {
       }
 
       if (role === "wholesaler") {
-        return NextResponse.redirect(`${origin}/dashboard/wholesaler`);
+        const dest = await getWholesalerDestination(user.id);
+        if (dest.includes("error=banned")) {
+          await supabase.auth.signOut();
+        }
+        return NextResponse.redirect(`${origin}${dest}`);
       }
       if (role === "retailer") {
         return NextResponse.redirect(`${origin}/`);

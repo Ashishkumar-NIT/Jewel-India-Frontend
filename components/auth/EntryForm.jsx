@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import { Button } from "../ui/Button";
 import { GoogleButton } from "../ui/GoogleButton";
 import { signInWithGoogle } from "../../lib/actions/auth";
@@ -15,10 +15,26 @@ import { signInWithGoogle } from "../../lib/actions/auth";
  */
 export function EntryForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+
   const [identity, setIdentity] = useState("");
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+  
   const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const urlError = searchParams.get("error");
+    if (urlError === "banned") {
+      setError("Your account has been banned. Please use a different number or email.");
+    } else if (urlError) {
+      try {
+        setError(decodeURIComponent(urlError));
+      } catch {
+        setError(urlError);
+      }
+    }
+  }, [searchParams]);
 
   async function handleContinue(e) {
     e.preventDefault();

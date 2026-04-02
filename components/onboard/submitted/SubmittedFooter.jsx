@@ -1,8 +1,9 @@
 "use client";
-import { useRouter } from "next/navigation";
+import { useTransition } from "react";
+import { terminalUserExit } from "../../../../lib/actions/auth";
 
-export function SubmittedFooter() {
-  const router = useRouter();
+export function SubmittedFooter({ label = "I understand", actionRoute = "/entry_page/signup" }) {
+  const [isPending, startTransition] = useTransition();
 
   return (
     <div className="w-full flex flex-col md:flex-row items-center justify-between gap-6 md:gap-0 pt-6 mt-8">
@@ -14,10 +15,11 @@ export function SubmittedFooter() {
         </div>
       </div>
       <button 
-        onClick={() => router.push('/entry_page/signin')}
-        className={`w-full md:w-auto bg-[#000000] text-white font-extrabold rounded-[10px] px-[clamp(24px,3vw,40px)] py-[clamp(10px,1.2vw,14px)] text-[clamp(13px,1.4vw,15px)] hover:bg-black/90 transition-colors tracking-wide`}
+        disabled={isPending}
+        onClick={() => startTransition(() => terminalUserExit(actionRoute))}
+        className={`w-full md:w-auto bg-[#000000] text-white font-extrabold rounded-[10px] px-[clamp(24px,3vw,40px)] py-[clamp(10px,1.2vw,14px)] text-[clamp(13px,1.4vw,15px)] hover:bg-black/90 transition-colors tracking-wide disabled:opacity-50`}
       >
-        I understand
+        {isPending ? "Loading..." : label}
       </button>
     </div>
   );
