@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState, useEffect, useCallback, useRef, useTransition, useMemo } from "react";
 import CatalogueGrid from "./CatalogueGrid";
-import { createClient } from "../../../../lib/supabase/client";
+import { createClient } from "../../../lib/supabase/client";
 
 const LIMIT = 20;
 
@@ -98,7 +98,7 @@ export default function CatalogueClient({
       if (f.purity.length) f.purity.forEach(v => params.append("purity[]", v));
       // TODO: wire trending in retailer phase
 
-      const res = await fetch(\`/api/catalogue/products?\${params.toString()}\`);
+      const res = await fetch(`/api/catalogue/products?${params.toString()}`);
       if (!res.ok) throw new Error("Fetch failed");
       
       const json = await res.json();
@@ -107,7 +107,7 @@ export default function CatalogueClient({
 
       // Update URL safely
       startTransition(() => {
-        router.replace(\`?\${params.toString()}\`, { scroll: false });
+        router.replace(`?${params.toString()}`, { scroll: false });
       });
 
     } catch (err) {
@@ -238,7 +238,7 @@ export default function CatalogueClient({
                   onClick={() => handleCategoryClick(cat.slug)}
                   className="flex flex-col items-center gap-3 group outline-none"
                 >
-                  <div className={\`w-full aspect-square rounded-[10px] overflow-hidden transition-all duration-250 ease-out \${activeCategory === cat.slug ? "scale-105 border-[2px] border-[#111] shadow-md" : "hover:shadow-md group-hover:scale-105"}\`}>
+                  <div className={`w-full aspect-square rounded-[10px] overflow-hidden transition-all duration-250 ease-out ${activeCategory === cat.slug ? "scale-105 border-[2px] border-[#111] shadow-md" : "hover:shadow-md group-hover:scale-105"}`}>
                     {cat.image ? (
                       <img src={cat.image} alt={cat.name} loading="lazy" className="w-full h-full object-cover" />
                     ) : (
@@ -264,7 +264,7 @@ export default function CatalogueClient({
                     className="flex flex-col items-center gap-2 group outline-none shrink-0"
                   >
                     <div 
-                      className={\`w-[90px] h-[90px] rounded-[10px] overflow-hidden transition-all duration-300 ease-out \${isActive ? "scale-115 border-[2px] border-[#111] shadow-md" : "hover:shadow-sm"}\`}
+                      className={`w-[90px] h-[90px] rounded-[10px] overflow-hidden transition-all duration-300 ease-out ${isActive ? "scale-115 border-[2px] border-[#111] shadow-md" : "hover:shadow-sm"}`}
                       style={isActive ? { transform: 'scale(1.15)' } : {}}
                     >
                       {cat.image ? (
@@ -309,9 +309,9 @@ export default function CatalogueClient({
                 // Label: "1 ×" instead of "Size" if single selection for Size? 
                 // Wait, prompt says: "Label: 'Weight ×' for 1 selection. Active pill (2+): Label: 'Weight · 3 ×'".
                 // Oh I see, just "Feature ×" or "Feature · N ×".
-                pillLabel = \`\${fc.label}\`;
+                pillLabel = `${fc.label}`;
               } else {
-                pillLabel = \`\${fc.label} · \${activeOptions.length}\`;
+                pillLabel = `${fc.label} · ${activeOptions.length}`;
               }
             }
 
@@ -319,11 +319,11 @@ export default function CatalogueClient({
               <div key={fc.id} className="relative inline-block">
                 <button
                   onClick={() => setOpenDropdown(isOpen ? null : fc.id)}
-                  className={\`flex items-center justify-between gap-2 px-[18px] py-[10px] rounded-full border text-[14px] font-medium transition-colors \${
+                  className={`flex items-center justify-between gap-2 px-[18px] py-[10px] rounded-full border text-[14px] font-medium transition-colors ${
                     isActive || isOpen
                       ? "bg-[#111] text-white border-[#111]"
                       : "bg-white text-[#333] border-[#ddd] hover:bg-[#f2f2f2]"
-                  }\`}
+                  }`}
                 >
                   <span>{pillLabel}</span>
                   {isActive ? (
@@ -335,7 +335,7 @@ export default function CatalogueClient({
                       ×
                     </span>
                   ) : (
-                    <svg xmlns="http://www.w3.org/2000/svg" className={\`w-4 h-4 transition-transform \${isOpen ? 'rotate-180' : ''}\`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <svg xmlns="http://www.w3.org/2000/svg" className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <polyline points="6 9 12 15 18 9"></polyline>
                     </svg>
                   )}
@@ -353,7 +353,7 @@ export default function CatalogueClient({
                         return (
                           <label key={opt} className="flex items-center justify-between px-5 py-4 hover:bg-[#f9f9f9] cursor-pointer group transition-colors">
                             <span className="text-[16px] text-[#111] select-none">{opt}</span>
-                            <div className={\`w-6 h-6 rounded-[6px] border flex items-center justify-center transition-colors \${checked ? "bg-[#111] border-[#111]" : "border-[#ddd] group-hover:border-[#999] bg-white"}\`}>
+                            <div className={`w-6 h-6 rounded-[6px] border flex items-center justify-center transition-colors ${checked ? "bg-[#111] border-[#111]" : "border-[#ddd] group-hover:border-[#999] bg-white"}`}>
                               {checked && (
                                 <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                                   <polyline points="20 6 9 17 4 12"></polyline>
@@ -413,11 +413,11 @@ export default function CatalogueClient({
                   <button
                     key={n}
                     onClick={() => handlePageChange(n)}
-                    className={\`w-8 h-8 flex items-center justify-center text-[14px] font-medium rounded-full transition-all \${
+                    className={`w-8 h-8 flex items-center justify-center text-[14px] font-medium rounded-full transition-all ${
                       page === n
                         ? "bg-[#111] text-white"
                         : "text-[#666] hover:bg-[#eee]"
-                    }\`}
+                    }`}
                   >
                     {n}
                   </button>
