@@ -16,7 +16,7 @@ const FILTER_CONFIG = [
   { 
     id: "size", 
     label: "Size", 
-    options: ["1", "2", "3", "4", "5"] 
+    options: ["XS", "S", "M", "L", "XL", "Free Size"] 
   },
   { 
     id: "weight", 
@@ -31,7 +31,7 @@ const FILTER_CONFIG = [
   { 
     id: "purity", 
     label: "Purity", 
-    options: ["14 KT", "18 KT", "22 KT", "PT"] 
+    options: ["24K (999)", "22K (916)", "18K (750)", "14K (585)", "925 Silver", "950 Platinum"] 
   }
 ];
 

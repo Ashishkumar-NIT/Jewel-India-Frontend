@@ -59,7 +59,8 @@ export default async function CataloguePage({ searchParams }) {
     .eq("wholesaler_id", user.id);
 
   if (initialCategory && initialCategory !== "all") {
-    query = query.ilike("category", `%${initialCategory}%`);
+    const baseSlug = initialCategory.replace(/s$/, '');
+    query = query.in("jewellery_type", [baseSlug, baseSlug + 's']);
   }
 
   query = query

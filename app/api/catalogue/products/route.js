@@ -50,28 +50,61 @@ export async function GET(request) {
     .eq("wholesaler_id", user.id);
 
   if (category && category.toLowerCase() !== "all") {
-    query = query.ilike("category", `%${category}%`);
+    const baseSlug = category.toLowerCase().replace(/s$/, '');
+    query = query.in("jewellery_type", [baseSlug, baseSlug + 's']);
   }
 
-  // Handle array filters using .in()
+  // Handle array filters
   const sizes = searchParams.getAll("size[]");
-  if (sizes.length > 0) query = query.in("size", sizes);
+  if (sizes.length > 0) {
+    const parsedSizes = sizes.map(s => s.toLowerCase().replace(/\s+/g, ''));
+    query = query.in("size", parsedSizes);
+  }
 
   const weights = searchParams.getAll("weight[]");
-  if (weights.length > 0) query = query.in("net_weight", weights); 
+  if (weights.length > 0) {
+    const weightOrGroups = weights.map(w => {
+      if (w.includes("+")) {
+        const min = parseFloat(w);
+        return `net_weight.gte.${min}`;
+      } else {
+        const [minStr, maxStr] = w.replace(" g", "").split("-");
+        const min = parseFloat(minStr);
+        const max = parseFloat(maxStr);
+        return `and(net_weight.gte.${min},net_weight.lte.${max})`;
+      }
+    });
+    query = query.or(weightOrGroups.join(","));
+  }
   
   const availability = searchParams.getAll("availability[]");
   if (availability.length > 0) {
-     // TODO: proper availability logic based on future DB iterations. 
-     // For now, if "In stock" is selected, we can filter by stock_available = true.
-     const wantsInStock = availability.includes("In stock");
-     if (wantsInStock) {
-        query = query.eq("stock_available", true);
-     }
+    const availOrGroups = availability.map(a => {
+      if (a === "In stock") return `stock_available.eq.true`;
+      if (a === "Within 5 days") return `and(stock_available.eq.false,make_to_order_days.lte.5)`;
+      if (a === "Within 15 days") return `and(stock_available.eq.false,make_to_order_days.lte.15)`;
+      if (a === "Within 30 days") return `and(stock_available.eq.false,make_to_order_days.lte.30)`;
+      if (a === "More than 30 days") return `and(stock_available.eq.false,make_to_order_days.gt.30)`;
+      return "";
+    }).filter(Boolean);
+    if (availOrGroups.length > 0) {
+      query = query.or(availOrGroups.join(","));
+    }
   }
 
   const purities = searchParams.getAll("purity[]");
-  if (purities.length > 0) query = query.in("metal_purity", purities);
+  if (purities.length > 0) {
+    const parsedPurities = purities.map(p => {
+      if (p.includes("24K")) return "24k";
+      if (p.includes("22K")) return "22k";
+      if (p.includes("18K")) return "18k";
+      if (p.includes("14K")) return "14k";
+      if (p.includes("925")) return "925";
+      if (p.includes("950")) return "950pt";
+      return p.toLowerCase();
+    });
+    query = query.in("metal_purity", parsedPurities);
+  }
 
   // TODO: Add Trending Sort logic here when retailer phase columns are added (likes, view_count, is_published)
   
