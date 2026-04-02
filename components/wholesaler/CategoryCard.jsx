@@ -27,8 +27,8 @@ export default function CategoryCard({ category }) {
         )}
 
         {/* Category name */}
-        <div className="absolute inset-x-0 bottom-0 h-1/2 bg-linear-to-b from-transparent to-celestique-dark/30 pointer-events-none" />
-        <div className="absolute bottom-4 left-4 right-4">
+        <div className="absolute inset-x-0 top-0 h-1/2 bg-linear-to-b from-celestique-dark/30 to-transparent pointer-events-none" />
+        <div className="absolute top-6 left-4 right-4">
           <p className="font-serif font-medium text-xl text-white tracking-wide text-center w-full">
             {category.name}
           </p>
