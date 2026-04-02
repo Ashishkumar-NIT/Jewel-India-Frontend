@@ -9,8 +9,8 @@ export const metadata = {
 export default function SignUpPage() {
   return (
     <AuthLayout
-      title="Join Celestique"
-      subtitle="Enter your email to get started. We'll check if you already have an account."
+      title="Welcome"
+      subtitle="Sign in to explore Jewellery all over India"
       imageSrc="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1774883373/authImg_ivftu7.png"
     >
       <Suspense>

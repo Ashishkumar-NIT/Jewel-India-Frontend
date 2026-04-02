@@ -10,7 +10,7 @@ export default function SignInPage() {
   return (
     <AuthLayout
       title="Welcome back"
-      subtitle="Your account was found. Enter your password to continue."
+      subtitle="Sign in to explore Jewellery all over India"
       imageSrc="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1774883373/authImg_ivftu7.png"
     >
       <Suspense>
