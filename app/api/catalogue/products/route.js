@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "../../../../lib/supabase/server";
 
-const LIMIT = 12;
-
 export async function GET(request) {
   const supabase = await createClient();
 
@@ -20,12 +18,12 @@ export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const category = searchParams.get("category") ?? "";
   const page     = Math.max(1, parseInt(searchParams.get("page") ?? "1", 10));
-  const limit    = Math.min(50, parseInt(searchParams.get("limit") ?? String(LIMIT), 10));
+  const limit    = Math.min(50, parseInt(searchParams.get("limit") ?? "20", 10));
 
   const fromIndex = (page - 1) * limit;
   const toIndex   = fromIndex + limit - 1;
 
-  // ── 3. Build query (RLS ensures only this user's products are accessible) ──
+  // ── 3. Build query ─────────────────────────────────────────────────────────
   let query = supabase
     .from("products")
     .select(
@@ -55,6 +53,28 @@ export async function GET(request) {
     query = query.ilike("category", `%${category}%`);
   }
 
+  // Handle array filters using .in()
+  const sizes = searchParams.getAll("size[]");
+  if (sizes.length > 0) query = query.in("size", sizes);
+
+  const weights = searchParams.getAll("weight[]");
+  if (weights.length > 0) query = query.in("net_weight", weights); 
+  
+  const availability = searchParams.getAll("availability[]");
+  if (availability.length > 0) {
+     // TODO: proper availability logic based on future DB iterations. 
+     // For now, if "In stock" is selected, we can filter by stock_available = true.
+     const wantsInStock = availability.includes("In stock");
+     if (wantsInStock) {
+        query = query.eq("stock_available", true);
+     }
+  }
+
+  const purities = searchParams.getAll("purity[]");
+  if (purities.length > 0) query = query.in("metal_purity", purities);
+
+  // TODO: Add Trending Sort logic here when retailer phase columns are added (likes, view_count, is_published)
+  
   query = query
     .order("created_at", { ascending: false })
     .range(fromIndex, toIndex);

@@ -1,4 +1,5 @@
 import { supabaseAdmin } from "../../../../lib/supabase/admin.js";
+import { createClient } from "../../../../lib/supabase/server.js";
 import { NextResponse } from "next/server";
 
 // Force Node.js runtime — required for formData() + file buffer handling
@@ -6,22 +7,15 @@ export const runtime = "nodejs";
 
 export async function POST(req) {
   try {
-    // Read access token from Authorization header
-    const authHeader = req.headers.get("authorization") || "";
-    const token = authHeader.replace("Bearer ", "");
-
-    if (!token) {
-      return NextResponse.json(
-        { error: "No auth token provided" },
-        { status: 401 }
-      );
-    }
-
-    const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token);
+    // Use the secure SSR cookie client to verify the user
+    // This handles token expiration and refreshing automatically
+    const supabaseServer = await createClient();
+    const { data: { user }, error: authError } = await supabaseServer.auth.getUser();
 
     if (authError || !user) {
+      console.error("Auth User Error:", authError?.message || "No user found");
       return NextResponse.json(
-        { error: "Unauthorized — invalid or expired token" },
+        { error: `Unauthorized — ${authError?.message || "Please sign in again"}` },
         { status: 401 }
       );
     }
