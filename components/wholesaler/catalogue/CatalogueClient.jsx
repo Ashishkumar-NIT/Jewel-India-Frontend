@@ -47,7 +47,6 @@ export default function CatalogueClient({
   const supabase = useMemo(() => createClient(), []);
 
   const [activeCategory, setActiveCategory] = useState(initialCategory || "all");
-  const [isViewAll, setIsViewAll] = useState(false);
   const [openDropdown, setOpenDropdown] = useState(null);
   const dropdownRef = useRef(null);
 
@@ -145,7 +144,6 @@ export default function CatalogueClient({
     setActiveCategory(newCat);
     setFilters({ trending: [], size: [], weight: [], availability: [], purity: [] });
     setPage(1);
-    setIsViewAll(false);
     setOpenDropdown(null);
 
     // Scroll to grid (using basic auto scroll next frame)
@@ -218,86 +216,51 @@ export default function CatalogueClient({
           <p className="text-[15px] text-[#666]">See and manage all your catalogue categories from one place.</p>
         </section>
 
-        {/* ── View All Mode vs Row Mode ── */}
-        {isViewAll ? (
-          <div className="mb-[28px]">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-[20px] font-bold text-[#111]">All Categories</h2>
-              <button 
-                onClick={() => setIsViewAll(false)}
-                className="text-[14px] text-[#666] hover:text-[#111] underline underline-offset-4"
-              >
-                &#8592; Back to categories
-              </button>
-            </div>
-            
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 animate-in fade-in duration-300">
-              {dynamicCategories?.map((cat) => (
+        {/* ── Category Row ── */}
+        <div className="relative mb-[28px] flex items-center pr-24">
+          <div className="flex items-center gap-[12px] overflow-x-auto whitespace-nowrap scroll-smooth pb-4 pt-2 px-1 custom-scrollbar">
+            {dynamicCategories?.map((cat) => {
+              const isActive = activeCategory === cat.slug;
+              return (
                 <button
                   key={cat.slug}
                   onClick={() => handleCategoryClick(cat.slug)}
-                  className="flex flex-col items-center gap-3 group outline-none"
+                  className="flex flex-col items-center gap-2 group outline-none shrink-0"
                 >
-                  <div className={`w-full aspect-square rounded-[10px] overflow-hidden transition-all duration-250 ease-out ${activeCategory === cat.slug ? "scale-105 border-[2px] border-[#111] shadow-md" : "hover:shadow-md group-hover:scale-105"}`}>
+                  <div 
+                    className={`w-[90px] h-[90px] rounded-[10px] overflow-hidden transition-all duration-300 ease-out ${isActive ? "scale-115 border-[2px] border-[#111] shadow-md" : "hover:shadow-sm"}`}
+                    style={isActive ? { transform: 'scale(1.15)' } : {}}
+                  >
                     {cat.image ? (
                       <img src={cat.image} alt={cat.name} loading="lazy" className="w-full h-full object-cover" />
                     ) : (
-                      <div className="w-full h-full bg-[#1a1a1a] flex items-center justify-center text-white text-2xl font-bold">
+                      <div className="w-full h-full bg-[#1a1a1a] flex items-center justify-center text-white text-xl font-bold">
                         {cat.name.charAt(0).toUpperCase()}
                       </div>
                     )}
                   </div>
-                  <span className="text-[13px] text-[#666] group-hover:text-[#111] transition-colors">{cat.name}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-        ) : (
-          <div className="relative mb-[28px] flex items-center pr-24">
-            <div className="flex items-center gap-[12px] overflow-x-auto whitespace-nowrap scroll-smooth pb-4 pt-2 px-1 custom-scrollbar">
-              {dynamicCategories?.map((cat) => {
-                const isActive = activeCategory === cat.slug;
-                return (
-                  <button
-                    key={cat.slug}
-                    onClick={() => handleCategoryClick(cat.slug)}
-                    className="flex flex-col items-center gap-2 group outline-none shrink-0"
+                  {/* The label space is maintained, but visually pushed if scale applies. We handle spacing via gap. */}
+                  <span 
+                    className="text-[12px] text-[#666] text-center w-[90px] truncate"
+                    style={isActive ? { marginTop: '8px', color: '#111', fontWeight: 600 } : {}}
                   >
-                    <div 
-                      className={`w-[90px] h-[90px] rounded-[10px] overflow-hidden transition-all duration-300 ease-out ${isActive ? "scale-115 border-[2px] border-[#111] shadow-md" : "hover:shadow-sm"}`}
-                      style={isActive ? { transform: 'scale(1.15)' } : {}}
-                    >
-                      {cat.image ? (
-                        <img src={cat.image} alt={cat.name} loading="lazy" className="w-full h-full object-cover" />
-                      ) : (
-                        <div className="w-full h-full bg-[#1a1a1a] flex items-center justify-center text-white text-xl font-bold">
-                          {cat.name.charAt(0).toUpperCase()}
-                        </div>
-                      )}
-                    </div>
-                    {/* The label space is maintained, but visually pushed if scale applies. We handle spacing via gap. */}
-                    <span 
-                      className="text-[12px] text-[#666] text-center w-[90px] truncate"
-                      style={isActive ? { marginTop: '8px', color: '#111', fontWeight: 600 } : {}}
-                    >
-                      {cat.name}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-            {/* View All Button fixed at end visually */}
-            <button 
-              onClick={() => setIsViewAll(true)}
-              className="absolute right-0 top-1/2 -translate-y-1/2 text-[14px] text-[#111] hover:text-[#000] underline underline-offset-4 decoration-[#111] bg-gradient-to-l from-[#f9f9f9] via-[#f9f9f9] to-transparent pl-8 py-8"
-            >
-              View All &#8594;
-            </button>
+                    {cat.name}
+                  </span>
+                </button>
+              );
+            })}
           </div>
-        )}
+          {/* View All Button fixed at end visually */}
+          <button 
+            onClick={() => handleCategoryClick("all")}
+            className="absolute right-0 top-1/2 -translate-y-1/2 text-[14px] text-[#111] hover:text-[#000] underline underline-offset-4 decoration-[#111] bg-gradient-to-l from-[#f9f9f9] via-[#f9f9f9] to-transparent pl-8 py-8"
+          >
+            View All &#8594;
+          </button>
+        </div>
 
         {/* ── Filter Bar ── */}
-        <div id="product-grid" className="flex items-center gap-3 overflow-x-auto whitespace-nowrap pb-6 pt-2 mb-2 custom-scrollbar relative" ref={dropdownRef}>
+        <div id="product-grid" className="flex flex-wrap items-center gap-3 pb-6 pt-2 mb-2 relative" ref={dropdownRef}>
           {FILTER_CONFIG.map(fc => {
             const activeOptions = filters[fc.id];
             const isActive = activeOptions.length > 0;
