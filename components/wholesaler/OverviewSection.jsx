@@ -47,6 +47,7 @@ export default function OverviewSection() {
               icon={<QueryIcon />}
               title="New Queries"
               badge="2"
+              href="/dashboard/wholesaler/queries"
             />
             <TopStatCard
               icon={<OrderIcon />}

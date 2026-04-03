@@ -182,17 +182,25 @@ export default function QueriesClient() {
             <>
               {/* Detail Header */}
               <div className={s.detailHeader}>
-                <div>
+                <div className={s.detailHeaderMain}>
                   <button className={s.backBtn} onClick={handleBack}>
                     <BackArrow /> Queries
                   </button>
-                  <h2 className={s.detailProductName}>{selected.product}</h2>
+                  <div className={s.productNameRow}>
+                    <h2 className={s.detailProductName}>{selected.product}</h2>
+                    <div className={s.timestampMobile}>
+                      <ClockIcon />
+                      <span>3 days ago</span>
+                    </div>
+                  </div>
                 </div>
                 <div className={s.detailContactArea}>
                   <p className={s.detailContactName}>
                     {selected.contactName}
-                    <ClockIcon />
-                    <span style={{ fontWeight: 400, color: "#9CA3AF", fontSize: "12px" }}>3 days ago</span>
+                    <span className={s.timestampDesktop}>
+                      <ClockIcon />
+                      <span style={{ fontWeight: 400 }}>3 days ago</span>
+                    </span>
                   </p>
                   <p className={s.detailStore}>{selected.storeName}</p>
                 </div>
