@@ -6,7 +6,8 @@ import Link from "next/link";
 import { Button } from "../ui/Button";
 import { Input } from "../ui/Input";
 import { GoogleButton } from "../ui/GoogleButton";
-import { signUp, signInWithGoogle } from "../../lib/actions/auth";
+import { signUp } from "../../lib/actions/auth";
+import { initiateGoogleOAuth } from "../../lib/actions/oauth";
 
 const ROLES = [
   {
@@ -60,7 +61,8 @@ export function SignUpForm() {
 
   async function handleGoogle() {
     setError(null);
-    const result = await signInWithGoogle();
+    const redirectTo = `${window.location.origin}/auth/callback`;
+    const result = await initiateGoogleOAuth(redirectTo);
     if (result?.error) setError(result.error);
   }
 

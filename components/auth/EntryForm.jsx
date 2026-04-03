@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { signInWithGoogle } from "../../lib/actions/auth";
+import { initiateGoogleOAuth } from "../../lib/actions/oauth";
 
 /**
  * EntryForm — unified entry for new auth flow.
@@ -105,7 +105,10 @@ export function EntryForm() {
   async function handleGoogle() {
     setError(null);
     setGoogleLoading(true);
-    const result = await signInWithGoogle();
+    // Use window.location.origin so the redirectTo is always the current domain
+    // (localhost in dev, production URL on Vercel) — no env var needed.
+    const redirectTo = `${window.location.origin}/auth/callback`;
+    const result = await initiateGoogleOAuth(redirectTo);
     if (result?.error) {
       setError(result.error);
       setGoogleLoading(false);
