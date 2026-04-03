@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "../ui/Button";
 
@@ -260,139 +260,127 @@ export function OtpForm() {
   const isLocked = !!lockedUntil && new Date() < new Date(lockedUntil);
 
   return (
-    <div className="mt-10 space-y-8">
-      {/* Identity display */}
-      {identity && (
-        <div className="flex items-center gap-2 animate-fade-in">
-          <div className="w-1.5 h-1.5 rounded-full bg-celestique-dark/40" />
-          <p className="text-[10px] uppercase tracking-[0.2em] text-celestique-dark/50">
-            OTP sent to <span className="text-celestique-dark font-semibold">{identity}</span>
-          </p>
-        </div>
-      )}
-
-      <form onSubmit={handleVerify} className="space-y-8">
-        {/* OTP Digit Boxes */}
-        <div className="flex gap-3 justify-center" onPaste={handlePaste}>
-          {digits.map((digit, i) => (
-            <input
-              key={i}
-              ref={(el) => (inputRefs.current[i] = el)}
-              id={`otp-digit-${i}`}
-              type="text"
-              inputMode="numeric"
-              maxLength={1}
-              value={digit}
-              onChange={(e) => handleDigitChange(i, e.target.value)}
-              onKeyDown={(e) => handleKeyDown(i, e)}
-              className={`
-                w-12 h-14 text-center text-xl font-bold border-b-2 bg-transparent transition-all duration-200
-                focus:outline-none focus:border-celestique-dark
-                ${digit ? "border-celestique-dark text-celestique-dark" : "border-celestique-taupe text-celestique-dark/40"}
-                ${isWrongOtp ? "border-red-400 text-red-500" : ""}
-                ${!isWrongOtp && digit ? "border-celestique-dark" : ""}
-              `}
-              autoFocus={i === 0}
-            />
-          ))}
-        </div>
-
-        {/* OTP Validity Countdown (stopwatch) */}
-        {showStopwatch && otpSecondsLeft > 0 && (
-          <div className="flex flex-col items-center gap-1 animate-fade-in">
-            <p className="text-[9px] uppercase tracking-[0.2em] text-celestique-dark/40">
-              OTP valid for
-            </p>
-            <p
-              className={`text-3xl font-bold tracking-widest tabular-nums transition-colors duration-300 ${
-                otpSecondsLeft <= 10
-                  ? "text-red-500"
-                  : "text-celestique-dark"
-              }`}
-            >
-              {formatTime(otpSecondsLeft)}
-            </p>
-          </div>
-        )}
-
-        {otpSecondsLeft === 0 && !isWrongOtp && showStopwatch && (
-          <p className="text-center text-[10px] uppercase tracking-[0.2em] text-celestique-dark/50 animate-fade-in">
-            OTP expired — please resend.
+    <div className="-mt-1 text-left w-full max-w-[400px]">
+      {/* Subtitle / Identity display */}
+      <div className="mb-[32px]">
+        {identity && (
+          <p className="text-[14px] text-[#9CA3AF] font-normal leading-[1.5]">
+            The 8-digit OTP has been sent to you at<br/>
+            <span className="text-[#111827]">
+              {identity} 
+              <button 
+                 type="button"
+                 onClick={() => router.replace("/entry_page/signup")}
+                 className="ml-[6px] font-bold text-[#111827] hover:underline cursor-pointer focus:outline-none"
+              >
+                Edit
+              </button>
+            </span>
           </p>
         )}
+      </div>
 
-        {/* Error message */}
-        {error && (
-          <div className="flex items-start gap-2 animate-fade-in">
-            <span className="shrink-0 w-1 h-1 rounded-full bg-red-500 mt-1.5" />
-            <p className="text-[10px] uppercase tracking-[0.1em] text-red-600 leading-relaxed">
-              {isWrongOtp
-                ? `Wrong OTP — try resending or check your ${isPhoneIdentity ? 'SMS messages' : 'email'} for the correct code.`
-                : error}
-            </p>
+      <form onSubmit={handleVerify} className="space-y-[24px]">
+        {/* OTP Input Boxes */}
+        <div className="w-full">
+          <div className="flex justify-between sm:gap-[4px] md:gap-[8px] items-center w-full" onPaste={handlePaste}>
+            {digits.map((digit, i) => (
+               <React.Fragment key={i}>
+                 {i === 4 && <span className="text-[#D1D5DB] text-[20px] font-light mx-[2px]">-</span>}
+                 <input
+                   ref={(el) => (inputRefs.current[i] = el)}
+                   id={`otp-digit-${i}`}
+                   type="text"
+                   inputMode="numeric"
+                   maxLength={1}
+                   value={digit}
+                   onChange={(e) => handleDigitChange(i, e.target.value)}
+                   onKeyDown={(e) => handleKeyDown(i, e)}
+                   className={`
+                      flex-1 max-w-[32px] sm:max-w-[36px] md:max-w-[48px] aspect-4/5 md:aspect-square md:h-[58px] text-center text-[16px] md:text-[18px] font-medium rounded-[8px] border-[1.5px] bg-white transition-all px-0
+                      focus:outline-none focus:border-[#374151]
+                      ${isWrongOtp ? "border-[#DC2626] text-[#DC2626]" : "border-[#D1D5DB] text-[#111827]"}
+                   `}
+                   autoFocus={i === 0}
+                 />
+               </React.Fragment>
+            ))}
           </div>
-        )}
 
-        {/* Locked state */}
-        {isLocked && (
-          <div className="border border-red-200 bg-red-50 px-4 py-3 animate-fade-in">
-            <p className="text-[10px] uppercase tracking-[0.1em] text-red-600">
-              All 5 resend attempts used. OTP requests for this identity are locked for 24 hours.
-            </p>
-          </div>
-        )}
+          {/* Error Message */}
+          {isWrongOtp && (
+            <div className="mt-[12px] animate-fade-in">
+               <p className="text-[13px] font-bold text-[#DC2626]">
+                 Invalid OTP! 2 attempts remaining
+               </p>
+            </div>
+          )}
+          {!isWrongOtp && error && (
+            <div className="mt-[12px] animate-fade-in">
+               <p className="text-[13px] font-bold text-[#DC2626]">
+                 {error}
+               </p>
+            </div>
+          )}
 
-        {/* Resend section */}
+          {/* Locked state */}
+          {isLocked && (
+            <div className="mt-[12px] border border-red-200 bg-red-50 px-4 py-3 animate-fade-in">
+              <p className="text-[11px] uppercase tracking-[0.1em] text-red-600">
+                All 5 resend attempts used. Priority locked.
+              </p>
+            </div>
+          )}
+        </div>
+        
+        {/* Timer / Resend Row */}
         {!isLocked && (
-          <div className="flex flex-col items-center gap-3">
-            {/* Resend cooldown */}
-            {resendCooldown > 0 && (
-              <p className="text-[9px] uppercase tracking-[0.2em] text-celestique-dark/40">
-                Next OTP available in{" "}
-                <span className="font-bold text-celestique-dark tabular-nums">
-                  {resendCooldown}s
-                </span>
+          <div className="flex flex-col gap-[6px]">
+              <p className="text-[13px] text-[#9CA3AF] font-normal">
+                OTP valid for <span className="text-[#111827] font-bold tabular-nums font-mono">{otpSecondsLeft === 0 ? "00:00" : formatTime(otpSecondsLeft)}</span>
               </p>
-            )}
-
-            <button
-              type="button"
-              onClick={handleResend}
-              disabled={resending || resendCooldown > 0 || remainingResends <= 0}
-              className="text-[10px] uppercase tracking-[0.2em] text-celestique-dark border-b border-celestique-dark/40 pb-0.5 transition-all hover:border-celestique-dark disabled:opacity-30 disabled:cursor-not-allowed"
-            >
-              {resending ? "Sending…" : "Resend OTP"}
-            </button>
-
-            {remainingResends > 0 && remainingResends < MAX_RESENDS && (
-              <p className="text-[9px] uppercase tracking-[0.15em] text-celestique-dark/40">
-                <span className="text-celestique-dark font-bold">{remainingResends}</span>{" "}
-                resend{remainingResends === 1 ? "" : "s"} remaining
-              </p>
-            )}
+              
+              <button
+                 type="button"
+                 onClick={handleResend}
+                 disabled={resending || otpSecondsLeft > 0 || remainingResends <= 0}
+                 className={`text-[14px] text-left w-fit transition-all ${
+                   otpSecondsLeft > 0 
+                       ? "text-[#D1D5DB] cursor-default text-[13px]" 
+                       : "text-[#111827] font-bold hover:underline cursor-pointer"
+                 }`}
+              >
+                {resending ? "Sending…" : "Resend OTP"}
+              </button>
           </div>
         )}
 
-        {/* Verify Button */}
-        <Button
-          type="submit"
-          variant="primary"
-          loading={verifying}
-          disabled={!otpComplete || verifying}
-          id="otp-verify-btn"
-        >
-          Verify OTP
-        </Button>
-      </form>
+        {/* Info Note */}
+        <div className="pt-[40px] md:pt-[60px]">
+            <p className="text-[12px] text-[#9CA3AF] text-left leading-relaxed">
+               Only wholesalers accounts will be verified. Retailers will require an invite to sign in.
+            </p>
+        </div>
 
-      {/* Back to entry */}
-      <button
-        type="button"
-        onClick={() => router.replace("/entry_page/signup")}
-        className="w-full text-center text-[9px] uppercase tracking-[0.2em] text-celestique-dark/40 hover:text-celestique-dark transition-colors"
-      >
-        ← Use a different email
-      </button>
+        {/* Continue Button */}
+        <div>
+          <button
+             type="submit"
+             id="otp-verify-btn"
+             disabled={!otpComplete || verifying}
+             className="w-full h-[48px] bg-[#1F2937] hover:bg-[#111827] text-white text-[14px] font-bold rounded-[12px] flex items-center justify-center transition-colors disabled:opacity-70 disabled:cursor-not-allowed border-none shadow-sm"
+          >
+            {verifying ? "Verifying..." : "Continue"}
+          </button>
+        </div>
+
+        {/* Terms Footer */}
+        <div>
+            <p className="text-[12px] text-[#9CA3AF] text-left">
+               By continuing, you agree to our <a href="#" className="underline text-[#111827] hover:text-black">Terms of Service</a> and <a href="#" className="underline text-[#111827] hover:text-black">Privacy Policy</a>.
+            </p>
+        </div>
+      </form>
     </div>
   );
 }

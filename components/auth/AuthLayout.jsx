@@ -16,18 +16,7 @@ export function AuthLayout({ children, imageSrc, title, subtitle }) {
       </div>
 
       {/* Right Side — White Form Panel, capped at 520px wide */}
-      <div style={{
-        flex: 1,
-        minWidth: "320px",
-        maxWidth: "520px",
-        background: "#FFFFFF",
-        height: "100vh",
-        overflowY: "auto",
-        display: "flex",
-        flexDirection: "column",
-        padding: "48px 48px 32px",
-        boxSizing: "border-box",
-      }}>
+      <div className="flex-1 w-full max-w-[520px] bg-white h-screen overflow-y-auto overflow-x-hidden flex flex-col px-6 md:px-12 py-8 md:pt-12 box-border">
 
         {/* Logo Row */}
         <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "32px" }}>

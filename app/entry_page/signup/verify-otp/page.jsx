@@ -9,8 +9,8 @@ export const metadata = {
 export default function VerifyOtpPage() {
   return (
     <AuthLayout
-      title="Enter your OTP"
-      subtitle="We've sent a 6-digit verification code. It's valid for 60 seconds."
+      title={<><span className="text-[28px] sm:text-[32px] md:text-[44px]">Create a</span><br/><span className="text-[28px] sm:text-[32px] md:text-[44px]">Wholesaler Account</span></>}
+      subtitle={null}
       imageSrc="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1774883373/authImg_ivftu7.png"
     >
       <Suspense>
