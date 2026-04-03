@@ -3,9 +3,9 @@ import Image from "next/image";
 export function AuthLayout({ children, imageSrc, title, subtitle }) {
   return (
     <div style={{ display: "flex", height: "100vh", width: "100%", overflow: "hidden" }}>
-      
-      {/* Left Side — Jewellery Photo (~62%) */}
-      <div style={{ position: "relative", width: "62%", flexShrink: 0 }} className="hidden md:block">
+
+      {/* Left Side — Jewellery Photo (~62%), shown on md+ (768px+) */}
+      <div style={{ position: "relative", width: "62%", height: "100%", flexShrink: 0 }} className="hidden md:block">
         <Image
           src={imageSrc || "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1774883373/authImg_ivftu7.png"}
           alt="Jewellery"
@@ -15,17 +15,17 @@ export function AuthLayout({ children, imageSrc, title, subtitle }) {
         />
       </div>
 
-      {/* Right Side — White Form Panel (~38%), full height, scrollable */}
+      {/* Right Side — White Form Panel, capped at 520px wide */}
       <div style={{
-        width: "38%",
+        flex: 1,
         minWidth: "320px",
-        flexGrow: 1,
+        maxWidth: "520px",
         background: "#FFFFFF",
         height: "100vh",
         overflowY: "auto",
         display: "flex",
         flexDirection: "column",
-        padding: "60px 60px",
+        padding: "48px 48px 32px",
         boxSizing: "border-box",
       }}>
 
@@ -71,10 +71,11 @@ export function AuthLayout({ children, imageSrc, title, subtitle }) {
           {subtitle}
         </p>
 
-        {/* Form — fills remaining height with internal spacer */}
+        {/* Form — fills remaining height for internal flex spacer to work */}
         <div style={{ display: "flex", flexDirection: "column", flex: 1 }}>
           {children}
         </div>
+
       </div>
     </div>
   );
