@@ -53,6 +53,7 @@ export default function OverviewSection() {
               icon={<OrderIcon />}
               title="New Orders"
               badge="1"
+              href="/dashboard/wholesaler/orders"
             />
           </div>
 
