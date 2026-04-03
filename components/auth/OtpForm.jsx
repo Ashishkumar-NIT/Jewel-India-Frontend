@@ -297,7 +297,7 @@ export function OtpForm() {
                    onChange={(e) => handleDigitChange(i, e.target.value)}
                    onKeyDown={(e) => handleKeyDown(i, e)}
                    className={`
-                      flex-1 max-w-[32px] sm:max-w-[36px] md:max-w-[48px] aspect-4/5 md:aspect-square md:h-[58px] text-center text-[16px] md:text-[18px] font-medium rounded-[8px] border-[1.5px] bg-white transition-all px-0
+                      flex-1 max-w-[32px] sm:max-w-[36px] md:max-w-[40px] aspect-4/5 text-center text-[16px] md:text-[18px] font-medium rounded-[8px] border-[1.5px] bg-white transition-all px-0
                       focus:outline-none focus:border-[#374151]
                       ${isWrongOtp ? "border-[#DC2626] text-[#DC2626]" : "border-[#D1D5DB] text-[#111827]"}
                    `}
