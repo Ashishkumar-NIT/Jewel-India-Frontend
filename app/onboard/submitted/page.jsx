@@ -77,7 +77,7 @@ export default async function OnboardSubmittedPage() {
         </div>
         
         <div className="flex flex-col w-full mt-10">
-          <VerificationTimeline />
+          <VerificationTimeline status={status} />
           
           <p className="text-[14px] text-[#9CA3AF] text-center mt-6">
             {paragraphText}

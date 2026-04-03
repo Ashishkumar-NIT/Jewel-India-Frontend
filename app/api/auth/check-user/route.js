@@ -48,10 +48,11 @@ export async function POST(request) {
         (u) => u.email?.toLowerCase() === normalized
       );
     } else {
-      // Normalize phone: strip spaces/dashes/parens for comparison
-      const normalizedPhone = identity.trim().replace(/[\s\-().]/g, "");
+      // Normalize phone: strip spaces/dashes/parens AND plus signs for comparison
+      // Supabase stores phone numbers like '911234567890' without the '+'
+      const normalizedPhone = identity.trim().replace(/[\s\-.()+]/g, "");
       exists = data.users.some(
-        (u) => u.phone?.replace(/[\s\-().]/g, "") === normalizedPhone
+        (u) => u.phone?.replace(/[\s\-.()+]/g, "") === normalizedPhone
       );
     }
 
