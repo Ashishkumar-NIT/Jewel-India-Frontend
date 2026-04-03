@@ -1,0 +1,503 @@
+/* ── Queries Page Styles ── */
+
+.page {
+  padding: 36px 40px;
+  min-height: 100vh;
+  background: #fff;
+  font-family: 'DM Sans', sans-serif;
+}
+
+/* ── Header ── */
+.title {
+  font-family: Georgia, serif;
+  font-size: 32px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 6px;
+}
+
+.subtitle {
+  font-size: 15px;
+  color: #9CA3AF;
+  margin: 0 0 20px;
+  font-weight: 400;
+}
+
+/* ── Filter Tabs ── */
+.filters {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.filterTab {
+  padding: 6px 18px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  border: 1.5px solid #E5E7EB;
+  background: #fff;
+  color: #9CA3AF;
+}
+
+.filterTab:hover {
+  border-color: #D1D5DB;
+}
+
+.filterTabActive {
+  border-color: #374151;
+  color: #111827;
+}
+
+/* ── Split Panel ── */
+.splitPanel {
+  display: flex;
+  gap: 0;
+  height: calc(100vh - 200px);
+  min-height: 480px;
+}
+
+/* ── Left Panel (card list) ── */
+.leftPanel {
+  width: 380px;
+  flex-shrink: 0;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 14px 0 0 14px;
+  background: #fff;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Right Panel ── */
+.rightPanel {
+  flex: 1;
+  border: 1.5px solid #E5E7EB;
+  border-left: none;
+  border-radius: 0 14px 14px 0;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ── Query Card ── */
+.card {
+  padding: 18px 20px;
+  border-bottom: 1px solid #F3F4F6;
+  cursor: pointer;
+  position: relative;
+  transition: background 0.12s, border-color 0.12s;
+}
+
+.card:hover {
+  background: #FAFAFA;
+}
+
+.cardSelected {
+  border: 1.5px solid #374151;
+  border-radius: 10px;
+  margin: 4px 6px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.06);
+}
+
+.cardBadge {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 6px;
+  letter-spacing: 0.01em;
+  text-transform: lowercase;
+}
+
+.badgeUnread {
+  background: #2563EB;
+  color: #fff;
+}
+
+.badgeReplied,
+.badgeRead {
+  background: #F3F4F6;
+  color: #6B7280;
+}
+
+.cardProduct {
+  font-size: 15px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 4px;
+  padding-right: 80px;
+}
+
+.cardFrom {
+  font-size: 12px;
+  color: #D97706;
+  margin: 0 0 10px;
+  font-weight: 500;
+}
+
+.cardPreview {
+  font-size: 13px;
+  color: #4B5563;
+  margin: 0 0 8px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.45;
+}
+
+.cardTimestamp {
+  font-size: 12px;
+  color: #9CA3AF;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  justify-content: flex-end;
+}
+
+.clockIcon {
+  width: 13px;
+  height: 13px;
+  opacity: 0.6;
+}
+
+/* ── Empty State ── */
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  text-align: center;
+  padding: 40px;
+}
+
+.emptyIcon {
+  width: 64px;
+  height: 64px;
+  margin-bottom: 20px;
+  opacity: 0.35;
+}
+
+.emptyHeading {
+  font-size: 17px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 6px;
+}
+
+.emptyCaption {
+  font-size: 14px;
+  color: #9CA3AF;
+  margin: 0;
+}
+
+/* ── Detail Header ── */
+.detailHeader {
+  padding: 20px 24px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  border-bottom: 1px solid #E5E7EB;
+  flex-shrink: 0;
+}
+
+.detailProductName {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.detailContactArea {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.detailContactName {
+  font-size: 14px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.detailStore {
+  font-size: 12px;
+  color: #9CA3AF;
+  margin: 2px 0 0;
+}
+
+/* ── Chat Area ── */
+.chatArea {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.chatTimestamp {
+  text-align: center;
+  font-size: 12px;
+  color: #9CA3AF;
+  margin: 8px 0;
+}
+
+.bubbleRetailer {
+  background: #F3F4F6;
+  color: #374151;
+  padding: 14px 18px;
+  border-radius: 4px 16px 16px 16px;
+  max-width: 75%;
+  font-size: 14px;
+  line-height: 1.55;
+  align-self: flex-start;
+}
+
+.bubbleWholesaler {
+  background: #EEF2FF;
+  color: #374151;
+  padding: 14px 18px;
+  border-radius: 16px 4px 16px 16px;
+  max-width: 75%;
+  font-size: 14px;
+  line-height: 1.55;
+  align-self: flex-end;
+}
+
+/* ── Reply Bar ── */
+.replyBar {
+  padding: 16px 24px;
+  border-top: 1px solid #E5E7EB;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #fff;
+  flex-shrink: 0;
+}
+
+.paperclipBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  opacity: 0.45;
+  transition: opacity 0.15s;
+}
+
+.paperclipBtn:hover {
+  opacity: 0.7;
+}
+
+.replyInput {
+  flex: 1;
+  height: 44px;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 10px;
+  padding: 0 16px;
+  font-size: 14px;
+  color: #111827;
+  background: #fff;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.replyInput:focus {
+  border-color: #9CA3AF;
+}
+
+.replyInput::placeholder {
+  color: #9CA3AF;
+}
+
+.sendBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 10px;
+  background: #374151;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+  flex-shrink: 0;
+}
+
+.sendBtn:hover {
+  background: #1F2937;
+}
+
+/* ── Mobile Back Button ── */
+.backBtn {
+  display: none;
+}
+
+/* ── TABLET (768–1024px) ── */
+@media (max-width: 1024px) {
+  .page {
+    padding: 24px;
+  }
+
+  .leftPanel {
+    width: 270px;
+  }
+
+  .card {
+    padding: 12px 14px;
+  }
+
+  .cardProduct {
+    font-size: 14px;
+  }
+
+  .cardPreview {
+    font-size: 12px;
+  }
+
+  .detailProductName {
+    font-size: 16px;
+  }
+
+  .detailContactName {
+    font-size: 13px;
+  }
+}
+
+/* ── MOBILE (<768px) ── */
+@media (max-width: 767px) {
+  .page {
+    padding: 16px;
+    padding-bottom: 0;
+  }
+
+  .title {
+    font-size: 26px;
+  }
+
+  .subtitle {
+    font-size: 13px;
+  }
+
+  .splitPanel {
+    height: auto;
+    min-height: unset;
+    flex-direction: column;
+  }
+
+  /* ── List mode ── */
+  .leftPanel {
+    width: 100%;
+    border-radius: 14px;
+    border: 1.5px solid #E5E7EB;
+    height: auto;
+    max-height: none;
+    overflow: visible;
+  }
+
+  .leftPanelHidden {
+    display: none;
+  }
+
+  /* ── Detail mode ── */
+  .rightPanel {
+    border-radius: 14px;
+    border: 1.5px solid #E5E7EB;
+    border-left: 1.5px solid #E5E7EB;
+    height: calc(100vh - 80px);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 50;
+    border-radius: 0;
+    border: none;
+  }
+
+  .rightPanelHidden {
+    display: none;
+  }
+
+  .card {
+    padding: 14px 16px;
+  }
+
+  .cardProduct {
+    font-size: 14px;
+  }
+
+  .cardPreview {
+    font-size: 13px;
+  }
+
+  .cardTimestamp {
+    font-size: 11px;
+  }
+
+  .bubbleRetailer,
+  .bubbleWholesaler {
+    max-width: 85%;
+  }
+
+  /* ── Back Button ── */
+  .backBtn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: none;
+    border: none;
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
+    cursor: pointer;
+    padding: 0;
+    margin-bottom: 12px;
+  }
+
+  /* ── Detail header stacks vertically ── */
+  .detailHeader {
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px;
+  }
+
+  .detailContactArea {
+    text-align: left;
+  }
+
+  .detailContactName {
+    justify-content: flex-start;
+  }
+
+  /* ── Fixed reply bar ── */
+  .replyBar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 12px 16px;
+    padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+    border-top: 1px solid #E5E7EB;
+    z-index: 51;
+  }
+
+  .chatArea {
+    padding-bottom: 80px;
+  }
+}

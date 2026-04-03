@@ -1,8 +1,10 @@
+import QueriesClient from "../../../../components/wholesaler/queries/QueriesClient";
+
+export const metadata = {
+  title: "Queries — Wholesaler Dashboard",
+  description: "Manage retailer inquiries and respond to potential leads.",
+};
+
 export default function QueriesPage() {
-  return (
-    <main>
-      <h1>Queries</h1>
-      <p>Customer queries will appear here.</p>
-    </main>
-  );
+  return <QueriesClient />;
 }
