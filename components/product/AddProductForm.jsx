@@ -13,13 +13,13 @@ import { useRouter } from "next/navigation";
 
 const JEWELLERY_TYPES = [
   { value: "necklace", label: "Necklace" },
-  { value: "ring", label: "Ring" },
+  { value: "rings", label: "Rings" },
   { value: "earrings", label: "Earrings" },
   { value: "bracelet", label: "Bracelet" },
   { value: "pendant", label: "Pendant" },
   { value: "bangles", label: "Bangles" },
-  { value: "anklet", label: "Anklet" },
-  { value: "brooch", label: "Brooch" },
+  { value: "nosepins", label: "Nosepins" },
+  { value: "mangalsutra", label: "Mangalsutra" },
 ];
 
 const CATEGORIES = [
