@@ -35,7 +35,7 @@ export default function NavigationTabs() {
   }
 
   return (
-    <div className="sticky top-0 z-20 px-6 py-3 flex justify-center">
+    <div className="px-6 py-3 flex justify-center">
       {/* Pill container */}
       <div className="flex flex-row items-center gap-1 rounded-full bg-gray-100 p-1.5">
         {tabs.map((tab) => (
