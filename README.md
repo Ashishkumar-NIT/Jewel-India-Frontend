@@ -1,36 +1,71 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Jewel India 💎
+### Premium Jewelry Wholesale Platform
 
-## Getting Started
+Jewel India is a digital marketplace designed specifically for the jewelry industry in India. It builds a bridge between **Wholesale Manufacturers** and **Retail Jewelers**, making the process of discovering, ordering, and managing jewelry inventory seamless and modern.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## ✨ What is Jewel India?
+Traditionally, jewelry wholesale involves heavy paperwork and physical visits. Jewel India digitizes this experience:
+* **For Wholesalers:** A powerful dashboard to showcase your latest collections, manage stock, and track retailer queries in real-time.
+* **For Retailers:** A premium, easy-to-use catalog to discover new designs and place orders from trusted suppliers.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## 🚀 Key Features
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 1. Simple Onboarding 📝
+A professional registration process that ensures only verified businesses enter the platform. Includes:
+* KYC Verification (GST, Aadhaar, PAN)
+* Portfolio/Logo uploads
+* Business profile management
 
-## Learn More
+### 2. Digital Catalog 💍
+A stunning, high-performance product gallery where wholesalers can:
+* Showcase products with rich images.
+* Toggle "In-Stock" or "Out-of-Stock" instantly.
+* Filter by category and design type.
 
-To learn more about Next.js, take a look at the following resources:
+### 3. Smart Dashboard 📊
+Track everything in one place:
+* **Order Queries:** See who is interested in which designs.
+* **Status Tracking:** Manage the journey from "Pending" to "Fulfilled."
+* **Inventory Management:** Update your collection on the fly.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🛠️ How to Launch (For Developers)
 
-## Deploy on Vercel
+If you are a developer looking to run this project locally, follow these simple steps:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. **Install Dependencies**
+   ```bash
+   npm install
+   ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+2. **Configure Environment**
+   Create a `.env` file and add your Supabase credentials (refer to `.env.example`).
+
+3. **Start the Engine**
+   ```bash
+   npm run dev
+   ```
+
+4. **View the Site**
+   Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+---
+
+## 🏗️ Technology Behind the Scenes
+We use modern tools to ensure the platform is fast and secure:
+* **Framework:** Next.js (Fast & SEO friendly)
+* **Database & Auth:** Supabase (Secure data storage)
+* **Animations:** GSAP & Lenis (Smooth, premium user experience)
+* **Styling:** CSS & Tailwind (Modern, responsive designs)
+
+---
+
+## 📮 Contact & Support
+If you have any questions or need help setting up, please reach out to the project administrator.
+
+*Copyright © 2026 Jewel India. All rights reserved.*
