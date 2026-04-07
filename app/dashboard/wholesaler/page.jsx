@@ -27,7 +27,7 @@ export default async function WholesalerDashboardPage() {
   const userIdentifier = user?.email || user?.phone || "";
 
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen bg-white pb-20">
       {/* Header */}
       <header className="sticky top-0 z-50 flex items-center justify-between border-b border-[#e5e5e5] bg-white px-4 md:px-10 py-2.5">
         {/* Left - Sign Out and User Email */}

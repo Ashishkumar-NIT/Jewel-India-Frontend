@@ -35,7 +35,7 @@ function ProductDetailModal({ product, onClose }) {
         <div className="flex flex-col md:flex-row gap-[24px]">
           {/* Left Column */}
           <div className="w-full md:w-[45%] flex flex-col gap-[16px] shrink-0">
-            <div className="w-full aspect-square bg-[#222] rounded-[12px] overflow-hidden">
+            <div className="w-full h-[400px] bg-[#222] rounded-[12px] overflow-hidden">
               {images[activeImageIndex] ? (
                 <img 
                   src={images[activeImageIndex]} 
