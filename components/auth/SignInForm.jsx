@@ -44,7 +44,7 @@ export function SignInForm() {
     if (!urlIdentity) {
       const stored = sessionStorage.getItem("auth_identity");
       if (!stored) {
-        router.replace("/signup");
+        router.replace("/entry_page/signup");
       }
     }
   }, [urlIdentity, router]);

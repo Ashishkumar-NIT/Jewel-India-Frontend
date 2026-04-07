@@ -42,21 +42,30 @@ export async function POST(request) {
     }
 
     let exists = false;
+    let provider = null;
 
     if (isEmail) {
-      exists = data.users.some(
+      const userMatch = data.users.find(
         (u) => u.email?.toLowerCase() === normalized
       );
+      if (userMatch) {
+        exists = true;
+        provider = userMatch.app_metadata?.provider || null;
+      }
     } else {
       // Normalize phone: strip spaces/dashes/parens AND plus signs for comparison
       // Supabase stores phone numbers like '911234567890' without the '+'
       const normalizedPhone = identity.trim().replace(/[\s\-.()+]/g, "");
-      exists = data.users.some(
+      const userMatch = data.users.find(
         (u) => u.phone?.replace(/[\s\-.()+]/g, "") === normalizedPhone
       );
+      if (userMatch) {
+        exists = true;
+        provider = userMatch.app_metadata?.provider || null;
+      }
     }
 
-    return NextResponse.json({ exists, isEmail, isPhone: !isEmail });
+    return NextResponse.json({ exists, provider, isEmail, isPhone: !isEmail });
   } catch (err) {
     console.error("[check-user] unexpected error:", err);
     return NextResponse.json({ error: "Server error. Please try again." }, { status: 500 });

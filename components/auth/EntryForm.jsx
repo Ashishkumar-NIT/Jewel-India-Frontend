@@ -75,6 +75,18 @@ export function EntryForm() {
       }
 
       if (checkData.exists) {
+        if (checkData.provider === "google") {
+          setError("You signed up with Google. Redirecting...");
+          setGoogleLoading(true);
+          const redirectTo = `${window.location.origin}/auth/callback`;
+          const result = await initiateGoogleOAuth(redirectTo);
+          if (result?.error) {
+            setError(result.error);
+            setGoogleLoading(false);
+          }
+          return;
+        }
+        
         sessionStorage.setItem("auth_identity", normalizedIdentity);
         router.push(`/entry_page/signin?identity=${encodeURIComponent(normalizedIdentity)}`);
         return;
