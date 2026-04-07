@@ -38,6 +38,14 @@ export async function GET(request) {
       }
 
       if (role === "wholesaler") {
+        // If the role was missing from the JWT but found in the database,
+        // we MUST inject it into the JWT now, or the middleware will reject them later.
+        if (!user?.user_metadata?.role) {
+          await supabase.auth.updateUser({
+            data: { role: "wholesaler" }
+          });
+        }
+        
         const dest = await getWholesalerDestination(user.id);
         if (dest.includes("error=banned")) {
           await supabase.auth.signOut();
@@ -46,6 +54,11 @@ export async function GET(request) {
       }
       
       if (role === "retailer") {
+        if (!user?.user_metadata?.role) {
+          await supabase.auth.updateUser({
+            data: { role: "retailer" }
+          });
+        }
         return NextResponse.redirect(`${origin}/`);
       }
 
