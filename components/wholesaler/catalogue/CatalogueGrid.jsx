@@ -3,6 +3,143 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
+// ── Product Detail Modal ──────────────────────────────────────────────────────
+function ProductDetailModal({ product, onClose }) {
+  if (!product) return null;
+
+  const images = Array.from(new Set([
+    product.processed_image_url,
+    product.image_url,
+    product.raw_image_url,
+    ...(product.generated_image_urls || []),
+  ].filter(Boolean)));
+
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
+
+  const title = product.title || (product.jewellery_type ? product.jewellery_type.charAt(0).toUpperCase() + product.jewellery_type.slice(1) : "Jewelry Piece");
+  const typeDisplay = product.jewellery_type ? product.jewellery_type.charAt(0).toUpperCase() + product.jewellery_type.slice(1) : "";
+
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[rgba(0,0,0,0.6)] p-4" onClick={onClose}>
+      <div 
+        className="relative bg-[#1a1a1a] rounded-[16px] w-full max-w-[780px] p-[24px] shadow-[0_8px_32px_rgba(0,0,0,0.5)] max-h-[90vh] overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button 
+          onClick={onClose}
+          className="absolute top-[16px] right-[16px] text-[#aaaaaa] hover:text-[#ffffff] text-[24px] bg-transparent border-none cursor-pointer leading-[1]"
+        >
+          &times;
+        </button>
+
+        <div className="flex flex-col md:flex-row gap-[24px]">
+          {/* Left Column */}
+          <div className="w-full md:w-[45%] flex flex-col gap-[16px] shrink-0">
+            <div className="w-full aspect-square bg-[#222] rounded-[12px] overflow-hidden">
+              {images[activeImageIndex] ? (
+                <img 
+                  src={images[activeImageIndex]} 
+                  alt={title} 
+                  className="w-full h-full object-cover" 
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-[#666]">
+                  No Image
+                </div>
+              )}
+            </div>
+            
+            {images.length > 1 && (
+              <div className="flex gap-[8px] overflow-x-auto pb-1 scrollbar-hide">
+                {images.map((img, idx) => (
+                  <img 
+                    key={idx}
+                    src={img}
+                    alt={`Thumbnail ${idx}`}
+                    onClick={() => setActiveImageIndex(idx)}
+                    className={`shrink-0 w-[60px] h-[60px] object-cover rounded-[8px] cursor-pointer box-border transition-colors ${activeImageIndex === idx ? 'border-[2px] border-[#ff69b4]' : 'border-[2px] border-transparent'}`}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Right Column */}
+          <div className="w-full md:w-[55%] flex flex-col flex-1 shrink-0">
+            <div className="flex items-center gap-3 flex-wrap mb-[16px]">
+              <h2 className="text-[22px] font-[700] text-[#ffffff] m-0 leading-tight">{title}</h2>
+              {typeDisplay && (
+                <span className="bg-[rgba(255,105,180,0.15)] text-[#ff69b4] border border-[#ff69b4] rounded-[999px] text-[12px] px-[10px] py-[4px]">
+                  {typeDisplay}
+                </span>
+              )}
+            </div>
+
+            <div className="flex flex-col gap-3 py-4 border-t border-b border-[rgba(255,255,255,0.05)] mb-[16px]">
+              {product.metal_category && (
+                <div className="flex justify-between items-center text-[14px]">
+                  <span className="text-[#aaaaaa]">Metal category</span>
+                  <span className="text-[#ffffff] font-medium">{product.metal_category}</span>
+                </div>
+              )}
+              {product.purity && (
+                <div className="flex justify-between items-center text-[14px]">
+                  <span className="text-[#aaaaaa]">Purity</span>
+                  <span className="text-[#ffffff] font-medium">{product.purity}</span>
+                </div>
+              )}
+              {(product.design_style || product.style) && (
+                <div className="flex justify-between items-center text-[14px]">
+                  <span className="text-[#aaaaaa]">Style</span>
+                  <span className="text-[#ffffff] font-medium">{product.design_style || product.style}</span>
+                </div>
+              )}
+              {product.size && (
+                <div className="flex justify-between items-center text-[14px]">
+                  <span className="text-[#aaaaaa]">Size</span>
+                  <span className="text-[#ffffff] font-medium">{product.size}</span>
+                </div>
+              )}
+            </div>
+
+            {(product.gross_weight || product.stone_weight || product.net_weight) && (
+              <div className="flex gap-[8px] mb-[16px]">
+                {product.gross_weight && (
+                  <div className="flex-1 bg-[rgba(255,255,255,0.05)] rounded-[8px] px-[14px] py-[10px] flex flex-col gap-1">
+                    <span className="text-[11px] text-[#aaaaaa]">Gross weight</span>
+                    <span className="text-[14px] text-[#ffffff] font-[600]">{product.gross_weight}g</span>
+                  </div>
+                )}
+                {product.stone_weight && (
+                  <div className="flex-1 bg-[rgba(255,255,255,0.05)] rounded-[8px] px-[14px] py-[10px] flex flex-col gap-1">
+                    <span className="text-[11px] text-[#aaaaaa]">Stone weight</span>
+                    <span className="text-[14px] text-[#ffffff] font-[600]">{product.stone_weight}g</span>
+                  </div>
+                )}
+                {product.net_weight && (
+                  <div className="flex-1 bg-[rgba(255,255,255,0.05)] rounded-[8px] px-[14px] py-[10px] flex flex-col gap-1">
+                    <span className="text-[11px] text-[#aaaaaa]">Net weight</span>
+                    <span className="text-[14px] text-[#ffffff] font-[600]">{product.net_weight}g</span>
+                  </div>
+                )}
+              </div>
+            )}
+
+            <div className="mt-auto pt-2">
+              <div className="flex items-center gap-1.5">
+                <div className={`w-[8px] h-[8px] rounded-full ${product.stock_available !== false ? 'bg-[#00c853]' : 'bg-[#ff1744]'}`} />
+                <span className={`text-[13px] font-[500] ${product.stock_available !== false ? 'text-[#00c853]' : 'text-[#ff1744]'}`}>
+                  {product.stock_available !== false ? 'In Stock' : 'Out of Stock'}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── Skeleton ─────────────────────────────────────────────────────────────────
 export function CatalogueCardSkeleton() {
   return (
@@ -21,7 +158,7 @@ export function CatalogueCardSkeleton() {
 }
 
 // ── Product Card ──────────────────────────────────────────────────────────────
-function CatalogueProductCard({ product }) {
+function CatalogueProductCard({ product, onClick }) {
   const [imgError, setImgError] = useState(false);
   const [isInStock, setIsInStock] = useState(product.stock_available ?? false);
   const [isUpdating, setIsUpdating] = useState(false);
@@ -61,7 +198,10 @@ function CatalogueProductCard({ product }) {
     }
   };
 
-  return <article className="group flex flex-col bg-[#ffffff] rounded-xl border border-[#eee] transition-all duration-200 ease bg-white shadow-[0_2px_12px_rgba(0,0,0,0.07)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.12)] hover:-translate-y-[2px]">
+  return <article 
+    onClick={() => onClick && onClick(product)}
+    className="cursor-pointer group flex flex-col bg-[#ffffff] rounded-xl border border-[#eee] transition-all duration-200 ease shadow-[0_2px_12px_rgba(0,0,0,0.07)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.12)] hover:-translate-y-[2px]"
+  >
     <div className="w-full aspect-square bg-[#f9f9f9] rounded-t-xl overflow-hidden relative">
       {imgUrl && !imgError ? (
         <img
@@ -82,9 +222,16 @@ function CatalogueProductCard({ product }) {
     </div>
 
     <div className="border-t border-[#eee] p-3 md:p-4 flex flex-col gap-2">
-      <h3 className="font-bold text-[14px] text-[#111] leading-tight truncate">
-        {title}
-      </h3>
+      <div className="flex flex-col">
+        <h3 className="font-bold text-[14px] text-[#111] leading-tight truncate">
+          {title}
+        </h3>
+        {product.jewellery_type && (
+          <span className="text-[11px] text-[#aaaaaa] mt-0.5">
+            {product.jewellery_type.charAt(0).toUpperCase() + product.jewellery_type.slice(1)}
+          </span>
+        )}
+      </div>
 
       <div className="text-[13px] text-[#666] flex items-center gap-2">
         <span>
@@ -128,6 +275,7 @@ export default function CatalogueGrid({
   activeCategory = "All",
 }) {
   const router = useRouter();
+  const [selectedProduct, setSelectedProduct] = useState(null);
 
   if (isError) {
     return (
@@ -181,10 +329,22 @@ export default function CatalogueGrid({
   }
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-[16px]">
-      {products.map((product) => (
-        <CatalogueProductCard key={product.id} product={product} />
-      ))}
-    </div>
+    <>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-[16px]">
+        {products.map((product) => (
+          <CatalogueProductCard 
+            key={product.id} 
+            product={product} 
+            onClick={() => setSelectedProduct(product)}
+          />
+        ))}
+      </div>
+      {selectedProduct && (
+        <ProductDetailModal 
+          product={selectedProduct} 
+          onClose={() => setSelectedProduct(null)} 
+        />
+      )}
+    </>
   );
 }
