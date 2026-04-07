@@ -1,5 +1,5 @@
 "use client";
-import { useEffect } from "react";
+// import { useEffect } from "react";
 
 const INDIAN_STATES = [
   "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", "Goa",
@@ -9,6 +9,7 @@ const INDIAN_STATES = [
   "Uttar Pradesh", "Uttarakhand", "West Bengal"
 ];
 
+/*
 const CITY_MAP = {
   "Andhra Pradesh": ["Visakhapatnam", "Vijayawada", "Guntur", "Nellore", "Kurnool"],
   "Arunachal Pradesh": ["Itanagar", "Tawang", "Naharlagun", "Pasighat", "Ziro"],
@@ -45,6 +46,7 @@ function getCitiesByState(state) {
   if (!state) return [];
   return CITY_MAP[state] || [`${state} City 1`, `${state} City 2`, `${state} City 3`];
 }
+*/
 
 export function BusinessForm({
   businessName, setBusinessName,
@@ -57,12 +59,14 @@ export function BusinessForm({
   const isStateError = submitAttempted && selectedState === "";
   const isCityError = submitAttempted && selectedCity === "";
 
+  /*
   useEffect(() => {
     if (selectedState) {
       setCities(getCitiesByState(selectedState));
       setSelectedCity("");
     }
   }, [selectedState, setCities, setSelectedCity]);
+  */
 
   return (
     <div className="flex flex-col gap-[clamp(16px,2vw,24px)] w-full">
@@ -108,23 +112,17 @@ export function BusinessForm({
         <div className="flex-1 flex flex-col gap-2 min-w-0">
           <label htmlFor="city" className="text-[13px] font-semibold text-[#374151]">City*</label>
           <div className="relative">
-            <select
+            <input
               id="city"
+              type="text"
               value={selectedCity}
               onChange={(e) => setSelectedCity(e.target.value)}
               disabled={!selectedState}
-              className={`w-full appearance-none rounded-[8px] border outline-none px-[clamp(10px,1.5vw,16px)] py-[clamp(8px,1.2vw,14px)] text-[clamp(13px,1.4vw,15px)] text-[#374151] transition-shadow ${!selectedState ? 'bg-[#F9FAFB] border-[#E5E7EB] cursor-not-allowed opacity-80' : isCityError ? 'bg-[#FFFFFF] border-[#EF4444]' : 'bg-[#FFFFFF] border-[#E5E7EB] focus:ring-2 focus:ring-black/10 cursor-pointer'}`}
-            >
-              <option value="" disabled className="text-[#9CA3AF]">select</option>
-              {cities.map((city) => (
-                <option key={city} value={city}>{city}</option>
-              ))}
-            </select>
-            <div className={`pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 ${selectedCity ? 'text-[#374151]' : 'text-[#9CA3AF]'}`}>
-              <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-[clamp(12px,1.5vw,16px)] h-[clamp(12px,1.5vw,16px)]"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
-            </div>
+              placeholder="select"
+              className={`w-full rounded-[8px] border outline-none px-[clamp(10px,1.5vw,16px)] py-[clamp(8px,1.2vw,14px)] text-[clamp(13px,1.4vw,15px)] text-[#374151] placeholder:text-[#9CA3AF] transition-shadow ${!selectedState ? 'bg-[#F9FAFB] border-[#E5E7EB] cursor-not-allowed opacity-80' : isCityError ? 'bg-[#FFFFFF] border-[#EF4444]' : 'bg-[#FFFFFF] border-[#E5E7EB] focus:ring-2 focus:ring-black/10'}`}
+            />
           </div>
-          {isCityError && <span className="text-[12px] text-[#EF4444]">Please select a city</span>}
+          {isCityError && <span className="text-[12px] text-[#EF4444]">Please enter a city</span>}
         </div>
       </div>
     </div>
