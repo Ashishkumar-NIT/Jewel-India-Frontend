@@ -41,7 +41,8 @@ export default function CatalogueClient({
   initialCategory,
   dynamicCategories,
   wholesalerId, 
-  userEmail 
+  userEmail,
+  artisanName 
 }) {
   const router = useRouter();
   const supabase = useMemo(() => createClient(), []);
@@ -348,6 +349,7 @@ export default function CatalogueClient({
           isError={isError}
           onRetry={() => fetchProducts(activeCategory, page, filters)}
           activeCategory={getActiveCatName()}
+          artisanName={artisanName}
         />
 
         {/* ── Pagination ── */}

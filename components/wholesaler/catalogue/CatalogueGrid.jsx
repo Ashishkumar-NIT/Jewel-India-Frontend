@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 // ── Product Detail Modal ──────────────────────────────────────────────────────
-function ProductDetailModal({ product, onClose }) {
+function ProductDetailModal({ product, onClose, artisanNameFallback }) {
   if (!product) return null;
 
   const images = Array.from(new Set([
@@ -36,7 +36,7 @@ function ProductDetailModal({ product, onClose }) {
   // Data fallbacks/parsing
   const sku = product.sku || `JWL-${(product.id || "0000").slice(-6).toUpperCase()}`;
   const studioName = product.studio_name || "Jewel India";
-  const artisanName = product.crafted_by || product.studio_name || "Unknown Artisan";
+  const artisanName = product.crafted_by || product.studio_name || artisanNameFallback || "Unknown Artisan";
   const purity = product.purity || "24K";
   const addedOnStr = product.created_at ? new Date(product.created_at).toLocaleDateString("en-GB", {day: "numeric", month: "long", year: "numeric"}) : "7 April 2026";
   const moq = savedFields.moq ? `${savedFields.moq} pcs` : "5 pcs";
@@ -493,6 +493,7 @@ export default function CatalogueGrid({
   isError = false,
   onRetry,
   activeCategory = "All",
+  artisanName = "",
 }) {
   const router = useRouter();
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -563,6 +564,7 @@ export default function CatalogueGrid({
         <ProductDetailModal 
           product={selectedProduct} 
           onClose={() => setSelectedProduct(null)} 
+          artisanNameFallback={artisanName}
         />
       )}
     </>

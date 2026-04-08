@@ -76,6 +76,19 @@ export default async function CataloguePage({ searchParams }) {
   const initialProducts = data ?? [];
   const initialCount = count ?? 0;
 
+  // ── 5. Fetch wholesaler data to get full_name for "Crafted by" ───────────
+  const { data: wholesalerData, error: wholesalerError } = await supabase
+    .from("wholesalers")
+    .select("full_name")
+    .eq("user_id", user.id)
+    .single();
+
+  if (wholesalerError) {
+    console.error("[CataloguePage] Wholesaler fetch error:", wholesalerError.message);
+  }
+
+  const artisanName = wholesalerData?.full_name || "";
+
   return (
     <Suspense>
       <CatalogueClient
@@ -85,6 +98,7 @@ export default async function CataloguePage({ searchParams }) {
         dynamicCategories={dynamicCategories}
         wholesalerId={user.id}
         userEmail={user.email}
+        artisanName={artisanName}
       />
     </Suspense>
   );

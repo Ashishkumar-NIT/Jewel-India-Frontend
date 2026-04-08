@@ -25,6 +25,13 @@ A stunning, high-performance product gallery where wholesalers can:
 * Showcase products with rich images.
 * Toggle "In-Stock" or "Out-of-Stock" instantly.
 * Filter by category and design type.
+* **New UI Enhancements**:
+  * Added missing fields (Metal Purity, Crafted By, Added On, Studio/Seller name, Product ID/SKU).
+  * Introduced wholesale‑specific fields (MOQ, Price per piece/set, Available Quantity, Restock Date, Bulk Discount Tiers).
+  * Added Edit‑Info panel allowing inline editing of all wholesale fields.
+  * Replaced side‑scrolling thumbnail strip with a wrapping flex layout.
+  * Studio name now defaults to "Jewel India" when not set.
+  * "Crafted By" now displays the onboarding user's name.
 
 ### 3. Smart Dashboard 📊
 Track everything in one place:
@@ -62,6 +69,15 @@ We use modern tools to ensure the platform is fast and secure:
 * **Database & Auth:** Supabase (Secure data storage)
 * **Animations:** GSAP & Lenis (Smooth, premium user experience)
 * **Styling:** CSS & Tailwind (Modern, responsive designs)
+
+---
+
+## 📦 Recent Enhancements
+- **Product Detail Modal** now includes all previously missing fields and new wholesale‑specific data points.
+- **Edit Info** button enables inline editing of wholesale information with live save/cancel actions.
+- **Studio name fallback** changed to "Jewel India" for consistency.
+- **Crafted By** automatically shows the name entered during onboarding.
+- **Thumbnail carousel** no longer scrolls horizontally; images wrap into rows for better UX.
 
 ---
 
