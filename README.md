@@ -1,4 +1,4 @@
-# Jewel India 💎
+<!-- # Jewel India 💎
 ### Premium Jewelry Wholesale Platform
 
 Jewel India is a digital marketplace designed specifically for the jewelry industry in India. It builds a bridge between **Wholesale Manufacturers** and **Retail Jewelers**, making the process of discovering, ordering, and managing jewelry inventory seamless and modern.
@@ -84,4 +84,4 @@ We use modern tools to ensure the platform is fast and secure:
 ## 📮 Contact & Support
 If you have any questions or need help setting up, please reach out to the project administrator.
 
-*Copyright © 2026 Jewel India. All rights reserved.*
+*Copyright © 2026 Jewel India. All rights reserved.* -->
