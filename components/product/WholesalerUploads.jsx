@@ -10,7 +10,7 @@ function UploadCard({ product }) {
     Array.isArray(product.generated_image_urls) &&
     product.generated_image_urls.length > 0
       ? product.generated_image_urls
-      : [product.processed_image_url || product.image_url || product.raw_image_url].filter(Boolean);
+      : [product.processed_image_url].filter(Boolean);
 
   const hasMultiple = variants.length > 1;
   const activeUrl = variants[variantIdx] ?? null;
@@ -26,7 +26,7 @@ function UploadCard({ product }) {
   return (
     <article className="group flex flex-col">
       {/* ── Image ── */}
-      <div className="relative aspect-[4/5] w-full overflow-hidden bg-celestique-taupe/20 mb-5">
+      <div className="relative aspect-4/5 w-full overflow-hidden bg-celestique-taupe/20 mb-5">
         {activeUrl && !imgError ? (
           <img
             src={activeUrl}
@@ -106,19 +106,19 @@ function UploadCard({ product }) {
               } Piece`}
           </h3>
           {product.category && (
-            <span className="text-[9px] uppercase tracking-[0.1em] text-celestique-dark/40 shrink-0">
+            <span className="text-[9px] uppercase tracking-widest text-celestique-dark/40 shrink-0">
               {product.category}
             </span>
           )}
         </div>
         {product.metal_purity && (
-          <p className="text-[9px] uppercase tracking-[0.1em] text-celestique-dark/50">
+          <p className="text-[9px] uppercase tracking-widest text-celestique-dark/50">
             {product.metal_purity}
             {product.net_weight ? ` · ${product.net_weight}g net` : ""}
           </p>
         )}
         {uploadedAt && (
-          <p className="text-[9px] uppercase tracking-[0.1em] text-celestique-dark/30">
+          <p className="text-[9px] uppercase tracking-widest text-celestique-dark/30">
             Uploaded {uploadedAt}
           </p>
         )}

@@ -22,16 +22,18 @@ export async function PATCH(request, context) {
 
     // 2. Parse payload
     const body = await request.json();
-    const { in_stock } = body;
+    const updatePayload = {};
+    if (typeof body.in_stock !== "undefined") updatePayload.stock_available = body.in_stock;
+    if (typeof body.is_published !== "undefined") updatePayload.is_published = body.is_published;
 
-    if (typeof in_stock !== "boolean") {
-      return NextResponse.json({ error: "Invalid payload: 'in_stock' must be a boolean" }, { status: 400 });
+    if (Object.keys(updatePayload).length === 0) {
+      return NextResponse.json({ error: "Invalid payload: no valid fields to update" }, { status: 400 });
     }
 
     // 3. Update the product, returning the updated row. Ensure RLS only updates if it's their product.
     const { data, error } = await supabase
       .from("products")
-      .update({ stock_available: in_stock })
+      .update(updatePayload)
       .eq("id", id)
       .eq("wholesaler_id", user.id)
       .select()
