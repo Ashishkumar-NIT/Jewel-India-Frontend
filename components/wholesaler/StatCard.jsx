@@ -34,7 +34,7 @@ export function TopStatCard({ icon, title, badge, href }) {
     </div>
   );
 
-  const containerClasses = "flex-1 flex flex-col justify-center rounded-xl border border-[#e5e5e5] bg-white py-5 px-6 relative transition-colors focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent " + (href ? "hover:bg-gray-50 cursor-pointer" : "");
+  const containerClasses = "flex-1 flex flex-col justify-center rounded-xl border border-[#e5e5e5] bg-white py-5 px-6 relative transition-all duration-200 hover:shadow-md hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent " + (href ? "hover:bg-gray-50 cursor-pointer" : "");
 
   if (href) {
     return (
@@ -65,7 +65,7 @@ export function BottomStatCard({ icon, title, value, href }) {
     </div>
   );
 
-  const containerClasses = "flex-1 flex flex-col justify-center rounded-xl border border-[#e5e5e5] bg-white py-5 px-6 relative transition-colors focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent " + (href ? "hover:bg-gray-50 cursor-pointer" : "");
+  const containerClasses = "flex-1 flex flex-col justify-center rounded-xl border border-[#e5e5e5] bg-white py-5 px-6 relative transition-all duration-200 hover:shadow-md hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent " + (href ? "hover:bg-gray-50 cursor-pointer" : "");
 
   if (href) {
     return (

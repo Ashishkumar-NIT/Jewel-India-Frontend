@@ -82,7 +82,7 @@ export default function Sidebar() {
                 transition: "all 0.15s ease",
                 backgroundColor: "transparent",
                 opacity: isActive ? 1 : 0.35,
-                filter: isActive ? "none" : "grayscale(1)",
+                filter: isActive ? "brightness(0)" : "grayscale(1)",
               }}
               className="sidebar-item"
             >
@@ -118,7 +118,7 @@ export default function Sidebar() {
             height={22}
           />
         </button>
-        
+
         <div
           style={{
             width: "44px",
@@ -141,11 +141,11 @@ export default function Sidebar() {
 
       <style>{`
         .sidebar-icon-stack {
-          gap: 16px;
+          gap: 32px;
         }
         @media (max-width: 1024px) {
           .sidebar-icon-stack {
-            gap: 24px;
+            gap: 32px;
           }
         }
         .sidebar-item:hover {

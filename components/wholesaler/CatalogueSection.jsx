@@ -7,7 +7,7 @@ export default function CatalogueSection() {
     <section className="px-6 py-12">
       <div className="mx-auto max-w-7xl">
         {/* Header */}
-        <div className="mb-8 text-center">
+        <div className="mb-8 text-left">
           <h2 className="font-cirka text-4xl text-celestique-dark md:text-3xl">
             My Catalogue
           </h2>

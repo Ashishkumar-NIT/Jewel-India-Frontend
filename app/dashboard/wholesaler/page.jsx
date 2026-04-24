@@ -1,6 +1,6 @@
 import HeroUploadSection from "../../../components/wholesaler/HeroUploadSection";
 import OverviewSection from "../../../components/wholesaler/OverviewSection";
-import NavigationTabs from "../../../components/wholesaler/NavigationTabs";
+import WeeklyReviewBanner from "../../../components/wholesaler/WeeklyReviewBanner";
 import CatalogueSection from "../../../components/wholesaler/CatalogueSection";
 import { createClient } from "../../../lib/supabase/server";
 import { SignOutButton } from "../../../components/auth/SignOutButton";
@@ -57,7 +57,7 @@ export default async function WholesalerDashboardPage() {
 
       <HeroUploadSection />
       <OverviewSection />
-      <NavigationTabs />
+      <WeeklyReviewBanner />
       <CatalogueSection />
     </main>
   );
