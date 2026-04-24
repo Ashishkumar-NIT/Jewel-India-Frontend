@@ -1,4 +1,5 @@
 import Footer from "../../../components/wholesaler/Footer";
+import Sidebar from "../../../components/wholesaler/Sidebar";
 
 export const metadata = {
   title: "Wholesaler Dashboard",
@@ -7,9 +8,12 @@ export const metadata = {
 
 export default function WholesalerLayout({ children }) {
   return (
-    <div>
-      {children}
-      {/* <Footer /> */}
+    <div style={{ display: "flex", minHeight: "100vh" }}>
+      <Sidebar />
+      <main style={{ flex: 1, marginLeft: "70px", minHeight: "100vh" }}>
+        {children}
+        {/* <Footer /> */}
+      </main>
     </div>
   );
 }
