@@ -31,6 +31,12 @@ export function EntryForm() {
         setError(urlError);
       }
     }
+
+    // Capture referral params
+    const ref = searchParams.get("ref");
+    const role = searchParams.get("role");
+    if (ref) sessionStorage.setItem("referral_code", ref);
+    if (role) sessionStorage.setItem("referral_role", role);
   }, [searchParams]);
 
   async function handleContinue(e) {
@@ -78,7 +84,8 @@ export function EntryForm() {
         if (checkData.provider === "google") {
           setError("You signed up with Google. Redirecting...");
           setGoogleLoading(true);
-          const redirectTo = `${window.location.origin}/auth/callback`;
+          const rRole = sessionStorage.getItem("referral_role");
+          const redirectTo = `${window.location.origin}/auth/callback${rRole ? '?role=' + rRole : ''}`;
           const result = await initiateGoogleOAuth(redirectTo);
           if (result?.error) {
             setError(result.error);
@@ -107,7 +114,11 @@ export function EntryForm() {
 
       sessionStorage.setItem("auth_identity", normalizedIdentity);
       sessionStorage.setItem("otp_sent_at", new Date().toISOString());
-      router.push("/entry_page/signup/verify-otp");
+      
+      const sessionRole = sessionStorage.getItem("referral_role");
+      const paramRole = searchParams.get("role") || sessionRole || "wholesaler";
+      
+      router.push(`/entry_page/signup/verify-otp?role=${paramRole}`);
     } catch {
       setError("Network error. Please check your connection and try again.");
       setLoading(false);
@@ -117,9 +128,8 @@ export function EntryForm() {
   async function handleGoogle() {
     setError(null);
     setGoogleLoading(true);
-    // Use window.location.origin so the redirectTo is always the current domain
-    // (localhost in dev, production URL on Vercel) — no env var needed.
-    const redirectTo = `${window.location.origin}/auth/callback`;
+    const rRole = searchParams.get("role") || sessionStorage.getItem("referral_role");
+    const redirectTo = `${window.location.origin}/auth/callback${rRole ? '?role=' + rRole : ''}`;
     const result = await initiateGoogleOAuth(redirectTo);
     if (result?.error) {
       setError(result.error);

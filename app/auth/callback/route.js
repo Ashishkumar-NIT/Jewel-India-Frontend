@@ -24,11 +24,14 @@ export async function GET(request) {
         data: { user },
       } = await supabase.auth.getUser();
 
+      const isNewUser = user && (Date.now() - new Date(user.created_at).getTime() < 60000);
+
       // Try metadata first (fastest — from JWT)
       let role = user?.user_metadata?.role;
 
-      // Fallback: query profiles table in case metadata is outdated
-      if (!role && user) {
+      // Fallback: query profiles table if metadata is empty BUT only if not a new user
+      // (because the DB trigger auto-inserts 'wholesaler' for brand new dimensionless users)
+      if (!role && user && !isNewUser) {
         const { data: profile } = await supabase
           .from("profiles")
           .select("role")
@@ -37,9 +40,28 @@ export async function GET(request) {
         role = profile?.role;
       }
 
+      // If no valid role exists, this is a first-time Google sign-in.
+      if (!role) {
+        const requestedRole = searchParams.get("role") === "retailer" ? "retailer" : "wholesaler";
+
+        // Use the SERVER client so the browser's session cookie gets refreshed with the new role
+        await supabase.auth.updateUser({
+          data: { role: requestedRole }
+        });
+        
+        // Ensure they exist in the profiles table correctly (overwriting trigger defaults)
+        await supabaseAdmin.from("profiles").upsert({
+          id: user.id,
+          email: user.email || user.phone,
+          role: requestedRole
+        }, { onConflict: "id" });
+
+        const redirectDest = requestedRole === "retailer" ? "/onboard-retailer" : "/onboard";
+        return NextResponse.redirect(`${origin}${redirectDest}`);
+      }
+
       if (role === "wholesaler") {
-        // If the role was missing from the JWT but found in the database,
-        // we MUST inject it into the JWT now, or the middleware will reject them later.
+        // If the role was missing from the JWT but found in the database, inject it now
         if (!user?.user_metadata?.role) {
           await supabase.auth.updateUser({
             data: { role: "wholesaler" }
@@ -59,25 +81,8 @@ export async function GET(request) {
             data: { role: "retailer" }
           });
         }
-        return NextResponse.redirect(`${origin}/`);
+        return NextResponse.redirect(`${origin}/`); // Will be caught by middleware and handled
       }
-
-      // No role yet — this is a first-time Google sign-in.
-      if (user) {
-        // Use the SERVER client, NOT admin client, so the browser's session cookie gets refreshed with the new role
-        await supabase.auth.updateUser({
-          data: { role: "wholesaler" }
-        });
-        
-        // Ensure they exist in the profiles table
-        await supabaseAdmin.from("profiles").upsert({
-          id: user.id,
-          email: user.email || user.phone,
-          role: "wholesaler"
-        }, { onConflict: "id" });
-      }
-
-      return NextResponse.redirect(`${origin}/onboard`);
     }
 
     // Exchange failed

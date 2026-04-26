@@ -30,10 +30,13 @@ export function SetPasswordForm() {
     setLoading(true);
     setError(null);
 
+    const searchParams = new URL(window.location.href).searchParams;
+    const role = searchParams.get("role") || sessionStorage.getItem("referral_role") || "wholesaler";
+
     const res = await fetch("/api/auth/set-password", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ password }),
+      body: JSON.stringify({ password, role }),
     });
     const data = await res.json();
 
@@ -49,7 +52,8 @@ export function SetPasswordForm() {
     sessionStorage.removeItem("otp_remaining_resends");
     sessionStorage.removeItem("otp_locked_until");
 
-    router.push("/onboard");
+    const redirectDest = role === "retailer" ? "/onboard-retailer" : "/onboard";
+    router.push(redirectDest);
   }
 
   return (

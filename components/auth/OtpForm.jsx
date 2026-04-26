@@ -202,9 +202,16 @@ export function OtpForm() {
 
     // Success — route based on user status
     if (data.isNewUser) {
-      router.push("/entry_page/signup/set-password");
+      const searchParams = new URL(window.location.href).searchParams;
+      const paramRole = searchParams.get("role") || sessionStorage.getItem("referral_role") || "wholesaler";
+      router.push(`/entry_page/signup/set-password?role=${paramRole}`);
     } else {
-      router.push("/dashboard/wholesaler");
+      // Returning user
+      if (data.userRole === "retailer") {
+        router.push("/dashboard/retailer"); // Or maybe just '/' if middleware handles it
+      } else {
+        router.push("/dashboard/wholesaler");
+      }
     }
   }
 

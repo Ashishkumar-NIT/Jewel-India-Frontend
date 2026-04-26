@@ -6,6 +6,7 @@ export async function PATCH(req: NextRequest) {
 
   const {
     id,
+    type = 'wholesaler',
     verification_status,
     rejection_reason,
     rejected_documents,
@@ -21,8 +22,10 @@ export async function PATCH(req: NextRequest) {
     )
   }
 
+  const table = type === 'retailer' ? 'retailers' : 'wholesalers'
+
   const { data, error } = await supabaseAdmin
-    .from('wholesalers')
+    .from(table)
     .update({
       verification_status,
       rejection_reason: rejection_reason ?? null,

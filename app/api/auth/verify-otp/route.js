@@ -57,7 +57,8 @@ export async function POST(request) {
     return NextResponse.json({ 
       success: true, 
       userId: data.user?.id,
-      isNewUser 
+      isNewUser,
+      userRole
     });
   } catch (err) {
     console.error("[verify-otp] unexpected error:", err);

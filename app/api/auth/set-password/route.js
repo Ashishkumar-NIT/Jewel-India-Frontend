@@ -12,11 +12,13 @@ import { supabaseAdmin } from "../../../../lib/supabase/admin";
  */
 export async function POST(request) {
   try {
-    const { password } = await request.json();
+    const { password, role: requestRole } = await request.json();
 
     if (!password) {
       return NextResponse.json({ error: "Password is required." }, { status: 400 });
     }
+
+    const assignedRole = requestRole === "retailer" ? "retailer" : "wholesaler";
 
     // Validate password strength
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
@@ -48,7 +50,7 @@ export async function POST(request) {
     // Update the user's password and metadata
     const { error: updateError } = await supabase.auth.updateUser({
       password,
-      data: { role: "wholesaler" }, // set role in metadata
+      data: { role: assignedRole }, // set role in metadata
     });
 
     if (updateError) {
@@ -63,7 +65,7 @@ export async function POST(request) {
       .upsert({
         id: user.id,
         email: user.email || user.phone,
-        role: "wholesaler",
+        role: assignedRole,
       }, { onConflict: "id" });
 
     if (profileError) {
