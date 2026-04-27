@@ -1,12 +1,14 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import styles from "./referralManager.module.css";
 
 export default function ReferralManager({ initialLinks = [] }) {
   const [links, setLinks] = useState(initialLinks);
   const [generating, setGenerating] = useState(false);
   const [generateError, setGenerateError] = useState(null);
   const [copiedId, setCopiedId] = useState(null);
+  const [activeLink, setActiveLink] = useState("");
 
   const handleGenerate = useCallback(async () => {
     setGenerating(true);
@@ -27,6 +29,7 @@ export default function ReferralManager({ initialLinks = [] }) {
       }
 
       setLinks((prev) => [data, ...prev]);
+      setActiveLink(data.link);
     } catch {
       setGenerateError("Network error. Please try again.");
     } finally {
@@ -59,90 +62,84 @@ export default function ReferralManager({ initialLinks = [] }) {
     return `${day}/${month}/${year}`;
   }
 
-  const latestLink = links[0]?.link || "";
-
   return (
-    <div style={{ width: "100%", fontFamily: "'Inter', sans-serif" }}>
+    <div className={styles.container}>
       {/* Link to referral program section */}
-      <div style={{ marginBottom: "64px" }}>
-        <h2 style={{ fontSize: "24px", fontWeight: 700, color: "#111", margin: "0 0 8px 0", letterSpacing: "-0.01em" }}>
+      <div className={styles.header}>
+        <h2 className={styles.title}>
           Link to referral program
         </h2>
-        <p style={{ fontSize: "14px", color: "#6B7280", margin: "0 0 24px 0" }}>
+        <p className={styles.subtitle}>
           Create and share your referral link to start onboarding retailers instantly.
         </p>
 
-        <div style={{ display: "flex", alignItems: "flex-start", gap: "16px" }}>
-          <div style={{ flex: 1, position: "relative" }}>
+        <div className={styles.inputRow}>
+          <div className={styles.inputWrapper}>
             <input
               type="text"
               readOnly
-              value={latestLink}
+              value={activeLink}
               placeholder="Generate a link to see it here..."
-              style={{
-                width: "100%",
-                height: "56px",
-                backgroundColor: "#F3F4F6",
-                border: "none",
-                borderRadius: "8px",
-                padding: "0 48px 0 16px",
-                fontSize: "15px",
-                color: "#374151",
-                outline: "none",
-              }}
+              className={`${styles.input} ${!activeLink ? styles.inputEmpty : ''}`}
             />
-            {latestLink && (
+            
+            {/* Action Buttons Container */}
+            <div className={styles.actionButtons}>
+              {copiedId === 'main' && (
+                <span style={{ fontSize: "12px", color: "#16A34A", fontWeight: 500, marginRight: "4px" }}>Copied!</span>
+              )}
               <button
-                onClick={() => handleCopy('main', latestLink)}
+                onClick={() => activeLink && handleCopy('main', activeLink)}
+                disabled={!activeLink}
                 style={{
-                  position: "absolute",
-                  right: "12px",
-                  top: "50%",
-                  transform: "translateY(-50%)",
                   background: "none",
                   border: "none",
-                  cursor: "pointer",
+                  cursor: activeLink ? "pointer" : "not-allowed",
                   padding: "4px",
                   display: "flex",
                   alignItems: "center",
-                  justifyContent: "center"
+                  justifyContent: "center",
+                  opacity: activeLink ? 1 : 0.3
                 }}
                 title="Copy link"
               >
                 <img src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777306236/retailerProfile_COPY_szewo3.svg" alt="Copy" style={{ width: "20px", height: "20px" }} />
               </button>
-            )}
-            {copiedId === 'main' && (
-              <span style={{ position: "absolute", right: "44px", top: "50%", transform: "translateY(-50%)", fontSize: "12px", color: "#16A34A", fontWeight: 500 }}>Copied!</span>
-            )}
+              
+              {activeLink && (
+                <button
+                  onClick={() => setActiveLink("")}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    padding: "4px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "#9CA3AF"
+                  }}
+                  title="Clear link"
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+                </button>
+              )}
+            </div>
           </div>
 
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", minWidth: "220px" }}>
+          <div className={styles.buttonContainer}>
             <button
               onClick={handleGenerate}
               disabled={generating}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: "8px",
-                height: "56px",
-                width: "100%",
-                backgroundColor: "#111",
-                color: "#FFF",
-                border: "none",
-                borderRadius: "8px",
-                fontSize: "15px",
-                fontWeight: 600,
-                cursor: generating ? "not-allowed" : "pointer",
-                transition: "opacity 0.2s",
-                opacity: generating ? 0.7 : 1,
-              }}
+              className={styles.generateButton}
             >
               <img src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777306661/link_logo_wtcyei.svg" alt="Link" style={{ width: "20px", height: "20px", filter: "brightness(0) invert(1)" }} />
               {generating ? "Generating..." : "Generate Link"}
             </button>
-            <span style={{ fontSize: "11px", color: "#9CA3AF", fontStyle: "italic", marginTop: "8px", textAlign: "right", lineHeight: 1.4 }}>
+            <span className={styles.secureText}>
               *Your links are secure and used only for<br/>tracking referrals.
             </span>
           </div>
@@ -155,20 +152,14 @@ export default function ReferralManager({ initialLinks = [] }) {
       {/* PREVIOUS LINK Section */}
       {links.length > 0 && (
         <div>
-          <h3 style={{ fontSize: "12px", fontWeight: 600, color: "#6B7280", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "16px" }}>
+          <h3 className={styles.prevTitle}>
             PREVIOUS LINK
           </h3>
           <div style={{ display: "flex", flexDirection: "column" }}>
             {links.map((link, index) => (
               <div
                 key={link.id}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  padding: "16px 0",
-                  borderBottom: index < links.length - 1 ? "1px solid #E5E7EB" : "none",
-                  backgroundColor: "#FFFFFF",
-                }}
+                className={styles.linkRow}
               >
                 <div style={{ width: "8px", height: "8px", borderRadius: "50%", backgroundColor: "#22C55E", marginRight: "16px", marginLeft: "4px", flexShrink: 0 }}></div>
                 
@@ -185,7 +176,7 @@ export default function ReferralManager({ initialLinks = [] }) {
                   Active
                 </span>
 
-                <span style={{ fontSize: "14px", color: "#4B5563", fontFamily: "monospace", flex: 1, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                <span className={styles.urlText}>
                   {link.link}
                 </span>
 
@@ -211,7 +202,7 @@ export default function ReferralManager({ initialLinks = [] }) {
                   )}
                 </button>
 
-                <span style={{
+                <span className={styles.dateBadge} style={{
                   padding: "6px 16px",
                   backgroundColor: "#F3F4F6",
                   color: "#6B7280",
