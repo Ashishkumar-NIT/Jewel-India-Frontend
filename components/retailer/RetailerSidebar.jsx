@@ -3,144 +3,109 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
+import { signOut } from "../../lib/actions/auth";
 
-export default function RetailerSidebar() {
+export default function RetailerSidebar({ retailer }) {
   const pathname = usePathname();
 
   const navItems = [
     {
-      name: "Home",
-      icon: "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777013959/home_logo_q3xekq.svg",
+      name: "Dashboard",
+      icon: "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777306237/retailerProfile_DASHBOARD_puhhge.svg",
       href: "/dashboard/retailer",
     },
     {
-      name: "Catalogue",
-      icon: "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777013959/catalogue_logo_baed4n.svg",
-      href: "/dashboard/retailer/catalogue",
+      name: "Employees",
+      icon: "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777306238/retailerProfile_EMPLOYEE_auk71p.svg",
+      href: "/dashboard/retailer/employees",
     },
     {
-      name: "Employees",
-      icon: "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777013959/profile_logo_jin2a8.svg",
-      href: "/dashboard/retailer/employees",
+      name: "Catalogue",
+      icon: "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777306237/retailerProfile_CATALOGUE_icjpw6.svg",
+      href: "/dashboard/retailer/catalogue",
     },
   ];
 
+  const retailerName = retailer?.full_name || "User";
+  const businessName = retailer?.business_name || "Business";
+  const logoUrl = retailer?.business_logo_url || "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777013959/jewel_logo_rhgin9.svg";
+
   return (
-    <aside
-      style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        height: "100vh",
-        width: "70px",
-        backgroundColor: "#f5f5f3",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "space-between",
-        padding: "24px 0",
-        overflow: "hidden",
-        boxSizing: "border-box",
-        zIndex: 50,
-      }}
-    >
-      <div className="sidebar-icon-stack" style={{ display: "flex", flexDirection: "column", marginTop: "96px", marginBottom: "auto" }}>
-        {navItems.map((item) => {
-          // Exact match for home to prevent it from being active on all sub-routes
-          const isActive =
-            item.href === "/dashboard/retailer"
+    <aside className="fixed top-0 left-0 h-screen bg-white border-r border-[#E5E7EB] shadow-[2px_0_8px_rgba(0,0,0,0.02)] z-50 flex flex-col justify-between w-[70px] md:w-[200px] lg:w-[220px] transition-all duration-300">
+      
+      <div className="flex flex-col flex-1 px-3 md:px-4 pt-6 pb-4 overflow-y-auto overflow-x-hidden no-scrollbar">
+        {/* Top Button */}
+        <div className="mb-6 flex justify-center">
+          <Link href="/dashboard/retailer/employees" className="w-full h-[40px] md:h-[44px] bg-[#E0E7FF] text-[#4338CA] rounded-full flex items-center justify-center hover:bg-[#C7D2FE] transition-colors overflow-hidden">
+            <span className="hidden md:inline text-[13px] lg:text-[14px] font-bold truncate px-2">New Employee</span>
+            <span className="md:hidden text-lg font-bold">+</span>
+          </Link>
+        </div>
+
+        {/* User Profile */}
+        <div className="flex items-center justify-center md:justify-start gap-3 mb-6 pb-6 border-b border-gray-100">
+          <div className="w-[36px] h-[36px] rounded-full overflow-hidden bg-gray-100 shrink-0 border border-gray-200">
+            <Image src={logoUrl} alt="Logo" width={36} height={36} className="object-cover w-full h-full" />
+          </div>
+          <div className="hidden md:flex flex-col min-w-0">
+            <span className="text-[13px] lg:text-[14px] font-bold text-[#111827] truncate">{retailerName}</span>
+            <span className="text-[11px] lg:text-[12px] text-[#6B7280] truncate">{businessName}</span>
+          </div>
+        </div>
+
+        {/* Navigation */}
+        <nav className="flex flex-col gap-2">
+          {navItems.map((item) => {
+            const isActive = item.href === "/dashboard/retailer"
               ? pathname === item.href
               : pathname.startsWith(item.href);
 
-          return (
-            <Link
-              key={item.name}
-              href={item.href}
-              title={item.name}
-              style={{
-                width: "44px",
-                height: "44px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                borderRadius: "8px",
-                transition: "all 0.15s ease",
-                backgroundColor: "transparent",
-                opacity: isActive ? 1 : 0.35,
-                filter: isActive ? "brightness(0)" : "grayscale(1)",
-              }}
-              className="sidebar-item"
-            >
-              <Image
-                src={item.icon}
-                alt={item.name}
-                width={28}
-                height={28}
-                style={{ objectFit: "contain" }}
-              />
-            </Link>
-          );
-        })}
+            return (
+              <Link
+                key={item.name}
+                href={item.href}
+                className={`flex items-center gap-3 h-[44px] rounded-[10px] px-3 transition-colors ${
+                  isActive ? "bg-[#F3F4F6] text-[#111827] font-bold" : "text-[#4B5563] hover:bg-gray-50"
+                } ${isActive ? "md:bg-[#E5E7EB]" : ""}`}
+                title={item.name}
+              >
+                <div className="w-[18px] h-[18px] shrink-0 flex items-center justify-center opacity-80">
+                  <Image src={item.icon} alt={item.name} width={18} height={18} className="object-contain" />
+                </div>
+                <span className={`hidden md:inline text-[13px] lg:text-[14px] ${isActive ? 'font-bold' : 'font-medium'}`}>
+                  {item.name}
+                </span>
+              </Link>
+            );
+          })}
+        </nav>
       </div>
 
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "16px", marginBottom: "8px" }}>
-        <button
-          style={{
-            background: "none",
-            border: "none",
-            cursor: "pointer",
-            opacity: 0.35,
-            transition: "all 0.15s ease",
-            padding: 0,
-            display: "flex",
-          }}
-          className="sidebar-profile"
-        >
+      <div className="px-3 md:px-4 pb-6 flex flex-col items-center">
+        <div className="hidden md:flex w-[100px] lg:w-[120px] mb-4 relative justify-center pointer-events-none">
           <Image
-            src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777013959/profile_logo_jin2a8.svg"
-            alt="User Profile"
-            width={22}
-            height={22}
-          />
-        </button>
-
-        <div
-          style={{
-            width: "44px",
-            height: "44px",
-            backgroundColor: "#2e2833",
-            borderRadius: "12px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Image
-            src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777013959/jewel_logo_rhgin9.svg"
-            alt="Product Logo"
-            width={28}
-            height={28}
+            src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777301517/retailer_profile_gucmsl.svg"
+            alt="3D Illustration"
+            width={120}
+            height={120}
+            className="object-contain"
           />
         </div>
+        
+        <form action={signOut} className="w-full">
+          <button type="submit" className="flex items-center justify-center md:justify-start gap-3 w-full px-3 py-2 text-[#6B7280] hover:text-[#111827] hover:bg-gray-50 rounded-[10px] transition-colors">
+            <Image
+              src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777306237/retailerProfile_LOGOUT_xkyr9u.svg"
+              alt="Logout"
+              width={18}
+              height={18}
+              className="shrink-0 opacity-80"
+            />
+            <span className="hidden md:inline text-[12px] font-bold uppercase tracking-wide">Log out</span>
+          </button>
+        </form>
       </div>
 
-      <style>{`
-        .sidebar-icon-stack {
-          gap: 32px;
-        }
-        @media (max-width: 1024px) {
-          .sidebar-icon-stack {
-            gap: 32px;
-          }
-        }
-        .sidebar-item:hover {
-          opacity: 0.7 !important;
-          background-color: rgba(0, 0, 0, 0.06) !important;
-        }
-        .sidebar-profile:hover {
-          opacity: 0.7 !important;
-        }
-      `}</style>
     </aside>
   );
 }
