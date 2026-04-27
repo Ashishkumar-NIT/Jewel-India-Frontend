@@ -8,13 +8,7 @@ export const metadata = {
   description: "Generate referral links to invite retailers.",
 };
 
-/**
- * Server component.
- * Fetches the wholesaler record + existing referral links,
- * then renders the ReferralManager client component.
- */
 export default async function AddRetailerPage() {
-  // ── 1. Auth check ────────────────────────────────────────────────
   const supabase = await createClient();
   const {
     data: { user },
@@ -25,7 +19,6 @@ export default async function AddRetailerPage() {
   const role = user.user_metadata?.role;
   if (role !== "wholesaler") redirect("/");
 
-  // ── 2. Wholesaler record ─────────────────────────────────────────
   const { data: wholesaler } = await supabaseAdmin
     .from("wholesalers")
     .select("id, business_name, verification_status")
@@ -36,7 +29,6 @@ export default async function AddRetailerPage() {
     redirect("/onboard/submitted");
   }
 
-  // ── 3. Existing referral links ───────────────────────────────────
   const siteUrl =
     process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") || "http://localhost:3000";
 
@@ -51,56 +43,56 @@ export default async function AddRetailerPage() {
     link: `${siteUrl}/join/${l.code}`,
   }));
 
-  // ── 4. Render ────────────────────────────────────────────────────
   return (
-    <main className="min-h-screen bg-white pb-20">
-      {/* ── Page header ──────────────────────────────────────────── */}
-      <div
-        style={{
-          borderBottom: "1px solid #E5E7EB",
-          padding: "28px 32px 24px",
-          backgroundColor: "#FFFFFF",
-        }}
-      >
-        <p
-          style={{
-            fontSize: "11px",
-            textTransform: "uppercase",
-            letterSpacing: "0.12em",
-            color: "#9CA3AF",
-            fontWeight: 600,
-            marginBottom: "6px",
-          }}
-        >
-          {wholesaler.business_name}
-        </p>
-        <h1
-          style={{
-            fontSize: "26px",
-            fontWeight: 700,
-            color: "#111111",
-            margin: 0,
-            lineHeight: 1.2,
-          }}
-        >
-          Invite Retailers
-        </h1>
-        <p
-          style={{
-            fontSize: "14px",
-            color: "#6B7280",
-            marginTop: "6px",
-            maxWidth: "520px",
-            lineHeight: 1.5,
-          }}
-        >
-          Generate a unique referral link and share it with retailers you want to onboard.
-          Each link tracks who signs up through it.
-        </p>
-      </div>
+    <main className="min-h-screen bg-white">
+      <div style={{ padding: "48px 64px", maxWidth: "1000px", fontFamily: "'Inter', sans-serif" }}>
+        {/* Header Section */}
+        <div style={{ marginBottom: "56px" }}>
+          <h1 style={{ fontSize: "36px", fontWeight: 700, color: "#111111", margin: "0 0 12px 0", letterSpacing: "-0.02em" }}>
+            Referral
+          </h1>
+          <p style={{ fontSize: "15px", color: "#6B7280", margin: 0 }}>
+            Grow your retailer network by sharing a simple invite link. Every signup is automatically linked to you.
+          </p>
+        </div>
 
-      {/* ── Main content ─────────────────────────────────────────── */}
-      <div style={{ padding: "32px" }}>
+        {/* 3-Step Flow Section */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", position: "relative", marginBottom: "80px" }}>
+          
+          {/* Arrow 1 */}
+          <svg style={{ position: "absolute", top: "15px", left: "16.66%", width: "33.33%", height: "30px", zIndex: 0, overflow: "visible" }} preserveAspectRatio="none" viewBox="0 0 100 30">
+            <path d="M15,30 Q50,-10 85,30" fill="none" stroke="#D1D5DB" strokeWidth="1.5" strokeDasharray="6, 6" />
+          </svg>
+
+          {/* Arrow 2 */}
+          <svg style={{ position: "absolute", top: "15px", left: "50%", width: "33.33%", height: "30px", zIndex: 0, overflow: "visible" }} preserveAspectRatio="none" viewBox="0 0 100 30">
+            <path d="M15,30 Q50,-10 85,30" fill="none" stroke="#D1D5DB" strokeWidth="1.5" strokeDasharray="6, 6" />
+          </svg>
+
+          {/* Step 1 */}
+          <div style={{ flex: 1, textAlign: "center", position: "relative", zIndex: 1 }}>
+             <img src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777306586/LINK_spu884.svg" alt="Share the link" style={{ width: "90px", height: "90px", margin: "0 auto 16px" }} />
+             <h3 style={{ fontSize: "15px", fontWeight: 600, color: "#111", margin: "0 0 8px 0" }}>1. Share the link</h3>
+             <p style={{ fontSize: "13px", color: "#6B7280", margin: 0, padding: "0 20px" }}>Invite retailers by sending them a unique link.</p>
+          </div>
+
+          {/* Step 2 */}
+          <div style={{ flex: 1, textAlign: "center", position: "relative", zIndex: 1 }}>
+             <img src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777306586/signup_vlrosz.svg" alt="Signup" style={{ width: "90px", height: "90px", margin: "0 auto 16px" }} />
+             <h3 style={{ fontSize: "15px", fontWeight: 600, color: "#111", margin: "0 0 8px 0" }}>2. Signup</h3>
+             <p style={{ fontSize: "13px", color: "#6B7280", margin: 0, padding: "0 20px" }}>They join using your link and get linked to your account.</p>
+          </div>
+
+          {/* Step 3 */}
+          <div style={{ flex: 1, textAlign: "center", position: "relative", zIndex: 1 }}>
+             <img src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777306585/retailerShop_iashfb.svg" alt="Retailer shop setup" style={{ width: "90px", height: "90px", margin: "0 auto 16px" }} />
+             <h3 style={{ fontSize: "15px", fontWeight: 600, color: "#111", margin: "0 0 8px 0" }}>3. Retailer shop setup</h3>
+             <p style={{ fontSize: "13px", color: "#6B7280", margin: 0, padding: "0 20px" }}>Retailers complete their store setup and go live.</p>
+          </div>
+
+        </div>
+
+        {/* Main content - ReferralManager */}
         <ReferralManager initialLinks={initialLinks} />
       </div>
     </main>
