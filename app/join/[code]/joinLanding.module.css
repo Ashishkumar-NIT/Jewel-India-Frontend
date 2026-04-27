@@ -1,0 +1,129 @@
+.pageContainer {
+  min-height: 100vh;
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image: url('https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777318931/invitation_bg_vlguu6.svg');
+  background-size: cover;
+  background-position: center;
+  font-family: 'Inter', sans-serif;
+  overflow-y: auto;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.card {
+  width: 380px;
+  background-color: #FFFFFF;
+  border-radius: 16px;
+  border: 2px solid #FFFFFF;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.imageSection {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  min-height: 380px;
+}
+
+.cardImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background-color: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(4px);
+  color: #111;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+
+.textOverlay {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  right: 20px;
+}
+
+.name {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(36px, 8vw, 48px);
+  font-weight: 700;
+  color: #FFFFFF;
+  margin: 0 0 4px 0;
+  line-height: 1.1;
+}
+
+.subtitle {
+  font-size: clamp(15px, 3vw, 18px);
+  font-weight: 300;
+  color: #FFFFFF;
+  margin: 0;
+}
+
+.buttonSection {
+  background-color: #FFFFFF;
+  padding: 16px;
+  border-top: 1px solid #E5E7EB;
+}
+
+.ctaButton {
+  width: 100%;
+  height: 52px;
+  background-color: #111;
+  color: #FFF;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  transition: opacity 0.2s;
+}
+
+.ctaButton:hover {
+  opacity: 0.85;
+}
+
+.ctaTextRegular {
+  font-weight: 400;
+}
+
+.ctaTextBold {
+  font-weight: 700;
+}
+
+@media (max-width: 1024px) {
+  .card {
+    width: 420px;
+  }
+}
+
+@media (max-width: 900px) {
+  .card {
+    width: 85%;
+  }
+}
+
+@media (max-width: 768px) {
+  .card {
+    width: 92%;
+    max-width: 420px;
+  }
+}
