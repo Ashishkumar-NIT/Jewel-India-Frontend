@@ -44,9 +44,7 @@ ALTER TABLE public.messages ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Wholesalers can view their conversations" 
 ON public.conversations FOR SELECT 
 USING (
-    wholesaler_id IN (
-        SELECT id FROM public.wholesalers WHERE user_id = auth.uid()
-    )
+    wholesaler_id = auth.uid()
 );
 
 -- Employees can see their own conversations
@@ -81,13 +79,7 @@ ON public.messages FOR SELECT
 USING (
     conversation_id IN (
         -- Wholesaler check
-        SELECT id FROM public.conversations WHERE wholesaler_id IN (SELECT id FROM public.wholesalers WHERE user_id = auth.uid())
-        UNION
-        -- Employee check
-        SELECT id FROM public.conversations WHERE employee_id IN (SELECT id FROM public.employees WHERE auth_user_id = auth.uid())
-        UNION
-        -- Retailer check
-        SELECT id FROM public.conversations WHERE retailer_id IN (SELECT id FROM public.retailers WHERE user_id = auth.uid())
+          SELECT id FROM public.conversations WHERE wholesaler_id = auth.uid()
     )
 );
 

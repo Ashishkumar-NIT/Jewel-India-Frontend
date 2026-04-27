@@ -1,6 +1,7 @@
 import { supabaseAdmin } from "../../../../lib/supabase/admin.js";
 import { createClient } from "../../../../lib/supabase/server.js";
 import { NextResponse } from "next/server";
+import { getURL } from "../../../../lib/utils/url.js";
 
 export const runtime = "nodejs";
 
@@ -53,8 +54,7 @@ export async function GET() {
     }
 
     // ── 4. Attach full shareable link URL ──────────────────────────
-    const siteUrl =
-      process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") || "http://localhost:3000";
+    const siteUrl = getURL();
 
     const data = (links ?? []).map((l) => ({
       ...l,
