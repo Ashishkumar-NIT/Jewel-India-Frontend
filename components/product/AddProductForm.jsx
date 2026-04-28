@@ -6,8 +6,7 @@ import { Toggle } from "../ui/Toggle";
 import { Input } from "../ui/Input";
 import { InputWithSuffix } from "../ui/InputWithSuffix";
 import { ImageUpload } from "./ImageUpload";
-import { ProcessingView } from "./ProcessingView";
-import { uploadProduct, processJewelleryImage } from "../../lib/api/products";
+import { uploadProduct } from "../../lib/api/products";
 import { saveProduct } from "../../lib/actions/products";
 import { useRouter } from "next/navigation";
 

@@ -17,22 +17,25 @@ export function ChatWindow({ conversation, currentUserType }) {
   }, [messages]);
 
   // Mark messages as read when viewing them
+  // Use ref to track previous count — avoid re-firing when `messages` array
+  // reference changes but count is unchanged (avoids unnecessary PATCH churn).
+  const prevUnreadRef = useRef(0);
+  const unreadCount = messages.filter(
+    (m) => !m.is_read && m.sender_type !== currentUserType
+  ).length;
+
   useEffect(() => {
-    if (!conversation?.id || messages.length === 0) return;
+    if (!conversation?.id) return;
+    if (unreadCount === prevUnreadRef.current) return;
+    prevUnreadRef.current = unreadCount;
+    if (unreadCount === 0) return;
 
-    // Check if there are any unread messages from the other party
-    const hasUnread = messages.some(
-      (m) => !m.is_read && m.sender_type !== currentUserType
-    );
-
-    if (hasUnread) {
-      fetch("/api/chat/messages/read", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ conversation_id: conversation.id }),
-      }).catch(console.error);
-    }
-  }, [conversation?.id, messages, currentUserType]);
+    fetch("/api/chat/messages/read", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ conversation_id: conversation.id }),
+    }).catch(console.error);
+  }, [conversation?.id, unreadCount]);
 
   const handleSendMessage = async (e) => {
     e.preventDefault();

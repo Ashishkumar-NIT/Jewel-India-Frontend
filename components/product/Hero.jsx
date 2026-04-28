@@ -29,7 +29,8 @@ export function Hero() {
     // lagSmoothing(0) stops GSAP from trying to "big-catch-up" after a
     // dropped frame, which is what causes the visible jank/lag.
     gsap.ticker.lagSmoothing(0);
-    gsap.ticker.add((time) => lenis.raf(time * 1000));
+    const tickerCallback = (time) => lenis.raf(time * 1000);
+    gsap.ticker.add(tickerCallback);
 
     // Tell ScrollTrigger to update whenever Lenis fires a scroll event.
     lenis.on("scroll", ScrollTrigger.update);
@@ -77,7 +78,7 @@ export function Hero() {
 
     return () => {
       ctx.revert();
-      gsap.ticker.remove((time) => lenis.raf(time * 1000));
+      gsap.ticker.remove(tickerCallback);
       lenis.destroy();
     };
   }, []);

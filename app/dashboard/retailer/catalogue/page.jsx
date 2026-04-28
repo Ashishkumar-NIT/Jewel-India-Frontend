@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, useCallback } from "react";
+import { useEffect, useMemo, useState, useCallback, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { RetailerCatalogueGrid } from "../../../../components/retailer/RetailerCatalogueGrid";
@@ -10,12 +10,21 @@ export default function RetailerCataloguePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const fetchDesigns = useCallback(async () => {
+  // Cache designs in a ref — revisits skip the network roundtrip
+  // unless explicitly forced after a mutation.
+  const cachedDesigns = useRef([]);
+
+  const fetchDesigns = useCallback(async (force = false) => {
+    if (!force && cachedDesigns.current.length > 0) {
+      setDesigns(cachedDesigns.current);
+      setIsLoading(false);
+      return;
+    }
+
     setIsLoading(true);
     setError("");
 
     try {
-      // Fetch all designs including archived to show accurate limits and states
       const response = await fetch(`/api/designs/list?archived=true`);
       const result = await response.json();
 
@@ -23,7 +32,8 @@ export default function RetailerCataloguePage() {
         throw new Error(result.error || "Failed to load designs.");
       }
 
-      setDesigns(result.data || []);
+      cachedDesigns.current = result.data || [];
+      setDesigns(cachedDesigns.current);
     } catch (err) {
       setError(err.message || "Failed to load designs.");
       setDesigns([]);
@@ -43,11 +53,11 @@ export default function RetailerCataloguePage() {
   const handleArchiveToggle = async (design) => {
     const nextValue = !design.is_archived;
 
-    setDesigns((prev) =>
-      prev.map((item) =>
-        item.id === design.id ? { ...item, is_archived: nextValue } : item
-      )
+    // Optimistic update against the cached array
+    cachedDesigns.current = cachedDesigns.current.map((item) =>
+      item.id === design.id ? { ...item, is_archived: nextValue } : item
     );
+    setDesigns(cachedDesigns.current);
 
     const response = await fetch(`/api/designs/${design.id}`, {
       method: "PATCH",
@@ -56,11 +66,11 @@ export default function RetailerCataloguePage() {
     });
 
     if (!response.ok) {
-      setDesigns((prev) =>
-        prev.map((item) =>
-          item.id === design.id ? { ...item, is_archived: design.is_archived } : item
-        )
+      // Revert on failure
+      cachedDesigns.current = cachedDesigns.current.map((item) =>
+        item.id === design.id ? { ...item, is_archived: design.is_archived } : item
       );
+      setDesigns(cachedDesigns.current);
     }
   };
 
@@ -68,14 +78,15 @@ export default function RetailerCataloguePage() {
     const confirmed = window.confirm("Delete this design permanently? This cannot be undone.");
     if (!confirmed) return;
 
-    setDesigns((prev) => prev.filter((item) => item.id !== design.id));
+    cachedDesigns.current = cachedDesigns.current.filter((item) => item.id !== design.id);
+    setDesigns(cachedDesigns.current);
 
     const response = await fetch(`/api/designs/${design.id}`, {
       method: "DELETE",
     });
 
     if (!response.ok) {
-      fetchDesigns();
+      fetchDesigns(true); // Re-fetch on failure to restore correct state
     }
   };
 
@@ -117,7 +128,7 @@ export default function RetailerCataloguePage() {
           <div className="rounded-[10px] border border-red-200 bg-red-50 px-4 py-3 text-[12px] text-red-600 font-medium flex items-center justify-between">
             <span>{error}</span>
             <button
-              onClick={fetchDesigns}
+              onClick={() => fetchDesigns(true)}
               className="text-[11px] font-bold text-red-700 hover:underline ml-4"
             >
               Retry

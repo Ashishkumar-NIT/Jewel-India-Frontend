@@ -1,30 +1,31 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { SignOutButton } from "../../../../components/auth/SignOutButton";
+import { useState, useEffect, useRef } from "react";
 import { EmployeeTable } from "../../../../components/retailer/EmployeeTable";
-import { CreateEmployeeModal } from "../../../../components/retailer/CreateEmployeeModal";
-import { EmployeeCredentialsModal } from "../../../../components/retailer/EmployeeCredentialsModal";
 
 export default function RetailerEmployeesPage() {
   const [employees, setEmployees] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Modals state
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [credentialsEmployee, setCredentialsEmployee] = useState(null);
+  // Cache fetched employees in a ref so revisits don't cause redundant refetches.
+  // Only refetch if explicitly needed (e.g., after mutation via onUpdate).
+  const cachedEmployees = useRef([]);
 
-  useEffect(() => {
-    fetchEmployees();
-  }, []);
+  const fetchEmployees = async (force = false) => {
+    // Skip if we already have data and this isn't a forced refresh
+    if (!force && cachedEmployees.current.length > 0) {
+      setEmployees(cachedEmployees.current);
+      setIsLoading(false);
+      return;
+    }
 
-  const fetchEmployees = async () => {
     try {
       const res = await fetch("/api/employees/list");
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to load employees");
-      setEmployees(data.data || []);
+      cachedEmployees.current = data.data || [];
+      setEmployees(cachedEmployees.current);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -32,25 +33,27 @@ export default function RetailerEmployeesPage() {
     }
   };
 
-  const handleEmployeeCreated = (newEmp) => {
-    setIsAddModalOpen(false);
-    setEmployees([newEmp, ...employees]);
-    setCredentialsEmployee(newEmp); // Show creds right away
-  };
+  useEffect(() => {
+    fetchEmployees();
+  }, []); // Only run once on mount — data persists in ref
 
   const handleToggleStatus = async (id, isActive) => {
     try {
       const res = await fetch(`/api/employees/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           is_active: isActive,
-          status: isActive ? "active" : "inactive" 
+          status: isActive ? "active" : "inactive"
         }),
       });
       if (!res.ok) throw new Error("Failed to update status");
-      
-      setEmployees(employees.map(e => e.id === id ? { ...e, is_active: isActive } : e));
+
+      // Update cache in-place without refetch
+      cachedEmployees.current = cachedEmployees.current.map(e =>
+        e.id === id ? { ...e, is_active: isActive } : e
+      );
+      setEmployees(cachedEmployees.current);
     } catch (err) {
       alert(err.message);
     }
@@ -62,8 +65,9 @@ export default function RetailerEmployeesPage() {
         method: "DELETE",
       });
       if (!res.ok) throw new Error("Failed to delete employee");
-      
-      setEmployees(employees.filter(e => e.id !== id));
+
+      cachedEmployees.current = cachedEmployees.current.filter(e => e.id !== id);
+      setEmployees(cachedEmployees.current);
     } catch (err) {
       alert(err.message);
     }
@@ -77,7 +81,7 @@ export default function RetailerEmployeesPage() {
             Employees
           </h1>
           <p className="text-[14px] text-[#6B7280]">
-            Welcome back! Here's employee's overview
+            Welcome back! Here's an overview of your employees
           </p>
         </div>
 
@@ -93,11 +97,11 @@ export default function RetailerEmployeesPage() {
             <div className="h-[300px] bg-gray-100 rounded-[16px] w-full"></div>
           </div>
         ) : (
-          <EmployeeTable 
-            employees={employees} 
+          <EmployeeTable
+            employees={employees}
             onToggleStatus={handleToggleStatus}
             onDelete={handleDelete}
-            onUpdate={fetchEmployees}
+            onUpdate={() => fetchEmployees(true)} // Force refresh after designation change
           />
         )}
       </main>

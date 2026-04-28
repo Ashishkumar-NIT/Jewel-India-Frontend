@@ -106,17 +106,40 @@ import { ProductInfoModal } from "../../../../components/employee/ProductInfoMod
 
 /**
  * Client component for the wholesaler gallery.
- * Provides search and category filtering over all wholesaler products.
+ * Provides search and category filtering over products.
+ * Filters are applied server-side via URL searchParams on first load;
+ * client can further refine via URL updates for shareable/bookmarkable state.
  */
-export default function WholesalerGalleryClient({ products, categoryTabs }) {
-  const [activeCategory, setActiveCategory] = useState("all");
-  const [search, setSearch] = useState("");
+export default function WholesalerGalleryClient({ products, categoryTabs, initialCategory = "all", initialSearch = "" }) {
+  const [activeCategory, setActiveCategory] = useState(initialCategory);
+  const [search, setSearch] = useState(initialSearch);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
+  // Sync client filters with URL so server-side filtering gets triggered
+  const router = useRouter();
+
+  const handleCategoryChange = (cat) => {
+    setActiveCategory(cat);
+    const params = new URLSearchParams();
+    if (cat !== "all") params.set("category", cat);
+    if (search.trim()) params.set("q", search.trim());
+    router.push(`?${params.toString()}`);
+  };
+
+  const handleSearchChange = (val) => {
+    setSearch(val);
+    const params = new URLSearchParams();
+    if (activeCategory !== "all") params.set("category", activeCategory);
+    if (val.trim()) params.set("q", val.trim());
+    router.push(`?${params.toString()}`);
+  };
+
+  // Since server already filtered, show results directly.
+  // Client still applies client-side refinement in case server filter was loose.
   const filteredProducts = useMemo(() => {
     let result = products;
 
-    // Category filter
+    // Category filter (should already be filtered, but refine for safety)
     if (activeCategory !== "all") {
       result = result.filter((p) => {
         const cat = (p.category || p.jewellery_type || "").toLowerCase();
@@ -196,7 +219,7 @@ export default function WholesalerGalleryClient({ products, categoryTabs }) {
             type="text"
             placeholder="Search products..."
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => handleSearchChange(e.target.value)}
             className="w-full bg-white border border-gray-200 rounded-[10px] pl-10 pr-4 py-2.5 text-[14px] outline-none focus:ring-2 focus:ring-black/5"
           />
         </div>
@@ -210,7 +233,7 @@ export default function WholesalerGalleryClient({ products, categoryTabs }) {
           return (
             <button
               key={tab}
-              onClick={() => setActiveCategory(key)}
+              onClick={() => handleCategoryChange(key)}
               className={`rounded-full px-4 py-2 text-[12px] font-semibold transition-colors ${
                 isActive
                   ? "bg-black text-white"

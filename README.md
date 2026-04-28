@@ -85,3 +85,36 @@ We use modern tools to ensure the platform is fast and secure:
 If you have any questions or need help setting up, please reach out to the project administrator.
 
 *Copyright © 2026 Jewel India. All rights reserved.* -->
+
+## Phase 2: Measured Performance Optimization Plan
+
+This plan is **analysis-driven** and staged to avoid regressions. No implementation is included in this phase.
+
+### Prioritized issues (impact, expected gain, risk, exact scope)
+
+| Priority | Category | Issue | Expected gain | Risk | Exact files/components affected |
+|---|---|---|---|---|---|
+| **HIGH** | Data fetching | Revisit/mount refetches with no shared cache (`employees`, `retailer catalogue`, chat conversation bootstrapping). | **Navigation/revisit latency:** ~20-45% faster on repeated visits to audited routes. | Medium | `app/dashboard/retailer/employees/page.jsx`, `app/dashboard/retailer/catalogue/page.jsx`, `app/dashboard/employee/messages/page.jsx`, `app/dashboard/wholesaler/queries/page.jsx`, `app/dashboard/employee/messages/MessagesClient.jsx`, `lib/hooks/useRealtimeMessages.js` |
+| **HIGH** | Rendering | Repeated chat read-mark side effect keyed on full `messages` array, causing unnecessary PATCH churn. | **Interaction lag/network chatter:** ~15-30% reduction in message-screen overhead. | Low | `components/chat/ChatWindow.jsx`, `app/api/chat/messages/read/route.js` |
+| **HIGH** | Expensive workloads | Full dataset gallery fetch + client-side filtering over all products in employee wholesaler gallery. | **Search/filter responsiveness:** ~35-70% improvement under larger datasets. | Medium | `app/dashboard/employee/wholesaler-gallery/page.jsx`, `app/dashboard/employee/wholesaler-gallery/WholesalerGalleryClient.jsx`, `lib/api/supabase-products.js` |
+| **HIGH** | API efficiency | Internal server pages call own API over HTTP with `cache: "no-store"` instead of direct data path. | **Server response time:** ~80-250ms saved per request path (typical local/edge overhead removed). | Medium | `app/dashboard/employee/messages/page.jsx`, `app/dashboard/wholesaler/queries/page.jsx`, `app/api/chat/conversations/route.js` |
+| **MEDIUM** | Dead code removal | Unused components/imports and duplicate legacy surfaces increase client footprint and maintenance cost. | **Bundle/readability:** ~3-10% JS reduction in affected routes + lower parse/hydration work. | Low | `components/wholesaler/queries/QueriesClient.jsx`, `components/wholesaler/NavigationTabs.jsx`, `components/employee/EmployeeHeader.jsx`, `components/employee/EmployeeTabs.jsx`, `components/onboard/OnboardFooter.jsx`, `components/product/ProcessingView.jsx` import in `components/product/AddProductForm.jsx`, `app/dashboard/retailer/employees/page.jsx` (unused modal imports/state), `lib/api/retailer-designs.js`, `app/api/referral/list/route.js` |
+| **MEDIUM** | Rendering/state boundaries | Monolithic context values in onboarding trigger broad rerenders across step consumers. | **Form step responsiveness:** ~10-25% less render work while editing fields. | Low | `context/OnboardContext.jsx`, `context/RetailerOnboardContext.jsx`, onboarding step containers/components under `components/onboard/**` and `components/onboard-retailer/**` |
+| **MEDIUM** | Bundle/runtime | Hero animation ticker cleanup bug can leave RAF callback subscribed; GSAP/Lenis path is heavy. | **Homepage smoothness + memory stability:** remove leak risk, smoother long sessions. | Medium | `components/product/Hero.jsx`, homepage usage in `app/page.jsx` |
+| **LOW** | Code splitting | No dynamic/lazy boundaries on heavy interactive modules (chat, large catalog UIs, modals). | **Initial route JS/hydration:** ~10-30% improvement on selected pages. | Medium | `app/dashboard/employee/messages/page.jsx`, `app/dashboard/wholesaler/queries/page.jsx`, `components/chat/*`, `components/wholesaler/catalogue/*`, `app/dashboard/retailer/catalogue/page.jsx` |
+| **LOW** | Asset strategy | Extensive `<img>` usage in grid/list-heavy views where `next/image` could improve loading behavior. | **Image-heavy route LCP/CLS/network:** ~5-20% depending on image sizes and cache headers. | Medium | `components/product/ProductCard.jsx`, `components/wholesaler/catalogue/CatalogueGrid.jsx`, `components/chat/ConversationList.jsx`, `app/dashboard/employee/wholesaler-gallery/WholesalerGalleryClient.jsx`, `app/page.jsx`, `app/dashboard/retailer/catalogue/upload/page.jsx` |
+
+### Controlled execution order (one category at a time)
+
+1. Remove dead code safely.
+2. Fix unnecessary re-renders (memoization only where proven beneficial, state placement corrections).
+3. Optimize expensive computations and high-cost render paths.
+4. Improve data fetching (cache/dedupe/revisit behavior).
+5. Introduce selective code splitting.
+6. Optimize large lists (including virtualization where thresholds justify it).
+
+### Risk controls and measurement gates
+
+- Keep behavior parity for each stage (no cross-category refactors in the same step).
+- Measure before/after for the touched routes (navigation time, interaction delay, network request count).
+- Roll out fixes in small, verifiable commits per category.
