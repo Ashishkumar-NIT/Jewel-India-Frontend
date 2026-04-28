@@ -40,6 +40,7 @@ export async function PATCH(request, context) {
     if (body.designation !== undefined) updates.designation = body.designation;
     if (body.phone !== undefined) updates.phone = body.phone;
     if (body.is_active !== undefined) updates.is_active = body.is_active;
+    if (body.status !== undefined) updates.status = body.status;
 
     const { data: updatedEmployee, error: updateError } = await supabase
       .from("employees")

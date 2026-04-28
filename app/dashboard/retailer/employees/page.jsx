@@ -43,7 +43,10 @@ export default function RetailerEmployeesPage() {
       const res = await fetch(`/api/employees/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ is_active: isActive }),
+        body: JSON.stringify({ 
+          is_active: isActive,
+          status: isActive ? "active" : "inactive" 
+        }),
       });
       if (!res.ok) throw new Error("Failed to update status");
       
@@ -68,33 +71,14 @@ export default function RetailerEmployeesPage() {
 
   return (
     <div className="flex flex-col min-h-screen relative">
-      {/* Header */}
-      <header className="sticky top-0 z-10 flex items-center justify-between border-b border-[#E5E7EB] bg-white px-4 md:px-10 py-3 shadow-sm">
-        <div className="flex flex-row items-center gap-4">
-          <SignOutButton />
-        </div>
-      </header>
-
       <main className="flex-1 w-full max-w-7xl mx-auto px-4 md:px-10 py-10">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
-          <div>
-            <h1 className="text-[clamp(24px,3vw,32px)] font-extrabold text-[#111827] tracking-tight mb-2">
-              Staff & Employees
-            </h1>
-            <p className="text-[15px] text-[#6B7280]">
-              Create accounts for your staff, manage their access, and share their credentials.
-            </p>
-          </div>
-          
-          <button 
-            onClick={() => setIsAddModalOpen(true)}
-            className="flex items-center justify-center gap-2 bg-[#111827] text-white font-bold rounded-[10px] px-5 py-2.5 hover:bg-black transition-colors"
-          >
-            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-[18px] h-[18px]">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
-            </svg>
-            Add Employee
-          </button>
+        <div className="flex flex-col gap-1 mb-8">
+          <h1 className="text-[clamp(28px,3vw,32px)] font-extrabold text-[#111827] tracking-tight">
+            Employees
+          </h1>
+          <p className="text-[14px] text-[#6B7280]">
+            Welcome back! Here's employee's overview
+          </p>
         </div>
 
         {error && (
@@ -105,7 +89,7 @@ export default function RetailerEmployeesPage() {
 
         {isLoading ? (
           <div className="flex flex-col gap-4 animate-pulse">
-            <div className="h-10 bg-gray-200 rounded-md w-full max-w-sm"></div>
+            <div className="h-[52px] bg-gray-200 rounded-[12px] w-full"></div>
             <div className="h-[300px] bg-gray-100 rounded-[16px] w-full"></div>
           </div>
         ) : (
@@ -113,21 +97,10 @@ export default function RetailerEmployeesPage() {
             employees={employees} 
             onToggleStatus={handleToggleStatus}
             onDelete={handleDelete}
+            onUpdate={fetchEmployees}
           />
         )}
       </main>
-
-      <CreateEmployeeModal 
-        isOpen={isAddModalOpen} 
-        onClose={() => setIsAddModalOpen(false)}
-        onEmployeeCreated={handleEmployeeCreated}
-      />
-
-      <EmployeeCredentialsModal 
-        isOpen={!!credentialsEmployee}
-        employee={credentialsEmployee}
-        onClose={() => setCredentialsEmployee(null)}
-      />
     </div>
   );
 }
