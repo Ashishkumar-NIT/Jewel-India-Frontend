@@ -36,7 +36,7 @@ export default function RetailerSidebar({ retailer }) {
       <div className="flex flex-col flex-1 px-3 md:px-4 pt-6 pb-4 overflow-y-auto overflow-x-hidden no-scrollbar">
         {/* Top Button */}
         <div className="mb-6 flex justify-center">
-          <Link href="/dashboard/retailer/employees" className="w-full h-[40px] md:h-[44px] bg-[#E0E7FF] text-[#4338CA] rounded-full flex items-center justify-center hover:bg-[#C7D2FE] transition-colors overflow-hidden">
+          <Link href="?modal=add-employee" scroll={false} className="w-full h-[40px] md:h-[44px] bg-[#E0E7FF] text-[#4338CA] rounded-full flex items-center justify-center hover:bg-[#C7D2FE] transition-colors overflow-hidden">
             <span className="hidden md:inline text-[13px] lg:text-[14px] font-bold truncate px-2">New Employee</span>
             <span className="md:hidden text-lg font-bold">+</span>
           </Link>

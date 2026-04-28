@@ -27,7 +27,7 @@ export async function POST(request) {
       return NextResponse.json({ error: "Retailer profile not found" }, { status: 404 });
     }
 
-    const { full_name, designation, phone } = await request.json();
+    const { full_name, designation, phone, personal_email, login_email, password_plain, status } = await request.json();
 
     const fullName = typeof full_name === "string" ? full_name.trim() : "";
     const designationValue =
@@ -47,18 +47,25 @@ export async function POST(request) {
       
     const existingEmails = existingEmployees?.map(e => e.email) || [];
 
-    // Generate credentials
-    const { email, password } = generateEmployeeCredentials(
-      fullName,
-      retailer.business_name,
-      existingEmails
-    );
+    // Generate credentials if not provided
+    let finalEmail = login_email;
+    let finalPassword = password_plain;
 
-    if (!isValidEmailFormat(email)) {
-      console.error("[employees/create] Generated invalid email", {
+    if (!finalEmail || !finalPassword) {
+      const { email, password } = generateEmployeeCredentials(
+        fullName,
+        retailer.business_name,
+        existingEmails
+      );
+      finalEmail = finalEmail || email;
+      finalPassword = finalPassword || password;
+    }
+
+    if (!isValidEmailFormat(finalEmail)) {
+      console.error("[employees/create] Generated/Provided invalid email", {
         fullName,
         businessName: retailer.business_name,
-        email,
+        email: finalEmail,
       });
       return NextResponse.json(
         {
@@ -71,8 +78,8 @@ export async function POST(request) {
 
     // Create the auth user and explicitly confirm their email so they can login immediately
     const { data: newAuthUser, error: createUserError } = await supabaseAdmin.auth.admin.createUser({
-      email: email,
-      password: password,
+      email: finalEmail,
+      password: finalPassword,
       email_confirm: true,
       user_metadata: { role: 'employee' }
     });
@@ -88,7 +95,7 @@ export async function POST(request) {
     // Add to specific profiles table 
     await supabaseAdmin.from("profiles").upsert({
       id: newAuthUser.user.id,
-      email: email,
+      email: finalEmail,
       role: 'employee'
     });
 
@@ -96,18 +103,19 @@ export async function POST(request) {
     const employeeBasePayload = {
       retailer_id: retailer.id,
       auth_user_id: newAuthUser.user.id,
-      email,
-      password_plain: password,
+      email: finalEmail,
+      password_plain: finalPassword,
       full_name: fullName,
       designation: designationValue,
       phone: phoneValue,
+      personal_email: personal_email || null,
     };
 
     let { data: newEmployee, error: employeeInsertError } = await supabaseAdmin
       .from("employees")
       .insert({
         ...employeeBasePayload,
-        status: "active",
+        status: status || "active",
       })
       .select()
       .single();

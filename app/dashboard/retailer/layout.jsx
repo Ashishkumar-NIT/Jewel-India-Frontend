@@ -1,5 +1,7 @@
 import { createClient } from "../../../lib/supabase/server";
 import RetailerSidebar from "../../../components/retailer/RetailerSidebar";
+import AddEmployeeModal from "../../../components/retailer/AddEmployeeModal";
+import { Suspense } from "react";
 
 export const metadata = {
   title: "Retailer Dashboard",
@@ -26,6 +28,10 @@ export default async function RetailerLayout({ children }) {
       <main className="flex-1 ml-[70px] md:ml-[200px] lg:ml-[220px] min-h-screen flex flex-col transition-all duration-300">
         {children}
       </main>
+      
+      <Suspense fallback={null}>
+        <AddEmployeeModal />
+      </Suspense>
     </div>
   );
 }

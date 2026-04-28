@@ -96,7 +96,8 @@ export default async function RetailerDashboardPage() {
           {/* Quick Action Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-3xl">
             <Link
-              href="/dashboard/retailer/employees"
+              href="?modal=add-employee"
+              scroll={false}
               className="bg-white rounded-[16px] p-6 flex flex-col justify-center gap-4 shadow-[0_2px_10px_rgba(0,0,0,0.03)] hover:shadow-md transition-shadow border border-gray-100 min-h-[130px]"
             >
               <div className="w-[48px] h-[48px] rounded-[14px] bg-[#E0E7FF] flex items-center justify-center shrink-0">
