@@ -1,18 +1,25 @@
 "use client";
 
-import EmployeeHeader from "./EmployeeHeader";
-import EmployeeTabs from "./EmployeeTabs";
+import EmployeeSidebar from "./EmployeeSidebar";
 
 /**
- * Client wrapper that combines the header and tabs.
- * Receives employee/retailer info from the server layout and renders them.
+ * Client wrapper that renders the permanent sidebar + main content area.
+ * The sidebar is fixed at 60px; content is offset by the same amount.
  */
 export default function EmployeeLayout({ employeeName, businessName, children }) {
   return (
-    <div className="flex flex-col min-h-screen bg-[#FAFAFA]">
-      <EmployeeHeader employeeName={employeeName} businessName={businessName} />
-      <EmployeeTabs />
-      <main className="flex-1 w-full">
+    <div style={{ display: "flex", minHeight: "100vh", background: "#FAFAFA" }}>
+      <EmployeeSidebar />
+
+      {/* Main content area — offset left by the sidebar width */}
+      <main
+        style={{
+          marginLeft: 60,
+          flex: 1,
+          width: "calc(100% - 60px)",
+          minHeight: "100vh",
+        }}
+      >
         {children}
       </main>
     </div>
