@@ -1,7 +1,15 @@
 import { createClient } from "../../../lib/supabase/server";
+import { getAuthUser } from "../../../lib/supabase/queries";
 import RetailerSidebar from "../../../components/retailer/RetailerSidebar";
-import AddEmployeeModal from "../../../components/retailer/AddEmployeeModal";
 import { Suspense } from "react";
+import dynamic from "next/dynamic";
+
+// Lazy-load AddEmployeeModal — only loaded when ?modal=add-employee is set.
+// Reduces initial JS bundle for every retailer route.
+const AddEmployeeModal = dynamic(
+  () => import("../../../components/retailer/AddEmployeeModal"),
+  { loading: () => null }
+);
 
 export const metadata = {
   title: "Retailer Dashboard",
@@ -9,9 +17,11 @@ export const metadata = {
 };
 
 export default async function RetailerLayout({ children }) {
+  // Use cached auth — React.cache() ensures only one /auth/v1/user call
+  // per server render even if both layout and page call getAuthUser().
+  const user = await getAuthUser();
+
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  
   let retailerData = null;
   if (user) {
     const { data } = await supabase

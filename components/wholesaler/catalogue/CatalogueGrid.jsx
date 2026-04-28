@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, memo } from "react";
 import { useRouter } from "next/navigation";
 
 // ── Product Detail Modal ──────────────────────────────────────────────────────
@@ -208,7 +208,8 @@ export function CatalogueCardSkeleton() {
 }
 
 // ── Product Card ──────────────────────────────────────────────────────────────
-function CatalogueProductCard({ product, onClick }) {
+// Memoize to prevent re-renders when parent re-renders but product hasn't changed.
+const CatalogueProductCard = memo(function CatalogueProductCard({ product, onClick }) {
   const [imgError, setImgError] = useState(false);
   const [isInStock, setIsInStock] = useState(product.stock_available ?? false);
   const [isUpdating, setIsUpdating] = useState(false);
@@ -248,73 +249,74 @@ function CatalogueProductCard({ product, onClick }) {
     }
   };
 
-  return <article 
-    onClick={() => onClick && onClick(product)}
-    className="cursor-pointer group flex flex-col bg-celestique-light rounded-xl border border-[#eee] transition-all duration-200 ease shadow-[0_2px_12px_rgba(0,0,0,0.07)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.12)] hover:-translate-y-[2px]"
-  >
-    <div className="w-full aspect-square bg-[#f9f9f9] rounded-t-xl overflow-hidden relative">
-      {imgUrl && !imgError ? (
-        <img
-          src={imgUrl}
-          alt={title}
-          loading="lazy"
-          decoding="async"
-          className="w-full h-full object-cover"
-          onError={() => setImgError(true)}
-        />
-      ) : (
-        <div className="absolute inset-0 flex items-center justify-center text-[#999]">
-          <svg xmlns="http://www.w3.org/2000/svg" className="w-8 h-8" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M6.5 2h11l4 6-9.5 14L2.5 8l4-6z" />
-          </svg>
-        </div>
-      )}
-    </div>
-
-    <div className="border-t border-[#eee] p-3 md:p-4 flex flex-col gap-2">
-      <div className="flex flex-col">
-        <h3 className="font-bold text-[14px] text-[#111] leading-tight truncate">
-          {title}
-        </h3>
-        {product.jewellery_type && (
-          <span className="text-[11px] text-[#aaaaaa] mt-0.5">
-            {product.jewellery_type.charAt(0).toUpperCase() + product.jewellery_type.slice(1)}
-          </span>
+  return (
+    <article
+      onClick={() => onClick && onClick(product)}
+      className="cursor-pointer group flex flex-col bg-celestique-light rounded-xl border border-[#eee] transition-all duration-200 ease shadow-[0_2px_12px_rgba(0,0,0,0.07)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.12)] hover:-translate-y-[2px]"
+    >
+      <div className="w-full aspect-square bg-[#f9f9f9] rounded-t-xl overflow-hidden relative">
+        {imgUrl && !imgError ? (
+          <img
+            src={imgUrl}
+            alt={title}
+            loading="lazy"
+            decoding="async"
+            className="w-full h-full object-cover"
+            onError={() => setImgError(true)}
+          />
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center text-[#999]">
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-8 h-8" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M6.5 2h11l4 6-9.5 14L2.5 8l4-6z" />
+            </svg>
+          </div>
         )}
       </div>
 
-      <div className="text-[13px] text-[#666] flex items-center gap-2">
-        <span>
-          <span className="text-red-500 mr-1">❤</span>
-          {likes}
-        </span>
-        <span className="text-[#e0e0e0]">|</span>
-        <span>{orders} orders</span>
-      </div>
-
-      <div className="flex items-center justify-between mt-1">
-        <div className="flex items-center gap-2">
-          <button
-            onClick={handleToggle}
-            disabled={isUpdating}
-            className={`relative w-9 h-5 rounded-full transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-[#111] ${isInStock ? 'bg-[#22c55e]' : 'bg-[#e0e0e0]'}`}
-          >
-            <span
-              className={`absolute top-[2px] left-[2px] bg-white w-4 h-4 rounded-full transition-transform duration-200 ease-in-out ${isInStock ? 'translate-x-4' : 'translate-x-0'}`}
-            />
-          </button>
-          <span className="text-[12px] text-[#999]">
-            {isInStock ? "In stock" : "Out of stock"}
-          </span>
+      <div className="border-t border-[#eee] p-3 md:p-4 flex flex-col gap-2">
+        <div className="flex flex-col">
+          <h3 className="font-bold text-[14px] text-[#111] leading-tight truncate">
+            {title}
+          </h3>
+          {product.jewellery_type && (
+            <span className="text-[11px] text-[#aaaaaa] mt-0.5">
+              {product.jewellery_type.charAt(0).toUpperCase() + product.jewellery_type.slice(1)}
+            </span>
+          )}
         </div>
-        {weight && (
-          <span className="text-[12px] text-[#999]">{weight}</span>
-        )}
+
+        <div className="text-[13px] text-[#666] flex items-center gap-2">
+          <span>
+            <span className="text-red-500 mr-1">❤</span>
+            {likes}
+          </span>
+          <span className="text-[#e0e0e0]">|</span>
+          <span>{orders} orders</span>
+        </div>
+
+        <div className="flex items-center justify-between mt-1">
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleToggle}
+              disabled={isUpdating}
+              className={`relative w-9 h-5 rounded-full transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-[#111] ${isInStock ? 'bg-[#22c55e]' : 'bg-[#e0e0e0]'}`}
+            >
+              <span
+                className={`absolute top-[2px] left-[2px] bg-white w-4 h-4 rounded-full transition-transform duration-200 ease-in-out ${isInStock ? 'translate-x-4' : 'translate-x-0'}`}
+              />
+            </button>
+            <span className="text-[12px] text-[#999]">
+              {isInStock ? "In stock" : "Out of stock"}
+            </span>
+          </div>
+          {weight && (
+            <span className="text-[12px] text-[#999]">{weight}</span>
+          )}
+        </div>
       </div>
-    </div>
-  </article>
-    ;
-}
+    </article>
+  );
+});
 
 // ── CatalogueGrid ─────────────────────────────────────────────────────────────
 export default function CatalogueGrid({

@@ -32,62 +32,57 @@ export default async function CataloguePage({ searchParams }) {
     image: cat.image,
   }));
 
-  // ── 4. Fetch first page of products (SSR for instant load) ────────────────
-  let query = supabase
-    .from("products")
-    .select(
-      `id,
-       title,
-       jewellery_type,
-       category,
-       style,
-       size,
-       stock_available,
-       make_to_order_days,
-       metal_purity,
-       net_weight,
-       gross_weight,
-       stone_weight,
-       raw_image_url,
-       processed_image_url,
-       generated_image_urls,
-       image_url,
-       wholesaler_email,
-       created_at`,
-      { count: "exact" }
-    )
-    .eq("wholesaler_id", user.id);
+  // ── 4. Fetch first page of products + wholesaler name in parallel ────────
+  const [productsResult, wholesalerData] = await Promise.all([
+    (async () => {
+      let q = supabase
+        .from("products")
+        .select(
+          `id,
+         title,
+         jewellery_type,
+         category,
+         style,
+         size,
+         stock_available,
+         make_to_order_days,
+         metal_purity,
+         net_weight,
+         gross_weight,
+         stone_weight,
+         raw_image_url,
+         processed_image_url,
+         generated_image_urls,
+         image_url,
+         wholesaler_email,
+         created_at`,
+          { count: "exact" }
+        )
+        .eq("wholesaler_id", user.id);
 
-  if (initialCategory && initialCategory !== "all") {
-    const baseSlug = initialCategory.replace(/s$/, '');
-    query = query.in("jewellery_type", [baseSlug, baseSlug + 's']);
-  }
+      if (initialCategory && initialCategory !== "all") {
+        const baseSlug = initialCategory.replace(/s$/, '');
+        q = q.in("jewellery_type", [baseSlug, baseSlug + 's']);
+      }
 
-  query = query
-    .order("created_at", { ascending: false })
-    .range(0, LIMIT - 1);
+      q = q.order("created_at", { ascending: false }).range(0, LIMIT - 1);
+      return q;
+    })(),
+    supabase
+      .from("wholesalers")
+      .select("full_name")
+      .eq("user_id", user.id)
+      .single(),
+  ]);
 
-  const { data, count, error } = await query;
-
+  const { data, count, error } = productsResult;
   if (error) {
     console.error("[CataloguePage] Supabase error:", error.message);
   }
 
   const initialProducts = data ?? [];
   const initialCount = count ?? 0;
-
-  // ── 5. Fetch wholesaler data to get full_name for "Crafted by" ───────────
-  const { data: wholesalerData, error: wholesalerError } = await supabase
-    .from("wholesalers")
-    .select("full_name")
-    .eq("user_id", user.id)
-    .single();
-
-  if (wholesalerError) {
-    console.error("[CataloguePage] Wholesaler fetch error:", wholesalerError.message);
-  }
-
-  const artisanName = wholesalerData?.full_name || "";
+  const artisanName = wholesalerData?.data?.full_name || "";
 
   return (
     <Suspense>

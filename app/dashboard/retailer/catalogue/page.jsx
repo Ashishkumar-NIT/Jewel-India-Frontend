@@ -13,8 +13,16 @@ export default function RetailerCataloguePage() {
   // Cache designs in a ref — revisits skip the network roundtrip
   // unless explicitly forced after a mutation.
   const cachedDesigns = useRef([]);
+  const abortRef = useRef(null);
 
   const fetchDesigns = useCallback(async (force = false) => {
+    // Cancel any in-flight request before starting a new one
+    if (abortRef.current) {
+      abortRef.current.abort();
+    }
+    const controller = new AbortController();
+    abortRef.current = controller;
+
     if (!force && cachedDesigns.current.length > 0) {
       setDesigns(cachedDesigns.current);
       setIsLoading(false);
@@ -25,7 +33,9 @@ export default function RetailerCataloguePage() {
     setError("");
 
     try {
-      const response = await fetch(`/api/designs/list?archived=true`);
+      const response = await fetch(`/api/designs/list?archived=true`, {
+        signal: controller.signal,
+      });
       const result = await response.json();
 
       if (!response.ok) {
@@ -35,6 +45,7 @@ export default function RetailerCataloguePage() {
       cachedDesigns.current = result.data || [];
       setDesigns(cachedDesigns.current);
     } catch (err) {
+      if (err.name === "AbortError") return; // Ignore cancelled requests
       setError(err.message || "Failed to load designs.");
       setDesigns([]);
     }

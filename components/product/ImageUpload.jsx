@@ -1,15 +1,31 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 
 export function ImageUpload({ onFileChange }) {
     const inputRef = useRef(null);
     const [preview, setPreview] = useState(null);
     const [dragOver, setDragOver] = useState(false);
+    const previousUrlRef = useRef(null);
+
+    // Cleanup on unmount
+    useEffect(() => {
+        return () => {
+            if (previousUrlRef.current) {
+                URL.revokeObjectURL(previousUrlRef.current);
+            }
+        };
+    }, []);
 
     function handleFile(file) {
         if (!file) return;
+        // Revoke previous URL to prevent memory leak
+        if (previousUrlRef.current) {
+            URL.revokeObjectURL(previousUrlRef.current);
+            previousUrlRef.current = null;
+        }
         const url = URL.createObjectURL(file);
+        previousUrlRef.current = url;
         setPreview(url);
         onFileChange(file);
     }
@@ -26,6 +42,11 @@ export function ImageUpload({ onFileChange }) {
 
     function handleRemove(e) {
         e.stopPropagation();
+        // Revoke the object URL to free memory
+        if (previousUrlRef.current) {
+            URL.revokeObjectURL(previousUrlRef.current);
+            previousUrlRef.current = null;
+        }
         setPreview(null);
         onFileChange(null);
         if (inputRef.current) inputRef.current.value = "";

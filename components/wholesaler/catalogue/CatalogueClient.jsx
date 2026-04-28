@@ -1,7 +1,7 @@
 "use client";
 
+import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { useState, useEffect, useCallback, useRef, useTransition, useMemo } from "react";
 import CatalogueGrid from "./CatalogueGrid";
 import { createClient } from "../../../lib/supabase/client";
 
@@ -66,7 +66,6 @@ export default function CatalogueClient({
   const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
-  const [, startTransition] = useTransition();
 
   const totalPages = Math.max(1, Math.ceil(totalCount / LIMIT));
 
@@ -82,10 +81,12 @@ export default function CatalogueClient({
   }, []);
 
   // Fetch logic
+  // Uses window.history.replaceState instead of router.replace() to update
+  // the URL without triggering Next.js route transitions (avoids server re-render loop).
   const fetchProducts = useCallback(async (cat, p, f, skipLoading = false) => {
     if (!skipLoading) setIsLoading(true);
     setIsError(false);
-    
+
     try {
       const params = new URLSearchParams();
       if (cat && cat !== "all") params.set("category", cat);
@@ -96,19 +97,17 @@ export default function CatalogueClient({
       if (f.weight.length) f.weight.forEach(v => params.append("weight[]", v));
       if (f.availability.length) f.availability.forEach(v => params.append("availability[]", v));
       if (f.purity.length) f.purity.forEach(v => params.append("purity[]", v));
-      // TODO: wire trending in retailer phase
 
       const res = await fetch(`/api/catalogue/products?${params.toString()}`);
       if (!res.ok) throw new Error("Fetch failed");
-      
+
       const json = await res.json();
       setProducts(json.data || []);
       setTotalCount(json.count || 0);
 
-      // Update URL safely
-      startTransition(() => {
-        router.replace(`?${params.toString()}`, { scroll: false });
-      });
+      // Update URL via History API — no Next.js router involvement,
+      // so no server component re-execution on every filter/page change.
+      window.history.replaceState({}, "", `?${params.toString()}`);
 
     } catch (err) {
       console.error(err);
@@ -116,7 +115,7 @@ export default function CatalogueClient({
     } finally {
       if (!skipLoading) setIsLoading(false);
     }
-  }, [router]);
+  }, []);
 
   // When filters or page or activeCategory change, trigger fetch
   useEffect(() => {

@@ -1,22 +1,30 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo, useDeferredValue } from "react";
 import Image from "next/image";
 
 export function EmployeeTable({ employees, onToggleStatus, onDelete, onUpdate }) {
   const [deletingId, setDeletingId] = useState(null);
   const [togglingId, setTogglingId] = useState(null);
-  const [search, setSearch] = useState("");
+  const [searchInput, setSearchInput] = useState("");
   const [actionsEmployee, setActionsEmployee] = useState(null);
-  
+
   // Actions Modal State
   const [editDesignation, setEditDesignation] = useState("");
   const [isUpdatingDesignation, setIsUpdatingDesignation] = useState(false);
 
-  const filteredEmployees = employees.filter(emp => 
-    emp.full_name?.toLowerCase().includes(search.toLowerCase()) ||
-    emp.email?.toLowerCase().includes(search.toLowerCase())
-  );
+  // Defer search value to keep filter non-blocking during re-renders
+  const search = useDeferredValue(searchInput);
+
+  // Memoize filtered list so it's not recomputed on every render
+  const filteredEmployees = useMemo(() => {
+    const q = search.toLowerCase();
+    return employees.filter(emp =>
+      !q ||
+      emp.full_name?.toLowerCase().includes(q) ||
+      emp.email?.toLowerCase().includes(q)
+    );
+  }, [employees, search]);
 
   const handleToggle = async (emp) => {
     setTogglingId(emp.id);
@@ -88,10 +96,10 @@ export function EmployeeTable({ employees, onToggleStatus, onDelete, onUpdate })
           </svg>
         </div>
         <input 
-          type="text" 
-          placeholder="Search employees by name or email..." 
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          type="text"
+          placeholder="Search employees by name or email..."
+          value={searchInput}
+          onChange={(e) => setSearchInput(e.target.value)}
           className="w-full bg-white border border-gray-100 rounded-[12px] pl-11 pr-4 h-[52px] text-[14px] outline-none focus:ring-2 focus:ring-black/5 text-[#111827] placeholder-[#9CA3AF]"
         />
       </div>

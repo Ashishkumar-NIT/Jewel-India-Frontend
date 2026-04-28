@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, memo } from "react";
 import Image from "next/image";
 
-function TagChip({ type, label }) {
+const TagChip = memo(function TagChip({ type, label }) {
   if (!label) return null;
   
   if (type === "material") {
@@ -20,22 +20,22 @@ function TagChip({ type, label }) {
       {label}
     </span>
   );
-}
+});
 
-function ToggleSwitch({ isOn, onToggle }) {
+const ToggleSwitch = memo(function ToggleSwitch({ isOn, onToggle }) {
   return (
     <div 
       onClick={(e) => { e.stopPropagation(); onToggle(); }}
       className={`w-11 h-6 flex items-center rounded-full p-1 cursor-pointer transition-colors duration-300 ${isOn ? "bg-black" : "bg-gray-200"}`}
     >
-      <div 
-        className={`bg-white w-4 h-4 rounded-full shadow-sm transform transition-transform duration-300 ${isOn ? "translate-x-5" : "translate-x-0"}`} 
+      <div
+        className={`bg-white w-4 h-4 rounded-full shadow-sm transform transition-transform duration-300 ${isOn ? "translate-x-5" : "translate-x-0"}`}
       />
     </div>
   );
-}
+});
 
-function DesignCard({ design, onArchiveToggle }) {
+const DesignCard = memo(function DesignCard({ design, onArchiveToggle }) {
   const [imgError, setImgError] = useState(false);
   const title = design.title || "Untitled design";
   const tags = Array.isArray(design.tags) ? design.tags : [];
@@ -84,7 +84,7 @@ function DesignCard({ design, onArchiveToggle }) {
       </div>
     </article>
   );
-}
+});
 
 export function RetailerCatalogueGrid({ designs, isLoading, onArchiveToggle }) {
   if (isLoading) {

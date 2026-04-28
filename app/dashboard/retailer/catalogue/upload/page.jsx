@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -8,7 +8,7 @@ import Image from "next/image";
 export default function UploadDesignPage() {
   const router = useRouter();
   const [isUploading, setIsUploading] = useState(false);
-  
+
   // Basic states
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("");
@@ -21,21 +21,32 @@ export default function UploadDesignPage() {
   const [netWeight, setNetWeight] = useState("");
   const [inStock, setInStock] = useState(false);
   const [productionTime, setProductionTime] = useState("");
-  
+
   // Multiple images state
   const [files, setFiles] = useState([]);
   const [previews, setPreviews] = useState([]);
+  const previewUrlsRef = useRef([]);
+
+  // Cleanup all preview URLs on unmount
+  useEffect(() => {
+    return () => {
+      previewUrlsRef.current.forEach(url => {
+        URL.revokeObjectURL(url);
+      });
+    };
+  }, []);
 
   const handleFileChange = (e) => {
     if (e.target.files && e.target.files.length > 0) {
       const newFiles = Array.from(e.target.files);
       const remainingSlots = 5 - files.length;
       const filesToAdd = newFiles.slice(0, remainingSlots);
-      
+
       if (filesToAdd.length > 0) {
         setFiles(prev => [...prev, ...filesToAdd]);
-        const newPreviews = filesToAdd.map(file => URL.createObjectURL(file));
-        setPreviews(prev => [...prev, ...newPreviews]);
+        const newUrls = filesToAdd.map(file => URL.createObjectURL(file));
+        previewUrlsRef.current = [...previewUrlsRef.current, ...newUrls];
+        setPreviews(prev => [...prev, ...newUrls]);
       }
     }
     // Reset input so the same file can be selected again if needed
@@ -43,6 +54,15 @@ export default function UploadDesignPage() {
   };
 
   const removeFile = (indexToRemove) => {
+    // Revoke the URL at the index being removed
+    const urlToRemove = previewUrlsRef.current[indexToRemove];
+    if (urlToRemove) {
+      URL.revokeObjectURL(urlToRemove);
+    }
+
+    // Remove from ref array
+    previewUrlsRef.current = previewUrlsRef.current.filter((_, idx) => idx !== indexToRemove);
+
     setFiles(prev => prev.filter((_, idx) => idx !== indexToRemove));
     setPreviews(prev => prev.filter((_, idx) => idx !== indexToRemove));
   };

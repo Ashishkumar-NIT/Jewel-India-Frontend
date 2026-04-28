@@ -11,8 +11,16 @@ export default function RetailerEmployeesPage() {
   // Cache fetched employees in a ref so revisits don't cause redundant refetches.
   // Only refetch if explicitly needed (e.g., after mutation via onUpdate).
   const cachedEmployees = useRef([]);
+  const abortRef = useRef(null);
 
   const fetchEmployees = async (force = false) => {
+    // Cancel any in-flight request before starting a new one
+    if (abortRef.current) {
+      abortRef.current.abort();
+    }
+    const controller = new AbortController();
+    abortRef.current = controller;
+
     // Skip if we already have data and this isn't a forced refresh
     if (!force && cachedEmployees.current.length > 0) {
       setEmployees(cachedEmployees.current);
@@ -21,12 +29,15 @@ export default function RetailerEmployeesPage() {
     }
 
     try {
-      const res = await fetch("/api/employees/list");
+      const res = await fetch("/api/employees/list", {
+        signal: controller.signal,
+      });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to load employees");
       cachedEmployees.current = data.data || [];
       setEmployees(cachedEmployees.current);
     } catch (err) {
+      if (err.name === "AbortError") return; // Ignore cancelled requests
       setError(err.message);
     } finally {
       setIsLoading(false);

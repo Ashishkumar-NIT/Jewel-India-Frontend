@@ -169,7 +169,6 @@ export default function WholesalerGalleryClient({ products, categoryTabs, initia
     return result;
   }, [products, activeCategory, search]);
 
-  const router = useRouter();
   const [isStartingChat, setIsStartingChat] = useState(false);
 
   const handleStartChat = async (product) => {

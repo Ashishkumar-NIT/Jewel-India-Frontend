@@ -1,10 +1,11 @@
 import { createClient } from "../../../lib/supabase/server";
+import { getAuthUser } from "../../../lib/supabase/queries";
 import DashboardStats from "../../../components/retailer/DashboardStats";
 import Link from "next/link";
 
 export default async function RetailerDashboardPage() {
+  const user = await getAuthUser();
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
 
   let employeesCount = 0;
   let activeEmployeesCount = 0;
@@ -23,48 +24,42 @@ export default async function RetailerDashboardPage() {
 
     if (retailer) {
       businessName = retailer.business_name;
-      
-      // Employee counts
-      const { count: empCount } = await supabase
-        .from("employees")
-        .select('*', { count: 'exact', head: true })
-        .eq("retailer_id", retailer.id);
-        
-      employeesCount = empCount || 0;
 
-      const { count: activeEmpCount } = await supabase
-        .from("employees")
-        .select('*', { count: 'exact', head: true })
-        .eq("retailer_id", retailer.id)
-        .eq("status", "active");
-        
-      activeEmployeesCount = activeEmpCount || 0;
-      
-      // Design counts
-      const { count: totalDesignCount } = await supabase
-        .from("retailer_designs")
-        .select('*', { count: 'exact', head: true })
-        .eq("retailer_id", retailer.id);
-        
-      totalDesigns = totalDesignCount || 0;
+      // Run all independent count queries + recent employees in parallel
+      const [empCountResult, activeEmpResult, totalDesignResult, recentEmpData] = await Promise.all([
+        supabase
+          .from("employees")
+          .select("*", { count: "exact", head: true })
+          .eq("retailer_id", retailer.id),
+        supabase
+          .from("employees")
+          .select("*", { count: "exact", head: true })
+          .eq("retailer_id", retailer.id)
+          .eq("status", "active"),
+        supabase
+          .from("retailer_designs")
+          .select("*", { count: "exact", head: true })
+          .eq("retailer_id", retailer.id),
+        supabase
+          .from("employees")
+          .select("id, full_name, designation, status, email, created_at")
+          .eq("retailer_id", retailer.id)
+          .order("created_at", { ascending: false })
+          .limit(5),
+      ]);
 
-      const { count: designCount } = await supabase
+      employeesCount = empCountResult.count || 0;
+      activeEmployeesCount = activeEmpResult.count || 0;
+      totalDesigns = totalDesignResult.count || 0;
+
+      const { count: activeDesignCount } = await supabase
         .from("retailer_designs")
-        .select('*', { count: 'exact', head: true })
+        .select("*", { count: "exact", head: true })
         .eq("retailer_id", retailer.id)
         .eq("is_archived", false);
-        
-      activeDesigns = designCount || 0;
+
+      activeDesigns = activeDesignCount || 0;
       archivedDesigns = totalDesigns - activeDesigns;
-
-      // Recent employees for the directory
-      const { data: recentEmpData } = await supabase
-        .from("employees")
-        .select("id, full_name, designation, status, email, created_at")
-        .eq("retailer_id", retailer.id)
-        .order("created_at", { ascending: false })
-        .limit(5);
-
       recentEmployees = recentEmpData || [];
     }
   }

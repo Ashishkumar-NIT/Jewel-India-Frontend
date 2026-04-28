@@ -1,13 +1,14 @@
+import { createClient } from "../../../lib/supabase/server";
+import { getAuthUser } from "../../../lib/supabase/queries";
 import HeroUploadSection from "../../../components/wholesaler/HeroUploadSection";
 import OverviewSection from "../../../components/wholesaler/OverviewSection";
 import WeeklyReviewBanner from "../../../components/wholesaler/WeeklyReviewBanner";
 import CatalogueSection from "../../../components/wholesaler/CatalogueSection";
-import { createClient } from "../../../lib/supabase/server";
 import { SignOutButton } from "../../../components/auth/SignOutButton";
 
 export default async function WholesalerDashboardPage() {
+  const user = await getAuthUser();
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
 
   if (user) {
     const { data: wholesaler } = await supabase
@@ -16,11 +17,15 @@ export default async function WholesalerDashboardPage() {
       .eq("user_id", user.id)
       .single();
 
+    // Fire-and-forget: don't block first paint on a non-critical DB write.
+    // If it fails the next visit will retry — no user-facing consequence.
     if (wholesaler && !wholesaler.has_visited_dashboard) {
-      await supabase
+      supabase
         .from("wholesalers")
         .update({ has_visited_dashboard: true })
-        .eq("user_id", user.id);
+        .eq("user_id", user.id)
+        .then(() => {})
+        .catch(() => {});
     }
   }
 
