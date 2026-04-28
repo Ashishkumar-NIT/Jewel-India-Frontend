@@ -1,11 +1,31 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ConversationList } from "../../../../components/chat/ConversationList";
 import { ChatWindow } from "../../../../components/chat/ChatWindow";
 
+// Module-level cache that persists across navigation
+const messagesCache = {
+  activeConversationId: null,
+  conversations: []
+};
+
 export default function MessagesClient({ initialConversations, currentUserType }) {
-  const [conversations, setConversations] = useState(initialConversations || []);
-  const [activeConversation, setActiveConversation] = useState(null);
+  // Restore state from cache on mount
+  const [conversations, setConversations] = useState(() => {
+    return messagesCache.conversations.length > 0 ? messagesCache.conversations : (initialConversations || []);
+  });
+  const [activeConversation, setActiveConversation] = useState(() => {
+    return messagesCache.activeConversationId ? { id: messagesCache.activeConversationId } : null;
+  });
+
+  // Persist state changes to cache
+  useEffect(() => {
+    messagesCache.conversations = conversations;
+  }, [conversations]);
+
+  useEffect(() => {
+    messagesCache.activeConversationId = activeConversation?.id || null;
+  }, [activeConversation]);
 
   // In a full implementation, you might want to subscribe to changes in the conversations table as well
   // to update the updated_at time or show a new conversation when it's created.

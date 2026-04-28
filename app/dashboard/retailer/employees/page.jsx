@@ -3,14 +3,18 @@
 import { useState, useEffect, useRef } from "react";
 import { EmployeeTable } from "../../../../components/retailer/EmployeeTable";
 
+// Module-level cache that persists across navigation (survives component unmount)
+const employeesCache = {
+  data: [],
+  timestamp: 0
+};
+
 export default function RetailerEmployeesPage() {
-  const [employees, setEmployees] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [employees, setEmployees] = useState(() => employeesCache.data || []);
+  const [isLoading, setIsLoading] = useState(employeesCache.data.length === 0);
   const [error, setError] = useState(null);
 
-  // Cache fetched employees in a ref so revisits don't cause redundant refetches.
-  // Only refetch if explicitly needed (e.g., after mutation via onUpdate).
-  const cachedEmployees = useRef([]);
+  // AbortController ref for cancelling in-flight requests
   const abortRef = useRef(null);
 
   const fetchEmployees = async (force = false) => {
@@ -21,9 +25,9 @@ export default function RetailerEmployeesPage() {
     const controller = new AbortController();
     abortRef.current = controller;
 
-    // Skip if we already have data and this isn't a forced refresh
-    if (!force && cachedEmployees.current.length > 0) {
-      setEmployees(cachedEmployees.current);
+    // Skip if we have cached data and this isn't a forced refresh
+    if (!force && employeesCache.data.length > 0) {
+      setEmployees(employeesCache.data);
       setIsLoading(false);
       return;
     }
@@ -34,8 +38,11 @@ export default function RetailerEmployeesPage() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to load employees");
-      cachedEmployees.current = data.data || [];
-      setEmployees(cachedEmployees.current);
+
+      // Update both state and module-level cache
+      employeesCache.data = data.data || [];
+      employeesCache.timestamp = Date.now();
+      setEmployees(employeesCache.data);
     } catch (err) {
       if (err.name === "AbortError") return; // Ignore cancelled requests
       setError(err.message);
@@ -46,7 +53,7 @@ export default function RetailerEmployeesPage() {
 
   useEffect(() => {
     fetchEmployees();
-  }, []); // Only run once on mount — data persists in ref
+  }, []);
 
   const handleToggleStatus = async (id, isActive) => {
     try {
@@ -61,10 +68,10 @@ export default function RetailerEmployeesPage() {
       if (!res.ok) throw new Error("Failed to update status");
 
       // Update cache in-place without refetch
-      cachedEmployees.current = cachedEmployees.current.map(e =>
+      employeesCache.data = employeesCache.data.map(e =>
         e.id === id ? { ...e, is_active: isActive } : e
       );
-      setEmployees(cachedEmployees.current);
+      setEmployees(employeesCache.data);
     } catch (err) {
       alert(err.message);
     }
@@ -77,8 +84,8 @@ export default function RetailerEmployeesPage() {
       });
       if (!res.ok) throw new Error("Failed to delete employee");
 
-      cachedEmployees.current = cachedEmployees.current.filter(e => e.id !== id);
-      setEmployees(cachedEmployees.current);
+      employeesCache.data = employeesCache.data.filter(e => e.id !== id);
+      setEmployees(employeesCache.data);
     } catch (err) {
       alert(err.message);
     }

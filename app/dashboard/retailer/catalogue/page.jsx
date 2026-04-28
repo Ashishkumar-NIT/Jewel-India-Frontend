@@ -5,14 +5,18 @@ import Link from "next/link";
 import Image from "next/image";
 import { RetailerCatalogueGrid } from "../../../../components/retailer/RetailerCatalogueGrid";
 
+// Module-level cache that persists across navigation (survives component unmount)
+const designsCache = {
+  data: [],
+  timestamp: 0
+};
+
 export default function RetailerCataloguePage() {
-  const [designs, setDesigns] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [designs, setDesigns] = useState(() => designsCache.data || []);
+  const [isLoading, setIsLoading] = useState(designsCache.data.length === 0);
   const [error, setError] = useState("");
 
-  // Cache designs in a ref — revisits skip the network roundtrip
-  // unless explicitly forced after a mutation.
-  const cachedDesigns = useRef([]);
+  // AbortController ref for cancelling in-flight requests
   const abortRef = useRef(null);
 
   const fetchDesigns = useCallback(async (force = false) => {
@@ -23,8 +27,9 @@ export default function RetailerCataloguePage() {
     const controller = new AbortController();
     abortRef.current = controller;
 
-    if (!force && cachedDesigns.current.length > 0) {
-      setDesigns(cachedDesigns.current);
+    // Skip if we have cached data and this isn't a forced refresh
+    if (!force && designsCache.data.length > 0) {
+      setDesigns(designsCache.data);
       setIsLoading(false);
       return;
     }
@@ -42,8 +47,10 @@ export default function RetailerCataloguePage() {
         throw new Error(result.error || "Failed to load designs.");
       }
 
-      cachedDesigns.current = result.data || [];
-      setDesigns(cachedDesigns.current);
+      // Update both state and module-level cache
+      designsCache.data = result.data || [];
+      designsCache.timestamp = Date.now();
+      setDesigns(designsCache.data);
     } catch (err) {
       if (err.name === "AbortError") return; // Ignore cancelled requests
       setError(err.message || "Failed to load designs.");
@@ -65,10 +72,10 @@ export default function RetailerCataloguePage() {
     const nextValue = !design.is_archived;
 
     // Optimistic update against the cached array
-    cachedDesigns.current = cachedDesigns.current.map((item) =>
+    designsCache.data = designsCache.data.map((item) =>
       item.id === design.id ? { ...item, is_archived: nextValue } : item
     );
-    setDesigns(cachedDesigns.current);
+    setDesigns(designsCache.data);
 
     const response = await fetch(`/api/designs/${design.id}`, {
       method: "PATCH",
@@ -78,10 +85,10 @@ export default function RetailerCataloguePage() {
 
     if (!response.ok) {
       // Revert on failure
-      cachedDesigns.current = cachedDesigns.current.map((item) =>
+      designsCache.data = designsCache.data.map((item) =>
         item.id === design.id ? { ...item, is_archived: design.is_archived } : item
       );
-      setDesigns(cachedDesigns.current);
+      setDesigns(designsCache.data);
     }
   };
 
@@ -89,8 +96,8 @@ export default function RetailerCataloguePage() {
     const confirmed = window.confirm("Delete this design permanently? This cannot be undone.");
     if (!confirmed) return;
 
-    cachedDesigns.current = cachedDesigns.current.filter((item) => item.id !== design.id);
-    setDesigns(cachedDesigns.current);
+    designsCache.data = designsCache.data.filter((item) => item.id !== design.id);
+    setDesigns(designsCache.data);
 
     const response = await fetch(`/api/designs/${design.id}`, {
       method: "DELETE",

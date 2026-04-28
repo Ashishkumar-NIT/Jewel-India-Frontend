@@ -1,9 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import s from "./orders.module.css";
 import Image from "next/image";
+
+// Module-level cache that persists across navigation
+const ordersCache = {
+  activeTab: "new",
+  modalVisible: false
+};
 
 /* ── SVG Icons ── */
 const ChevronLeftIcon = () => (
@@ -172,8 +178,18 @@ const COMPLETED_ORDERS = [
 
 /* ── Main Component ── */
 export default function OrdersClient() {
-  const [activeTab, setActiveTab] = useState("new");
-  const [modalVisible, setModalVisible] = useState(false);
+  // Restore state from cache on mount
+  const [activeTab, setActiveTab] = useState(ordersCache.activeTab || "new");
+  const [modalVisible, setModalVisible] = useState(ordersCache.modalVisible || false);
+
+  // Persist state changes to cache
+  useEffect(() => {
+    ordersCache.activeTab = activeTab;
+  }, [activeTab]);
+
+  useEffect(() => {
+    ordersCache.modalVisible = modalVisible;
+  }, [modalVisible]);
 
   function getListData() {
     if (activeTab === "new") return NEW_ORDERS;

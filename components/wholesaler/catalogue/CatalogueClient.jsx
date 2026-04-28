@@ -7,6 +7,15 @@ import { createClient } from "../../../lib/supabase/client";
 
 const LIMIT = 20;
 
+// Module-level cache that persists across navigation (survives component unmount)
+const productsCache = {
+  data: null,
+  count: 0,
+  category: "all",
+  filters: { trending: [], size: [], weight: [], availability: [], purity: [] },
+  page: 1
+};
+
 const FILTER_CONFIG = [
   { 
     id: "trending", 
@@ -35,24 +44,30 @@ const FILTER_CONFIG = [
   }
 ];
 
-export default function CatalogueClient({ 
-  initialProducts, 
-  initialCount, 
+export default function CatalogueClient({
+  initialProducts,
+  initialCount,
   initialCategory,
   dynamicCategories,
-  wholesalerId, 
+  wholesalerId,
   userEmail,
-  artisanName 
+  artisanName
 }) {
   const router = useRouter();
   const supabase = useMemo(() => createClient(), []);
 
-  const [activeCategory, setActiveCategory] = useState(initialCategory || "all");
+  const [activeCategory, setActiveCategory] = useState(() => {
+    // Restore from cache if available, otherwise use initial
+    return productsCache.category !== "all" ? productsCache.category : (initialCategory || "all");
+  });
   const [openDropdown, setOpenDropdown] = useState(null);
   const dropdownRef = useRef(null);
 
   const [filters, setFilters] = useState(() => {
-    return {
+    // Restore from cache if we have cached filters
+    const hasCachedFilters = productsCache.filters &&
+      Object.values(productsCache.filters).some(arr => arr.length > 0);
+    return hasCachedFilters ? productsCache.filters : {
       trending: [],
       size: [],
       weight: [],
@@ -61,9 +76,24 @@ export default function CatalogueClient({
     };
   });
 
-  const [products, setProducts] = useState(initialProducts || []);
-  const [totalCount, setTotalCount] = useState(initialCount || 0);
-  const [page, setPage] = useState(1);
+  const [products, setProducts] = useState(() => {
+    // Restore from cache if we have cached data for current category
+    if (productsCache.data && productsCache.category === (initialCategory || "all")) {
+      return productsCache.data;
+    }
+    return initialProducts || [];
+  });
+  const [totalCount, setTotalCount] = useState(() => {
+    // Restore from cache if we have cached count for current category
+    if (productsCache.count && productsCache.category === (initialCategory || "all")) {
+      return productsCache.count;
+    }
+    return initialCount || 0;
+  });
+  const [page, setPage] = useState(() => {
+    // Restore from cache if we have cached page for current category
+    return productsCache.category === (initialCategory || "all") ? productsCache.page : 1;
+  });
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
 
@@ -102,8 +132,19 @@ export default function CatalogueClient({
       if (!res.ok) throw new Error("Fetch failed");
 
       const json = await res.json();
-      setProducts(json.data || []);
-      setTotalCount(json.count || 0);
+      const newData = json.data || [];
+      const newCount = json.count || 0;
+
+      // Update state
+      setProducts(newData);
+      setTotalCount(newCount);
+
+      // Update module-level cache (persists across navigation)
+      productsCache.data = newData;
+      productsCache.count = newCount;
+      productsCache.category = cat || "all";
+      productsCache.filters = { ...f };
+      productsCache.page = p;
 
       // Update URL via History API — no Next.js router involvement,
       // so no server component re-execution on every filter/page change.
@@ -119,15 +160,16 @@ export default function CatalogueClient({
 
   // When filters or page or activeCategory change, trigger fetch
   useEffect(() => {
-     // Skip initial mount fetch since we have SSR data (unless category was set but no initialProducts, but that's handled)
-     // To avoid double fetch on mount, we compare if we are on page 1 without filters and activeCategory is initial.
-     const isInitial = page === 1 && 
-       activeCategory === (initialCategory || "all") && 
-       Object.values(filters).every(arr => arr.length === 0);
-       
-     if (!isInitial || products.length === 0) {
-       fetchProducts(activeCategory, page, filters);
-     }
+    // Skip fetch if we have cached data for current state
+    const hasCachedData = productsCache.data &&
+      productsCache.category === activeCategory &&
+      productsCache.page === page &&
+      JSON.stringify(productsCache.filters) === JSON.stringify(filters);
+
+    // Only fetch if we don't have cached data or if data is empty
+    if (!hasCachedData || products.length === 0) {
+      fetchProducts(activeCategory, page, filters);
+    }
   }, [page, filters, activeCategory]); // eslint-disable-line
 
   // Sign out
