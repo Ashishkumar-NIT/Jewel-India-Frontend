@@ -35,6 +35,7 @@ export default function WeeklyReviewBanner() {
               alt="Background Arrow"
               width={200}
               height={200}
+              loading="lazy"
               className="w-48 h-48 object-contain"
             />
           </div>

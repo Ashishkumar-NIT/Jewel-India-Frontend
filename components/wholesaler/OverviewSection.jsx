@@ -9,22 +9,22 @@ export default function OverviewSection() {
 
         <div className="flex flex-row gap-4 w-full">
           <BottomStatCard
-            icon={<Image src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777024605/live_products_nfjmtr.svg" alt="Live Products" width={16} height={16} />}
+            icon={<Image src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777024605/live_products_nfjmtr.svg" alt="Live Products" width={16} height={16} loading="lazy" />}
             title="Live Products"
             value={<>180<span className="text-gray-400 text-2xl font-sans">/200</span></>}
           />
           <BottomStatCard
-            icon={<Image src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777024605/avg_likes_logo_s3zgi3.svg" alt="Avg. Daily Likes" width={16} height={16} />}
+            icon={<Image src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777024605/avg_likes_logo_s3zgi3.svg" alt="Avg. Daily Likes" width={16} height={16} loading="lazy" />}
             title="Avg. Daily Likes"
             value="30k"
           />
           <BottomStatCard
-            icon={<Image src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777024605/total_grams_sold_szlqpe.svg" alt="Total grams ordered" width={16} height={16} />}
+            icon={<Image src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777024605/total_grams_sold_szlqpe.svg" alt="Total grams ordered" width={16} height={16} loading="lazy" />}
             title="Total grams ordered"
             value="4.5k"
           />
           <BottomStatCard
-            icon={<Image src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777024605/response_time_logo_zpm43k.svg" alt="Query response time" width={16} height={16} />}
+            icon={<Image src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777024605/response_time_logo_zpm43k.svg" alt="Query response time" width={16} height={16} loading="lazy" />}
             title="Query response time"
             value="2hrs"
           />

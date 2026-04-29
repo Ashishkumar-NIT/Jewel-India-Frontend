@@ -1,6 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
-export default function DashboardStats({
+import { memo } from "react";
+
+function DashboardStats({
   employeesCount,
   activeEmployeesCount,
   activeDesigns,
@@ -57,6 +59,7 @@ export default function DashboardStats({
               alt="Arrow Right" 
               width={14} 
               height={14} 
+              loading="lazy"
               className="object-contain"
             />
           </Link>
@@ -75,3 +78,5 @@ export default function DashboardStats({
     </div>
   );
 }
+
+export default memo(DashboardStats);

@@ -1,6 +1,7 @@
 import { createClient } from "../../../../lib/supabase/server";
 import { supabaseAdmin } from "../../../../lib/supabase/admin";
 import { redirect } from "next/navigation";
+import Image from "next/image";
 import ReferralManager from "../../../../components/wholesaler/referral/ReferralManager";
 import styles from "./addRetailer.module.css";
 
@@ -71,7 +72,7 @@ export default async function AddRetailerPage() {
 
           {/* Step 1 */}
           <div className={styles.step}>
-             <img src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777306586/LINK_spu884.svg" alt="Share the link" className={styles.stepIcon} />
+             <Image src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777306586/LINK_spu884.svg" alt="Share the link" width={40} height={40} loading="lazy" className={styles.stepIcon} />
              <h3 className={styles.stepTitle}>1. Share the link</h3>
              <p className={styles.stepDesc}>Invite retailers by sending them a unique link.</p>
           </div>
@@ -80,7 +81,7 @@ export default async function AddRetailerPage() {
 
           {/* Step 2 */}
           <div className={styles.step}>
-             <img src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777306586/signup_vlrosz.svg" alt="Signup" className={styles.stepIcon} />
+             <Image src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777306586/signup_vlrosz.svg" alt="Signup" width={40} height={40} loading="lazy" className={styles.stepIcon} />
              <h3 className={styles.stepTitle}>2. Signup</h3>
              <p className={styles.stepDesc}>They join using your link and get linked to your account.</p>
           </div>
@@ -89,7 +90,7 @@ export default async function AddRetailerPage() {
 
           {/* Step 3 */}
           <div className={styles.step}>
-             <img src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777306585/retailerShop_iashfb.svg" alt="Retailer shop setup" className={styles.stepIcon} />
+             <Image src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777306585/retailerShop_iashfb.svg" alt="Retailer shop setup" width={40} height={40} loading="lazy" className={styles.stepIcon} />
              <h3 className={styles.stepTitle}>3. Retailer shop setup</h3>
              <p className={styles.stepDesc}>Retailers complete their store setup and go live.</p>
           </div>

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import CatalogueGrid from "./CatalogueGrid";
 import { createClient } from "../../../lib/supabase/client";
 
@@ -274,7 +275,14 @@ export default function CatalogueClient({
                     style={isActive ? { transform: 'scale(1.15)' } : {}}
                   >
                     {cat.image ? (
-                      <img src={cat.image} alt={cat.name} loading="lazy" className="w-full h-full object-cover" />
+                      <Image
+                        src={cat.image}
+                        alt={cat.name}
+                        width={90}
+                        height={90}
+                        loading="lazy"
+                        className="w-full h-full object-cover"
+                      />
                     ) : (
                       <div className="w-full h-full bg-[#1a1a1a] flex items-center justify-center text-white text-xl font-bold">
                         {cat.name.charAt(0).toUpperCase()}

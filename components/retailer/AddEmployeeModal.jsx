@@ -274,7 +274,7 @@ export default function AddEmployeeModal() {
                   onClick={() => copyToClipboard(formData.login_email)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 p-2 hover:bg-gray-200 rounded-md transition-colors"
                 >
-                  <Image src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777306236/retailerProfile_COPY_szewo3.svg" alt="Copy" width={20} height={20} className="object-contain" />
+                  <Image src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777306236/retailerProfile_COPY_szewo3.svg" alt="Copy" width={20} height={20} loading="lazy" className="object-contain" />
                 </button>
               </div>
               <span className="text-[12px] font-medium text-[#4B5563] mt-0.5">*this is your employees EMAIL</span>
@@ -293,7 +293,7 @@ export default function AddEmployeeModal() {
                   onClick={() => copyToClipboard(formData.password_plain)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 p-2 hover:bg-gray-200 rounded-md transition-colors"
                 >
-                  <Image src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777306236/retailerProfile_COPY_szewo3.svg" alt="Copy" width={20} height={20} className="object-contain" />
+                  <Image src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777306236/retailerProfile_COPY_szewo3.svg" alt="Copy" width={20} height={20} loading="lazy" className="object-contain" />
                 </button>
               </div>
               <span className="text-[12px] font-medium text-[#4B5563] mt-0.5">*this is your employees login PASSWORD</span>

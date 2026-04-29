@@ -47,9 +47,11 @@ const DesignCard = memo(function DesignCard({ design, onArchiveToggle }) {
     <article className="flex flex-col rounded-[14px] bg-white overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] transition-shadow">
       <div className="relative aspect-square w-full bg-gray-50 overflow-hidden">
         {!imgError && design.image_url ? (
-          <img
+          <Image
             src={design.image_url}
             alt={title}
+            fill
+            loading="lazy"
             className="h-full w-full object-cover"
             onError={() => setImgError(true)}
           />

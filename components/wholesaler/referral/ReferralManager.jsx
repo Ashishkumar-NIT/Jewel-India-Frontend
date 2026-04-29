@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import Image from "next/image";
 import styles from "./referralManager.module.css";
 
 export default function ReferralManager({ initialLinks = [] }) {
@@ -103,7 +104,13 @@ export default function ReferralManager({ initialLinks = [] }) {
                 }}
                 title="Copy link"
               >
-                <img src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777306236/retailerProfile_COPY_szewo3.svg" alt="Copy" style={{ width: "20px", height: "20px" }} />
+                <Image
+                  src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777306236/retailerProfile_COPY_szewo3.svg"
+                  alt="Copy"
+                  width={20}
+                  height={20}
+                  loading="lazy"
+                />
               </button>
               
               {activeLink && (
@@ -136,7 +143,14 @@ export default function ReferralManager({ initialLinks = [] }) {
               disabled={generating}
               className={styles.generateButton}
             >
-              <img src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777306661/link_logo_wtcyei.svg" alt="Link" style={{ width: "20px", height: "20px", filter: "brightness(0) invert(1)" }} />
+              <Image
+                src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777306661/link_logo_wtcyei.svg"
+                alt="Link"
+                width={20}
+                height={20}
+                loading="lazy"
+                style={{ filter: "brightness(0) invert(1)" }}
+              />
               {generating ? "Generating..." : "Generate Link"}
             </button>
             <span className={styles.secureText}>
@@ -198,7 +212,13 @@ export default function ReferralManager({ initialLinks = [] }) {
                   {copiedId === link.id ? (
                     <span style={{ fontSize: "12px", color: "#16A34A", fontWeight: 500 }}>Copied!</span>
                   ) : (
-                    <img src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777306236/retailerProfile_COPY_szewo3.svg" alt="Copy" style={{ width: "20px", height: "20px" }} />
+                    <Image
+                      src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777306236/retailerProfile_COPY_szewo3.svg"
+                      alt="Copy"
+                      width={20}
+                      height={20}
+                      loading="lazy"
+                    />
                   )}
                 </button>
 

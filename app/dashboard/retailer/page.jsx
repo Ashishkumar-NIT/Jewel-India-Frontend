@@ -2,6 +2,7 @@ import { createClient } from "../../../lib/supabase/server";
 import { getAuthUser } from "../../../lib/supabase/queries";
 import DashboardStats from "../../../components/retailer/DashboardStats";
 import Link from "next/link";
+import Image from "next/image";
 
 export default async function RetailerDashboardPage() {
   const user = await getAuthUser();
@@ -25,7 +26,7 @@ export default async function RetailerDashboardPage() {
     if (retailer) {
       businessName = retailer.business_name;
 
-      const [empCountResult, activeEmpResult, totalDesignResult, recentEmpData] = await Promise.all([
+      const [empCountResult, activeEmpResult, totalDesignResult, activeDesignResult, recentEmpData] = await Promise.all([
         supabase
           .from("employees")
           .select("*", { count: "exact", head: true })
@@ -40,6 +41,11 @@ export default async function RetailerDashboardPage() {
           .select("*", { count: "exact", head: true })
           .eq("retailer_id", retailer.id),
         supabase
+          .from("retailer_designs")
+          .select("*", { count: "exact", head: true })
+          .eq("retailer_id", retailer.id)
+          .eq("is_archived", false),
+        supabase
           .from("employees")
           .select("id, full_name, designation, status, email, created_at")
           .eq("retailer_id", retailer.id)
@@ -50,14 +56,7 @@ export default async function RetailerDashboardPage() {
       employeesCount = empCountResult.count || 0;
       activeEmployeesCount = activeEmpResult.count || 0;
       totalDesigns = totalDesignResult.count || 0;
-
-      const { count: activeDesignCount } = await supabase
-        .from("retailer_designs")
-        .select("*", { count: "exact", head: true })
-        .eq("retailer_id", retailer.id)
-        .eq("is_archived", false);
-
-      activeDesigns = activeDesignCount || 0;
+      activeDesigns = activeDesignResult.count || 0;
       archivedDesigns = totalDesigns - activeDesigns;
       recentEmployees = recentEmpData || [];
     }
@@ -95,7 +94,7 @@ export default async function RetailerDashboardPage() {
               className="bg-white rounded-[16px] p-6 flex flex-col justify-center gap-4 shadow-[0_2px_10px_rgba(0,0,0,0.03)] hover:shadow-md transition-shadow border border-gray-100 min-h-[130px]"
             >
               <div className="w-[48px] h-[48px] rounded-[14px] bg-[#E0E7FF] flex items-center justify-center shrink-0">
-                <img src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777306236/retailerProfile_addEmployee_bayej7.svg" alt="Add Employee" className="w-[20px] h-[20px] object-contain" />
+                <Image src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777306236/retailerProfile_addEmployee_bayej7.svg" alt="Add Employee" width={20} height={20} loading="lazy" className="w-[20px] h-[20px] object-contain" />
               </div>
               <div className="flex flex-col gap-0.5">
                 <h3 className="text-[16px] font-bold text-[#111827]">Add New Employee</h3>
@@ -108,7 +107,7 @@ export default async function RetailerDashboardPage() {
               className="bg-white rounded-[16px] p-6 flex flex-col justify-center gap-4 shadow-[0_2px_10px_rgba(0,0,0,0.03)] hover:shadow-md transition-shadow border border-gray-100 min-h-[130px]"
             >
               <div className="w-[48px] h-[48px] rounded-[14px] bg-[#F3E8FF] flex items-center justify-center shrink-0">
-                <img src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777306237/retailerProfile_upload_u1mi2x.svg" alt="Upload Design" className="w-[20px] h-[20px] object-contain" />
+                <Image src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777306237/retailerProfile_upload_u1mi2x.svg" alt="Upload Design" width={20} height={20} loading="lazy" className="w-[20px] h-[20px] object-contain" />
               </div>
               <div className="flex flex-col gap-0.5">
                 <h3 className="text-[16px] font-bold text-[#111827]">Upload Design</h3>

@@ -9,13 +9,33 @@ import { SignOutButton } from "../../../components/auth/SignOutButton";
 export default async function WholesalerDashboardPage() {
   const user = await getAuthUser();
   const supabase = await createClient();
+  let businessName = "";
 
   if (user) {
-    const { data: wholesaler } = await supabase
-      .from("wholesalers")
-      .select("has_visited_dashboard")
-      .eq("user_id", user.id)
-      .single();
+    let wholesaler = null;
+
+    if (user.email) {
+      const { data } = await supabase
+        .from("wholesalers")
+        .select("has_visited_dashboard, business_name, full_name")
+        .eq("email", user.email)
+        .maybeSingle();
+      wholesaler = data;
+    }
+
+    if (!wholesaler) {
+      const { data } = await supabase
+        .from("wholesalers")
+        .select("has_visited_dashboard, business_name, full_name")
+        .eq("user_id", user.id)
+        .maybeSingle();
+      wholesaler = data;
+    }
+
+    businessName =
+      wholesaler?.business_name ||
+      wholesaler?.full_name ||
+      (user.email ? user.email.split("@")[0] : "");
 
     if (wholesaler && !wholesaler.has_visited_dashboard) {
       supabase
@@ -58,7 +78,7 @@ export default async function WholesalerDashboardPage() {
         </div>
       </header>
 
-      <HeroUploadSection />
+      <HeroUploadSection businessName={businessName} />
       <OverviewSection />
       <WeeklyReviewBanner />
       <CatalogueSection />

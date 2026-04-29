@@ -2,6 +2,7 @@
 
 import { useState, memo } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 // ── Product Detail Modal ──────────────────────────────────────────────────────
 function ProductDetailModal({ product, onClose, artisanNameFallback }) {
@@ -81,7 +82,13 @@ function ProductDetailModal({ product, onClose, artisanNameFallback }) {
           {/* Main Image */}
           <div className="w-full aspect-square bg-[#F5F5F5] rounded-[16px] flex items-center justify-center overflow-hidden relative">
             {activeImageUrl ? (
-              <img src={activeImageUrl} alt={title} className="w-full h-full object-contain mix-blend-multiply" />
+              <Image
+                src={activeImageUrl}
+                alt={title}
+                fill
+                loading="lazy"
+                className="w-full h-full object-contain mix-blend-multiply"
+              />
             ) : (
               <div className="flex flex-col items-center justify-center text-[#999] gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" className="w-10 h-10" viewBox="0 0 24 24" fill="currentColor">
@@ -101,7 +108,14 @@ function ProductDetailModal({ product, onClose, artisanNameFallback }) {
                   onClick={() => setActiveImageIndex(idx)}
                   className={`shrink-0 w-[64px] h-[64px] md:w-[72px] md:h-[72px] rounded-[10px] bg-[#f5f5f5] overflow-hidden transition-all border-2 ${activeImageIndex === idx ? 'border-[#111]' : 'border-transparent opacity-60 hover:opacity-100'}`}
                 >
-                  <img src={imgUrl} className="w-full h-full object-cover mix-blend-multiply" alt={`Thumb ${idx}`} />
+                  <Image
+                    src={imgUrl}
+                    alt={`Thumb ${idx}`}
+                    width={72}
+                    height={72}
+                    loading="lazy"
+                    className="w-full h-full object-cover mix-blend-multiply"
+                  />
                 </button>
               ))}
             </div>
@@ -256,11 +270,11 @@ const CatalogueProductCard = memo(function CatalogueProductCard({ product, onCli
     >
       <div className="w-full aspect-square bg-[#f9f9f9] rounded-t-xl overflow-hidden relative">
         {imgUrl && !imgError ? (
-          <img
+          <Image
             src={imgUrl}
             alt={title}
+            fill
             loading="lazy"
-            decoding="async"
             className="w-full h-full object-cover"
             onError={() => setImgError(true)}
           />
@@ -360,9 +374,12 @@ export default function CatalogueGrid({
 
     return (
       <div className="flex flex-col items-center justify-center py-16 text-center w-full">
-        <img
+        <Image
           src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1775076102/image_1613_bslbzg.png"
           alt="No products"
+          width={220}
+          height={220}
+          loading="lazy"
           className="w-[220px] h-auto mb-6"
         />
         <h3 className="font-bold text-[18px] text-[#111] mb-2">

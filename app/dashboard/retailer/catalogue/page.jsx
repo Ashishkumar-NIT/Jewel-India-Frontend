@@ -133,6 +133,7 @@ export default function RetailerCataloguePage() {
               alt="Upload" 
               width={16} 
               height={16} 
+              loading="lazy"
               className="invert brightness-0"
             />
             <span className="text-[14px]">Upload Design</span>

@@ -230,7 +230,7 @@ export function EmployeeTable({ employees, onToggleStatus, onDelete, onUpdate })
                     onClick={() => copyToClipboard(actionsEmployee.email)}
                     className="absolute right-2 top-1/2 -translate-y-1/2 p-2 hover:bg-gray-200 rounded-md transition-colors"
                   >
-                    <Image src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777306236/retailerProfile_COPY_szewo3.svg" alt="Copy" width={20} height={20} className="object-contain" />
+                    <Image src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777306236/retailerProfile_COPY_szewo3.svg" alt="Copy" width={20} height={20} loading="lazy" className="object-contain" />
                   </button>
                 </div>
               </div>
@@ -249,7 +249,7 @@ export function EmployeeTable({ employees, onToggleStatus, onDelete, onUpdate })
                     onClick={() => copyToClipboard(actionsEmployee.password_plain)}
                     className="absolute right-2 top-1/2 -translate-y-1/2 p-2 hover:bg-gray-200 rounded-md transition-colors"
                   >
-                    <Image src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777306236/retailerProfile_COPY_szewo3.svg" alt="Copy" width={20} height={20} className="object-contain" />
+                    <Image src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777306236/retailerProfile_COPY_szewo3.svg" alt="Copy" width={20} height={20} loading="lazy" className="object-contain" />
                   </button>
                 </div>
               </div>
@@ -287,7 +287,7 @@ export function EmployeeTable({ employees, onToggleStatus, onDelete, onUpdate })
                   disabled={deletingId === actionsEmployee.id}
                   className="flex items-center gap-2 h-[44px] px-5 bg-[#FEE2E2] text-[#B91C1C] font-bold text-[13px] rounded-full hover:bg-red-200 transition-colors mr-auto uppercase tracking-wide disabled:opacity-70"
                 >
-                  <Image src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777306235/retailerProfile_TRASH_v21ak2.svg" alt="Trash" width={16} height={16} />
+                  <Image src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777306235/retailerProfile_TRASH_v21ak2.svg" alt="Trash" width={16} height={16} loading="lazy" />
                   {deletingId === actionsEmployee.id ? "Deleting..." : "Delete Account"}
                 </button>
 

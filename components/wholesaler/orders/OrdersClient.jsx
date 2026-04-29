@@ -247,7 +247,14 @@ export default function OrdersClient() {
           <div key={order.id} className={s.card}>
             {/* Image */}
             <div className={s.cardImageArea}>
-              <img src={order.image} alt={order.product} className={s.productImage} />
+              <Image
+                src={order.image}
+                alt={order.product}
+                width={230}
+                height={230}
+                loading="lazy"
+                className={s.productImage}
+              />
             </div>
 
             {/* Details */}

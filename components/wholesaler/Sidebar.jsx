@@ -3,43 +3,55 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
-import { memo } from "react";
+import { memo, useMemo } from "react";
+
+const NAV_ITEMS = [
+  {
+    name: "Home",
+    icon: "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777013959/home_logo_q3xekq.svg",
+    href: "/dashboard/wholesaler",
+  },
+  {
+    name: "Add/Upload",
+    icon: "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777013959/upload_logo_hfdz8a.svg",
+    href: "/dashboard/wholesaler/add-product",
+  },
+  {
+    name: "Add Retailer",
+    icon: "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777013959/add_retailer_logo_aonkud.svg",
+    href: "/dashboard/wholesaler/add-retailer",
+  },
+  {
+    name: "Catalogue",
+    icon: "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777013959/catalogue_logo_baed4n.svg",
+    href: "/dashboard/wholesaler/catalogue",
+  },
+  {
+    name: "Orders",
+    icon: "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777013960/PACKAGE_LOGO_ekya2x.svg",
+    href: "/dashboard/wholesaler/orders",
+  },
+  {
+    name: "Chat",
+    icon: "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777013960/chatLOGO_j1mnkx.svg",
+    href: "/dashboard/wholesaler/queries",
+  },
+];
 
 function Sidebar() {
   const pathname = usePathname();
 
-  const navItems = [
-    {
-      name: "Home",
-      icon: "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777013959/home_logo_q3xekq.svg",
-      href: "/dashboard/wholesaler",
-    },
-    {
-      name: "Add/Upload",
-      icon: "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777013959/upload_logo_hfdz8a.svg",
-      href: "/dashboard/wholesaler/add-product",
-    },
-    {
-      name: "Add Retailer",
-      icon: "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777013959/add_retailer_logo_aonkud.svg",
-      href: "/dashboard/wholesaler/add-retailer",
-    },
-    {
-      name: "Catalogue",
-      icon: "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777013959/catalogue_logo_baed4n.svg",
-      href: "/dashboard/wholesaler/catalogue",
-    },
-    {
-      name: "Orders",
-      icon: "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777013960/PACKAGE_LOGO_ekya2x.svg",
-      href: "/dashboard/wholesaler/orders",
-    },
-    {
-      name: "Chat",
-      icon: "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777013960/chatLOGO_j1mnkx.svg",
-      href: "/dashboard/wholesaler/queries",
-    },
-  ];
+  const navItems = useMemo(
+    () =>
+      NAV_ITEMS.map((item) => ({
+        ...item,
+        isActive:
+          item.href === "/dashboard/wholesaler"
+            ? pathname === item.href
+            : pathname.startsWith(item.href),
+      })),
+    [pathname]
+  );
 
   return (
     <aside
@@ -62,16 +74,11 @@ function Sidebar() {
     >
       <div className="sidebar-icon-stack" style={{ display: "flex", flexDirection: "column", marginTop: "96px", marginBottom: "auto" }}>
         {navItems.map((item) => {
-          // Exact match for home to prevent it from being active on all sub-routes
-          const isActive =
-            item.href === "/dashboard/wholesaler"
-              ? pathname === item.href
-              : pathname.startsWith(item.href);
-
           return (
             <Link
               key={item.name}
               href={item.href}
+              prefetch
               title={item.name}
               style={{
                 width: "44px",
@@ -82,8 +89,8 @@ function Sidebar() {
                 borderRadius: "8px",
                 transition: "all 0.15s ease",
                 backgroundColor: "transparent",
-                opacity: isActive ? 1 : 0.35,
-                filter: isActive ? "brightness(0)" : "grayscale(1)",
+                opacity: item.isActive ? 1 : 0.35,
+                filter: item.isActive ? "brightness(0)" : "grayscale(1)",
               }}
               className="sidebar-item"
             >
@@ -92,6 +99,7 @@ function Sidebar() {
                 alt={item.name}
                 width={28}
                 height={28}
+                loading="lazy"
                 style={{ objectFit: "contain" }}
               />
             </Link>
@@ -117,6 +125,7 @@ function Sidebar() {
             alt="User Profile"
             width={22}
             height={22}
+            loading="lazy"
           />
         </button>
 
@@ -136,6 +145,7 @@ function Sidebar() {
             alt="Product Logo"
             width={28}
             height={28}
+            loading="lazy"
           />
         </div>
       </div>

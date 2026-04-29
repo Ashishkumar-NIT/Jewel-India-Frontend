@@ -17,14 +17,14 @@ export default function CatalogueSection() {
         </div>
 
         {/* Grid */}
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-5">
           {categories.map((category) => (
             <CategoryCard key={category.slug} category={category} />
           ))}
 
           {/* View All card */}
           <Link href="/dashboard/wholesaler/catalogue" className="block">
-            <div className="group flex w-[280px] h-[339px] cursor-pointer items-center justify-center rounded-xl border-2 border-dashed border-celestique-border bg-white hover:border-celestique-dark hover:bg-celestique-cream transition-all duration-200">
+            <div className="group flex w-full h-[339px] cursor-pointer items-center justify-center rounded-xl border-2 border-dashed border-celestique-border bg-white hover:border-celestique-dark hover:bg-celestique-cream transition-all duration-200">
               <div className="text-center">
                 <p className="text-3xl text-celestique-muted group-hover:text-celestique-dark transition-colors duration-200">
                   →

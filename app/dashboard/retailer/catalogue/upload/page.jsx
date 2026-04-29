@@ -161,7 +161,14 @@ export default function UploadDesignPage() {
                 <div className="flex flex-wrap gap-3">
                   {previews.map((preview, idx) => (
                     <div key={idx} className="relative w-[100px] h-[100px] rounded-[12px] border border-gray-200 overflow-hidden group shrink-0">
-                      <img src={preview} alt={`Preview ${idx + 1}`} className="w-full h-full object-cover" />
+                      <Image
+                        src={preview}
+                        alt={`Preview ${idx + 1}`}
+                        fill
+                        loading="lazy"
+                        unoptimized
+                        className="w-full h-full object-cover"
+                      />
                       <button 
                         onClick={() => removeFile(idx)}
                         className="absolute top-1 right-1 w-6 h-6 bg-white/80 rounded-full flex items-center justify-center text-red-500 opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm shadow-sm"

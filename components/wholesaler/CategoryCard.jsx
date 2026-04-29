@@ -9,13 +9,14 @@ export default function CategoryCard({ category }) {
 
   return (
     <Link href={`/dashboard/wholesaler/catalogue?category=${category.slug}`} className="block">
-      <div className="group relative w-[280px] h-[339px] cursor-pointer overflow-hidden rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200">
+      <div className="group relative w-full h-[339px] cursor-pointer overflow-hidden rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200">
         {/* Image or gradient fallback */}
         {!imgError ? (
           <Image
             src={category.image}
             alt={category.name}
             fill
+            loading="lazy"
             sizes="280px"
             className="object-cover transition-transform duration-500 group-hover:scale-105"
             onError={() => setImgError(true)}
