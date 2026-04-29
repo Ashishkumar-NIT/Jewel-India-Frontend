@@ -14,7 +14,6 @@ const TagChip = memo(function TagChip({ type, label }) {
       </span>
     );
   }
-  
   return (
     <span className="rounded-[6px] bg-[#E0E7FF] px-2.5 py-1 text-[12px] font-medium text-[#4338CA]">
       {label}

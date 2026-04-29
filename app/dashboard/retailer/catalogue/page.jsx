@@ -5,12 +5,10 @@ import Link from "next/link";
 import Image from "next/image";
 import { RetailerCatalogueGrid } from "../../../../components/retailer/RetailerCatalogueGrid";
 
-// Module-level cache that persists across navigation (survives component unmount)
 const designsCache = {
   data: [],
   timestamp: 0
 };
-
 export default function RetailerCataloguePage() {
   const [designs, setDesigns] = useState(() => designsCache.data || []);
   const [isLoading, setIsLoading] = useState(designsCache.data.length === 0);

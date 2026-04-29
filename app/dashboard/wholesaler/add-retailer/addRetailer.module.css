@@ -8,7 +8,6 @@
 .header {
   margin-bottom: 56px;
 }
-
 .title {
   font-size: clamp(28px, 4vw, 36px);
   font-weight: 700;

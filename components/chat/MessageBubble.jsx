@@ -9,7 +9,6 @@ function formatTime(dateStr) {
     hour12: true,
   });
 }
-
 export function MessageBubble({ message, isOwnMessage }) {
   return (
     <div className={`flex w-full ${isOwnMessage ? "justify-end" : "justify-start"} mb-4`}>

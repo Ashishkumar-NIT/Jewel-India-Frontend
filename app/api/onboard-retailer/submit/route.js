@@ -18,7 +18,6 @@ export async function POST(req) {
 
     const uid = user.id;
     const formData = await req.formData();
-
     const fullName = formData.get("name") || "";
     const aadharNumber = formData.get("aadhar") || "";
     const businessName = formData.get("businessName") || "";

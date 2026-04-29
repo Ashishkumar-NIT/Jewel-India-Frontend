@@ -73,7 +73,6 @@ export default async function HomePage() {
               </Link>
             </div>
           </div>
-
           <div className="lg:col-span-7 relative">
             <div className="grid grid-cols-2 gap-4">
               <div className="mt-12 aspect-[3/4] overflow-hidden bg-celestique-taupe/20 rounded-sm">

@@ -7,12 +7,6 @@ export const metadata = {
   description: "Browse products from all wholesalers.",
 };
 
-/**
- * /dashboard/employee/wholesaler-gallery
- *
- * Server component that fetches products with optional server-side filtering,
- * then passes data to client for pre-filtered results and interactive refinement.
- */
 export default async function WholesalerGalleryPage({ searchParams }) {
   const supabase = await createClient();
 

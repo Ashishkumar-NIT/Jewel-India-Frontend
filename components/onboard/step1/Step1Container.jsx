@@ -20,7 +20,6 @@ export function Step1Container() {
   const isNameValid = name.trim().length > 0;
   const isAadharValid = aadhar.replace(/\s/g, '').length === 12;
   const isFormValid = isNameValid && isAadharValid && frontImage !== null && backImage !== null;
-
   const handleNext = () => {
     if (isFormValid) {
       router.push('/onboard/step2');

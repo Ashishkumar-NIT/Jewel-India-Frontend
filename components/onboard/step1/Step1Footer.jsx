@@ -11,7 +11,6 @@ export function Step1Footer({ isFormValid, onSubmitAttempt }) {
       onSubmitAttempt();
     }
   };
-
   return (
     <div className="w-full flex flex-col md:flex-row items-center justify-between gap-6 md:gap-0 pt-6 border-t border-[#E0E0E0] mt-4">
       <p className="text-[12px] text-[#9CA3AF] max-w-[340px] text-center md:text-left leading-relaxed font-medium">

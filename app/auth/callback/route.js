@@ -14,7 +14,6 @@ export async function GET(request) {
     url.searchParams.set("error", description);
     return NextResponse.redirect(url.toString());
   }
-
   if (code) {
     const supabase = await createClient();
     const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);

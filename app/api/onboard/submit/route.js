@@ -19,7 +19,6 @@ export async function POST(req) {
         { status: 401 }
       );
     }
-
     const uid = user.id;
     const formData = await req.formData();
 

@@ -1,14 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "../../../../lib/supabase/server";
 
-/**
- * POST /api/auth/verify-otp
- * Body: { identity: string, token: string } — email + 6-digit OTP
- *
- * Verifies the OTP via Supabase verifyOtp.
- * On success: user is now signed in (session cookie set by Supabase).
- * Returns: { success } or { error }
- */
 export async function POST(request) {
   try {
     const { identity, token } = await request.json();

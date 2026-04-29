@@ -14,7 +14,6 @@ export async function PATCH(req: NextRequest) {
     notification_message,
     notified
   } = body
-
   if (!id || !verification_status) {
     return NextResponse.json(
       { error: 'id and verification_status are required' },

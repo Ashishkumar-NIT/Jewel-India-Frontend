@@ -27,7 +27,6 @@ const roles = [
     ),
   },
 ];
-
 export function SelectRoleForm() {
   const [selected, setSelected] = useState(null);
   const [loading, setLoading] = useState(false);

@@ -16,7 +16,6 @@ function DesignCard({ design }) {
   const title = design.title || "Untitled design";
   const category = design.category || "Uncategorized";
   const tags = Array.isArray(design.tags) ? design.tags : [];
-
   return (
     <article className="group flex flex-col rounded-[16px] border border-gray-200 bg-white overflow-hidden shadow-sm hover:shadow-md transition-shadow">
       <div className="relative aspect-square w-full bg-gray-50 overflow-hidden">

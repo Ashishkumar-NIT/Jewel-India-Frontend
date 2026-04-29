@@ -22,7 +22,6 @@ export function Step2Container() {
     selectedState !== '' &&
     selectedCity !== '' &&
     logoImage !== null;
-
   return (
     <div className="flex flex-col gap-[clamp(12px,1.5vw,20px)] w-full mt-4">
       <BusinessForm

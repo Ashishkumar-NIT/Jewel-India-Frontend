@@ -7,7 +7,6 @@ import { signOut } from "../../lib/actions/auth";
 
 export default function RetailerSidebar({ retailer }) {
   const pathname = usePathname();
-
   const navItems = [
     {
       name: "Dashboard",

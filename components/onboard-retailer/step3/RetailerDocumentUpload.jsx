@@ -4,7 +4,6 @@ import { ImageUploadBox } from "../../onboard/ImageUploadBox";
 export function RetailerDocumentUpload({ panFile, setPanFile, gstFile, setGstFile, submitAttempted }) {
   const panError = submitAttempted && !panFile;
   const gstError = submitAttempted && !gstFile;
-
   return (
     <div className="flex flex-row gap-[clamp(8px,3vw,24px)] w-full">
       <div className="flex-1 min-w-0">

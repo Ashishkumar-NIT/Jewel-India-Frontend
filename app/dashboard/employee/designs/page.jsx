@@ -8,12 +8,6 @@ export const metadata = {
   description: "Browse your store's design catalogue.",
 };
 
-/**
- * /dashboard/employee/designs
- *
- * Server component that fetches the parent retailer's non-archived designs
- * and hands them to a client component for filtering / display.
- */
 export default async function EmployeeDesignsPage() {
   const supabase = await createClient();
 

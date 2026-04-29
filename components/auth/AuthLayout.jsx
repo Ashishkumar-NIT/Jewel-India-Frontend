@@ -15,7 +15,6 @@ export function AuthLayout({ children, imageSrc, title, subtitle }) {
         />
       </div>
 
-      {/* Right Side — White Form Panel, capped at 520px wide */}
       <div className="flex-1 w-full max-w-[520px] bg-white h-screen overflow-y-auto flex flex-col px-6 md:px-12 py-8 md:pt-12 box-border [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
 
         {/* Logo Row */}

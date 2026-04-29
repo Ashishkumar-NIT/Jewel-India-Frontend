@@ -20,7 +20,6 @@ export async function POST(request) {
 
     const assignedRole = requestRole === "retailer" ? "retailer" : "wholesaler";
 
-    // Validate password strength
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
     if (!passwordRegex.test(password)) {
       return NextResponse.json(

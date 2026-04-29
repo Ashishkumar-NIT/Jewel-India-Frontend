@@ -9,7 +9,6 @@ export function EmployeeTable({ employees, onToggleStatus, onDelete, onUpdate })
   const [searchInput, setSearchInput] = useState("");
   const [actionsEmployee, setActionsEmployee] = useState(null);
 
-  // Actions Modal State
   const [editDesignation, setEditDesignation] = useState("");
   const [isUpdatingDesignation, setIsUpdatingDesignation] = useState(false);
 

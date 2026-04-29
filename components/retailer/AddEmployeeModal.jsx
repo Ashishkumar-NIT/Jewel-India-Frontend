@@ -14,7 +14,6 @@ export default function AddEmployeeModal() {
   const [step, setStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  
   const [formData, setFormData] = useState({
     full_name: "",
     phone: "",

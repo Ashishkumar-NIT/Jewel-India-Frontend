@@ -17,8 +17,6 @@ export const metadata = {
 };
 
 export default async function RetailerLayout({ children }) {
-  // Use cached auth — React.cache() ensures only one /auth/v1/user call
-  // per server render even if both layout and page call getAuthUser().
   const user = await getAuthUser();
 
   const supabase = await createClient();

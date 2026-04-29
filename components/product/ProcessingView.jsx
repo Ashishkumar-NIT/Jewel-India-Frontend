@@ -1,6 +1,4 @@
 "use client";
-
-// ── Checkerboard CSS for transparent-background images ───────────────────────
 const checkered = {
   backgroundImage: `
     linear-gradient(45deg, #e5e5e5 25%, transparent 25%),

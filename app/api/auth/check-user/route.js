@@ -19,7 +19,7 @@ export async function POST(request) {
 
     const normalized = identity.trim().toLowerCase();
 
-    // Detect if it's an email or phone number
+  
     const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalized);
     const isPhone = /^\+?[0-9\s\-().]{7,15}$/.test(identity.trim());
 

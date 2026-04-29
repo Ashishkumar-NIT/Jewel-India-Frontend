@@ -2,7 +2,6 @@ export const metadata = {
   title: "Liked — Jewel India",
   description: "Designs you've liked.",
 };
-
 export default function LikesPage() {
   return (
     <div className="flex-1 w-full max-w-5xl mx-auto px-4 md:px-8 py-8">

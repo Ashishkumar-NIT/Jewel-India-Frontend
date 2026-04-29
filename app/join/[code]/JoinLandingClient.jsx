@@ -24,7 +24,6 @@ export default function JoinLandingClient({
     router.push(`/entry_page/signup?ref=${encodeURIComponent(code)}&role=retailer`);
   }
 
-  // Use the person's name or fallback to the business name
   const displayName = wholesalerName ? wholesalerName.split(" ")[0] : (businessName || "Your partner");
 
   return (

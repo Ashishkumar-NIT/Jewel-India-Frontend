@@ -3,26 +3,6 @@ import { NextResponse } from "next/server";
 
 export const runtime = "nodejs";
 
-/**
- * GET /api/referral/validate?code=PJ-a8k3x2
- *
- * Public route — no auth required (used on the referral landing page
- * before the user has signed up).
- *
- * Returns wholesaler info so the landing page can show the referrer name.
- *
- * Response 200:
- * {
- *   valid: true,
- *   code: "PJ-a8k3x2",
- *   wholesaler_name: "Ananya Mehta",
- *   business_name: "Pine Jewels",
- *   business_logo_url: "https://..."
- * }
- *
- * Response 404:
- * { valid: false, reason: "not_found" | "inactive" | "maxed_out" }
- */
 export async function GET(req) {
   try {
     const { searchParams } = new URL(req.url);

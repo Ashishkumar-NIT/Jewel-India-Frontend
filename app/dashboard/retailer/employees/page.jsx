@@ -14,7 +14,6 @@ export default function RetailerEmployeesPage() {
   const [isLoading, setIsLoading] = useState(employeesCache.data.length === 0);
   const [error, setError] = useState(null);
 
-  // AbortController ref for cancelling in-flight requests
   const abortRef = useRef(null);
 
   const fetchEmployees = async (force = false) => {

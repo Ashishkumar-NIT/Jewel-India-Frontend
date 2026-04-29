@@ -21,7 +21,6 @@ export async function PATCH(request) {
     const role = user.user_metadata?.role;
     let senderTypeToMark = "";
 
-    // If I am an employee, I want to mark wholesaler messages as read.
     if (role === "employee") {
       senderTypeToMark = "wholesaler";
     } else if (role === "wholesaler") {

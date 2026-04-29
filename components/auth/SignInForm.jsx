@@ -5,12 +5,6 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { Button } from "../ui/Button";
 import { signIn } from "../../lib/actions/auth";
 
-/**
- * SignInForm — for EXISTING users only.
- * Reached via redirect from the entry page after a DB check confirms the user exists.
- * Pre-fills the identity (email/phone) from URL param or sessionStorage.
- * No Google auth (handled on the entry page).
- */
 export function SignInForm() {
   const searchParams = useSearchParams();
   const router = useRouter();

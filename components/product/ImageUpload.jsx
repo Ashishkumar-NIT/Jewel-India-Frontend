@@ -16,7 +16,6 @@ export function ImageUpload({ onFileChange }) {
             }
         };
     }, []);
-
     function handleFile(file) {
         if (!file) return;
         // Revoke previous URL to prevent memory leak

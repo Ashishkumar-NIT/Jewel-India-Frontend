@@ -16,7 +16,6 @@ export async function POST(request) {
     if (authError || !user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-
     const { data: retailer } = await supabase
       .from("retailers")
       .select("id, business_name")

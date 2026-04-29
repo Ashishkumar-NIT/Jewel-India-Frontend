@@ -19,7 +19,6 @@ export async function GET() {
     if (!retailer) {
       return NextResponse.json({ error: "Retailer profile not found" }, { status: 404 });
     }
-
     const { data: employees, error: fetchError } = await supabase
       .from("employees")
       .select("*")

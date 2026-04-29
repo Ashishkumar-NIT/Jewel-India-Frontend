@@ -4,13 +4,6 @@ import { useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { initiateGoogleOAuth } from "../../lib/actions/oauth";
 
-/**
- * EntryForm — unified entry for new auth flow.
- * User enters email (or phone — UI only; phone OTP pending setup).
- * On Continue:
- *   → existing user: redirect to /entry_page/signin?identity=...
- *   → new user: send OTP, redirect to /entry_page/signup/verify-otp
- */
 export function EntryForm() {
   const router = useRouter();
   const searchParams = useSearchParams();

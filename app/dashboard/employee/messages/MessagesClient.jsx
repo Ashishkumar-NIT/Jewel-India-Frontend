@@ -18,7 +18,6 @@ export default function MessagesClient({ initialConversations, currentUserType }
     return messagesCache.activeConversationId ? { id: messagesCache.activeConversationId } : null;
   });
 
-  // Persist state changes to cache
   useEffect(() => {
     messagesCache.conversations = conversations;
   }, [conversations]);

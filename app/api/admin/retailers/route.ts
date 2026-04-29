@@ -13,7 +13,6 @@ export async function GET() {
       { status: 500 }
     )
   }
-
   const referredByIds = [...new Set((retailers ?? []).map((r) => r.referred_by).filter(Boolean))]
 
   let wholesalerMap = new Map()

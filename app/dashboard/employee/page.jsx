@@ -2,15 +2,6 @@ import { createClient } from "../../../lib/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 
-/**
- * Employee Dashboard Home — /dashboard/employee
- *
- * Server component that displays:
- * - Welcome message with employee name + retailer store name
- * - Quick stats: retailer designs count, wholesaler products count
- * - Quick-access cards linking to the main sections
- * - Recent designs from the parent retailer
- */
 export default async function EmployeeDashboardPage() {
   const supabase = await createClient();
 

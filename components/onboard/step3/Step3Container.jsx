@@ -15,7 +15,6 @@ export function Step3Container() {
   const [submitAttempted, setSubmitAttempted] = useState(false);
 
   const isFormValid = panFile !== null && gstFile !== null;
-
   return (
     <div className="flex flex-col gap-8 w-full mt-10">
       <DocumentUpload

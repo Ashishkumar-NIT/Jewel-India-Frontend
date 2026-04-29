@@ -20,7 +20,7 @@ export async function PATCH(request, context) {
       return NextResponse.json({ error: "Product ID missing" }, { status: 400 });
     }
 
-    // 2. Parse payload
+
     const body = await request.json();
     const updatePayload = {};
     if (typeof body.in_stock !== "undefined") updatePayload.stock_available = body.in_stock;

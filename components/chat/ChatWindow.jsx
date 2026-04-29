@@ -54,7 +54,6 @@ export function ChatWindow({ conversation, currentUserType }) {
           content,
         }),
       });
-
       if (!res.ok) {
         throw new Error("Failed to send message");
       }

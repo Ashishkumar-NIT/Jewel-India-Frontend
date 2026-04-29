@@ -16,7 +16,6 @@ export function ImageUploadBox({ label, image, onUpload, onRemove, error, object
       setPreview(image);
     }
   }, [image, isPdf]);
-
   const handleFileChange = (e) => {
     const file = e.target.files?.[0];
     if (file && onUpload) {

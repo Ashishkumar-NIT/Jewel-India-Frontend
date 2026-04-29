@@ -4,7 +4,6 @@ import { useRouter } from "next/navigation";
 
 export function SubmittedPage() {
   const router = useRouter();
-
   return (
     <main className="flex-1 w-full flex flex-col items-center justify-center min-h-dvh px-4 py-20 bg-[#FFFFFF] font-sans">
       <div className="w-full flex flex-col items-center text-center">

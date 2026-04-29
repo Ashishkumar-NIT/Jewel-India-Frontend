@@ -10,7 +10,6 @@ const LIMIT = 20;
 export default async function CataloguePage({ searchParams }) {
   const supabase = await createClient();
 
-  // ── 1. Auth guard ──────────────────────────────────────────────────────────
   const {
     data: { user },
   } = await supabase.auth.getUser();

@@ -4,7 +4,6 @@ import { useRouter } from "next/navigation";
 
 export function BackToDashboardButton() {
   const router = useRouter();
-
   return (
     <button
       type="button"

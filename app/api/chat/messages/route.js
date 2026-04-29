@@ -18,7 +18,6 @@ export async function GET(request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Verify user has access to conversation
     const { data: conv, error: convErr } = await supabaseAdmin
       .from("conversations")
       .select("*")

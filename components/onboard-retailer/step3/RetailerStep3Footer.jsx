@@ -12,7 +12,6 @@ export function RetailerStep3Footer({ isFormValid, onSubmitAttempt }) {
     isSubmitting, setIsSubmitting, setSubmitError
   } = useRetailerOnboard();
 
-  // Reusable strict compression helper
   const compressImage = async (file, namePrefix) => {
     if (!file || !(file instanceof File)) return file;
     // Don't compress PDFs!

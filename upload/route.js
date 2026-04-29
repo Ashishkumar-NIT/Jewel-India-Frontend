@@ -1,5 +1,5 @@
-import { supabaseAdmin } from "../../../../lib/supabase/admin";
-import { createClient } from "../../../../lib/supabase/server";
+import { supabaseAdmin } from "../lib/supabase/admin";
+import { createClient } from "../lib/supabase/server";
 import { NextResponse } from "next/server";
 
 export const runtime = "nodejs";
@@ -15,7 +15,6 @@ export async function POST(req) {
     if (authError || !user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-
     if (user.user_metadata?.role !== "retailer") {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }

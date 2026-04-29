@@ -17,7 +17,6 @@ export function RetailerBusinessForm({
   const isNameError = submitAttempted && businessName.trim().length < 2;
   const isStateError = submitAttempted && selectedState === "";
   const isCityError = submitAttempted && selectedCity === "";
-
   return (
     <div className="flex flex-col gap-[clamp(16px,2vw,24px)] w-full">
       {/* Business / Store Name */}

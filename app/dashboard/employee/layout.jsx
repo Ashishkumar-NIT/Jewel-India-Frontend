@@ -7,11 +7,6 @@ export const metadata = {
   description: "View your store designs, browse wholesaler products, and manage messages.",
 };
 
-/**
- * Server layout for /dashboard/employee/*.
- * Fetches the authenticated employee's record + parent retailer info,
- * then passes it to the client EmployeeLayout wrapper.
- */
 export default async function EmployeeDashboardLayout({ children }) {
   const supabase = await createClient();
 

@@ -25,7 +25,6 @@ export default async function RetailerDashboardPage() {
     if (retailer) {
       businessName = retailer.business_name;
 
-      // Run all independent count queries + recent employees in parallel
       const [empCountResult, activeEmpResult, totalDesignResult, recentEmpData] = await Promise.all([
         supabase
           .from("employees")

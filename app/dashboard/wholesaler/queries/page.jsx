@@ -17,7 +17,6 @@ export default async function QueriesPage() {
 
   if (!user) redirect("/entry_page/signin");
 
-  // Verify the user is a wholesaler
   const { data: wholesaler } = await supabase
     .from("wholesalers")
     .select("id")

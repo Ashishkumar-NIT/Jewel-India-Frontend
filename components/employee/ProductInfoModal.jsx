@@ -6,7 +6,6 @@ function formatWeight(val) {
   if (!val && val !== 0) return null;
   return `${Number(val).toFixed(2)}g`;
 }
-
 export function ProductInfoModal({ isOpen, onClose, product, onStartChat }) {
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [imgError, setImgError] = useState(false);

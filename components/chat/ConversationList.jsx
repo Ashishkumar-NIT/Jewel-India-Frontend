@@ -13,7 +13,6 @@ function formatTimeAgo(dateStr) {
   
   return date.toLocaleDateString("en-IN", { month: "short", day: "numeric" });
 }
-
 export function ConversationList({ 
   conversations, 
   activeId, 

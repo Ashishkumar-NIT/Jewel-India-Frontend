@@ -7,7 +7,6 @@ function formatWeight(val) {
   if (!val && val !== 0) return null;
   return `${Number(val).toFixed(2)}g`;
 }
-
 function ProductCard({ product, onClick }) {
   const [imgError, setImgError] = useState(false);
 

@@ -15,7 +15,6 @@ export default async function RetailerSubmittedPage() {
     redirect("/entry_page/signup");
   }
 
-  // Get retailer status
   const { data: retailer } = await supabase
     .from("retailers")
     .select("verification_status, created_at, updated_at, rejection_reason")

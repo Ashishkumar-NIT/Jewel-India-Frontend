@@ -11,7 +11,6 @@ export function Step2Footer({ isFormValid, onSubmitAttempt }) {
       onSubmitAttempt();
     }
   };
-
   return (
     <div className="w-full flex justify-end">
       <button

@@ -15,10 +15,9 @@ export function Step3Footer({ isFormValid, onSubmitAttempt }) {
     setSubmitError,
   } = useOnboard();
 
-// Helper to compress an image file before upload
 const compressImage = async (file) => {
   if (!file || !file.type.startsWith("image/")) return file;
-  
+
   return new Promise((resolve) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);

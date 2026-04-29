@@ -17,8 +17,6 @@ export default async function WholesalerDashboardPage() {
       .eq("user_id", user.id)
       .single();
 
-    // Fire-and-forget: don't block first paint on a non-critical DB write.
-    // If it fails the next visit will retry — no user-facing consequence.
     if (wholesaler && !wholesaler.has_visited_dashboard) {
       supabase
         .from("wholesalers")

@@ -33,7 +33,6 @@ export function OtpForm() {
   const [remainingResends, setRemainingResends] = useState(MAX_RESENDS);
   const [lockedUntil, setLockedUntil] = useState(null);
 
-  // Identity from sessionStorage
   const [identity, setIdentity] = useState(null);
   const [isPhoneIdentity, setIsPhoneIdentity] = useState(false);
 

@@ -17,7 +17,6 @@ const manrope = Manrope({
   variable: "--font-manrope-var",
   subsets: ["latin"],
 });
-
 export const metadata = {
   title: "Celestique | Timeless Jewelry",
   description: "A celestial touch for timeless moments.",

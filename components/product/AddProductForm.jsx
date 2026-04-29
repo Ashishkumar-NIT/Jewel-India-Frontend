@@ -20,7 +20,6 @@ const JEWELLERY_TYPES = [
   { value: "nosepins", label: "Nosepins" },
   { value: "mangalsutra", label: "Mangalsutra" },
 ];
-
 const CATEGORIES = [
   { value: "gold", label: "Gold" },
   { value: "silver", label: "Silver" },

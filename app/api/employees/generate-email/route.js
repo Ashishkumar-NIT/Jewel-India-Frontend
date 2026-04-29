@@ -19,7 +19,6 @@ export async function POST(request) {
       .select("id, business_name")
       .eq("user_id", user.id)
       .single();
-
     if (!retailer) {
       return NextResponse.json({ error: "Retailer profile not found" }, { status: 404 });
     }

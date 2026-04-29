@@ -13,7 +13,6 @@ export default async function OnboardSubmittedPage() {
   if (!user) {
     redirect("/entry_page/signin");
   }
-
   const { data: wholesaler } = await supabase
     .from("wholesalers")
     .select("verification_status, notification_message")

@@ -2,7 +2,6 @@ export const metadata = {
   title: "Orders — Jewel India",
   description: "Track your jewellery orders.",
 };
-
 export default function OrdersPage() {
   return (
     <div className="flex-1 w-full max-w-5xl mx-auto px-4 md:px-8 py-8">

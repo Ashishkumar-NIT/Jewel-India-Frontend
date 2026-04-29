@@ -13,7 +13,6 @@ export default async function AddProductPage() {
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
-      {/* Header */}
       <header className="sticky top-0 z-50 flex items-center justify-between border-b border-[#e5e5e5] bg-white px-4 md:px-10 py-2.5">
         {/* Left - Back to dashboard */}
         <BackToDashboardButton />

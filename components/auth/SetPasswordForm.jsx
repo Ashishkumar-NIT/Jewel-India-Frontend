@@ -9,7 +9,6 @@ const RULES = [
   { id: "lower", label: "1 lowercase letter (a–z)", test: (p) => /[a-z]/.test(p) },
   { id: "special", label: "1 number (0–9) and 1 special character (!@#$%^&*...)", test: (p) => /[0-9]/.test(p) && /[!@#$%^&*()\-_=+[\]{};:'",.<>/?\\|`~]/.test(p) },
 ];
-
 export function SetPasswordForm() {
   const router = useRouter();
   const [password, setPassword] = useState("");

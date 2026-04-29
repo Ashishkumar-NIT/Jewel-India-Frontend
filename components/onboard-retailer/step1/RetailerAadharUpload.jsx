@@ -8,7 +8,6 @@ export function RetailerAadharUpload({
 }) {
   const frontError = submitAttempted && !frontImage;
   const backError = submitAttempted && !backImage;
-
   return (
     <div className="flex flex-row gap-[clamp(8px,1.5vw,24px)] w-full">
       <div className="flex-1 min-w-0">

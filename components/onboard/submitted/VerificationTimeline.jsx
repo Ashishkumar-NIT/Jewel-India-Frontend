@@ -13,7 +13,6 @@ const STATUS_CONFIG = {
     ),
   },
 
-  // 🔄 Resubmission required — yellow circle with refresh icon
   resubmission_required: {
     circleClass: "bg-[#CCCC00] text-white",
     label: "Verification (resubmit documents)",

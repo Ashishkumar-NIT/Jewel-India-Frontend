@@ -19,7 +19,6 @@ export function ProductCardSkeleton() {
     </article>
   );
 }
-
 // ── Main card ──────────────────────────────────────────────────────────────
 export function ProductCard({ product, index = 0 }) {
   const [imgLoaded,   setImgLoaded]   = useState(false);

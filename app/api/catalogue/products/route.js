@@ -13,7 +13,6 @@ export async function GET(request) {
   if (authError || !user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-
   // ── 2. Parse query params ──────────────────────────────────────────────────
   const { searchParams } = new URL(request.url);
   const category = searchParams.get("category") ?? "";

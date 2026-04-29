@@ -16,7 +16,6 @@ export function RetailerStep1Container() {
 
   const [submitAttempted, setSubmitAttempted] = useState(false);
   const router = useRouter();
-
   const isNameValid = name.trim().length > 0;
   const isAadharValid = aadhar.replace(/\s/g, "").length === 12;
   const isFormValid = isNameValid && isAadharValid && frontImage !== null && backImage !== null;

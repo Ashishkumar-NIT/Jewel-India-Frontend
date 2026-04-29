@@ -17,7 +17,6 @@ export default async function EmployeeMessagesPage() {
 
   if (!user) redirect("/entry_page/signin");
 
-  // Verify the user is an employee
   const { data: employee } = await supabase
     .from("employees")
     .select("id")

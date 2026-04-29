@@ -19,3 +19,4 @@ export function BusinessLogoUpload({ logoImage, setLogoImage, submitAttempted })
     </div>
   );
 }
+

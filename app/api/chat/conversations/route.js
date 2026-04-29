@@ -30,7 +30,6 @@ export async function GET(request) {
       if (!emp) return NextResponse.json({ error: "Employee not found" }, { status: 404 });
       query = query.eq("employee_id", emp.id);
     } else if (role === "wholesaler") {
-      // Find wholesaler ID
       const { data: ws } = await supabase.from("wholesalers").select("id").eq("user_id", user.id).single();
       if (!ws) return NextResponse.json({ error: "Wholesaler not found" }, { status: 404 });
       query = query.eq("wholesaler_id", user.id); // Check against auth user ID

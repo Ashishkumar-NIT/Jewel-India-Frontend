@@ -9,7 +9,6 @@ export default function UploadDesignPage() {
   const router = useRouter();
   const [isUploading, setIsUploading] = useState(false);
 
-  // Basic states
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("");
   const [material, setMaterial] = useState("");

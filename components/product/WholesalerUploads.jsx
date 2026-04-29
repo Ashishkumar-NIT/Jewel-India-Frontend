@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-
 function UploadCard({ product }) {
   const [imgError, setImgError] = useState(false);
   const [variantIdx, setVariantIdx] = useState(0);

@@ -15,7 +15,6 @@ const fmtDate = (iso) => {
   });
 };
 
-// Checkerboard background for transparent PNGs
 const checkerStyle = {
   backgroundImage: `
     linear-gradient(45deg, #e0dbd2 25%, transparent 25%),

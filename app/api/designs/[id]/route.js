@@ -17,7 +17,6 @@ export async function PATCH(request, context) {
     if (user.user_metadata?.role !== "retailer") {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
-
     const { id } = await context.params;
     const body = await request.json();
 

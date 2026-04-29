@@ -24,3 +24,4 @@ export function SubmittedFooter({ label = "I understand", actionRoute = "/entry_
     </div>
   );
 }
+

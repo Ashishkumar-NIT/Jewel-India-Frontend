@@ -13,7 +13,6 @@ export default function SuccessPage() {
       
       <div className="bg-white min-h-[calc(100vh-80px)] w-full flex items-center justify-center font-sans">
         
-        {/* Navbar placeholder if needed, user requested 'keep existing top navbar' but there is no specific layout navbar to render here since it's not present in layout.jsx. We will just render the content vertically and horizontally centered as requested. */}
         <div className="flex flex-col items-center justify-center text-center px-4 max-w-[500px]">
           <h1 className="text-[clamp(28px,4vw,32px)] font-extrabold text-[#111827] tracking-tight mb-4 leading-tight">
             Design uploaded successfully

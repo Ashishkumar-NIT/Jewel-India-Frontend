@@ -2,7 +2,6 @@
 import { createContext, useContext, useState } from "react";
 
 const OnboardContext = createContext(null);
-
 export function OnboardProvider({ children }) {
   // Step 1 — Identity
   const [name, setName] = useState("");

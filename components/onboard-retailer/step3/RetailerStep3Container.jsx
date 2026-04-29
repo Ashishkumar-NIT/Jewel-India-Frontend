@@ -11,7 +11,6 @@ export function RetailerStep3Container() {
     gstFile, setGstFile,
     submitError,
   } = useRetailerOnboard();
-
   const [submitAttempted, setSubmitAttempted] = useState(false);
 
   const isFormValid = panFile !== null && gstFile !== null;

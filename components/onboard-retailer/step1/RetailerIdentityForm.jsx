@@ -10,7 +10,6 @@ export function RetailerIdentityForm({ name, setName, aadhar, setAadhar, submitA
       setName(val);
     }
   };
-
   const handleAadharChange = (e) => {
     let digits = e.target.value.replace(/\D/g, "").slice(0, 12);
     let formatted = digits.replace(/(\d{4})(?=\d)/g, "$1 ").trim();

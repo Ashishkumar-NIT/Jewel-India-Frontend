@@ -6,15 +6,6 @@ const MAX_RESENDS = 5;          // max resend attempts per identity
 const LOCK_DURATION_HOURS = 24; // lockout duration after exhausting resends
 const RESEND_COOLDOWN_SECONDS = 30; // min wait between resends
 
-/**
- * POST /api/auth/send-otp
- * Body: { identity: string } — email or phone
- *
- * - Checks rate limits in otp_rate_limits table
- * - Sends OTP via Supabase signInWithOtp (email only for now)
- * - Increments resend count in otp_rate_limits
- * Returns: { success, remainingResends, lockedUntil?, lastSentAt? }
- */
 export async function POST(request) {
   try {
     const { identity } = await request.json();

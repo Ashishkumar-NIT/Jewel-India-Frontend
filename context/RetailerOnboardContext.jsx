@@ -1,13 +1,6 @@
 "use client";
 import { createContext, useContext, useState } from "react";
 
-/**
- * RetailerOnboardContext
- *
- * Mirrors OnboardContext exactly but is scoped to the retailer onboarding flow
- * (/onboard-retailer/*). Using a separate context keeps retailer and wholesaler
- * state fully isolated — no cross-contamination if someone navigates between flows.
- */
 const RetailerOnboardContext = createContext(null);
 
 export function RetailerOnboardProvider({ children }) {

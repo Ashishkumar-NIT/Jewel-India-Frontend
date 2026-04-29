@@ -18,7 +18,6 @@ export async function generateMetadata({ params }) {
 export default async function JoinPage({ params }) {
   const { code } = await params;
 
-  // ── Validate referral code server-side ─────────────────────────
   const baseUrl =
     process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") || "http://localhost:3000";
 

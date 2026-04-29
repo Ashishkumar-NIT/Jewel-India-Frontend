@@ -17,7 +17,6 @@ export function CreateEmployeeModal({ isOpen, onClose, onEmployeeCreated }) {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     setError(null);
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.full_name || !formData.designation) {

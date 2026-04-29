@@ -8,7 +8,6 @@ export const metadata = {
   title: "Add Retailer — Jewel India",
   description: "Generate referral links to invite retailers.",
 };
-
 export default async function AddRetailerPage() {
   const supabase = await createClient();
   const {

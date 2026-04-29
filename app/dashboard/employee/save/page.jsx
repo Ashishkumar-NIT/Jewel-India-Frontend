@@ -8,7 +8,6 @@ export default function SavePage() {
     <div className="flex-1 w-full max-w-5xl mx-auto px-4 md:px-8 py-8">
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
         <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777351888/saved_logo_bscslf.svg"
             alt="Saved"

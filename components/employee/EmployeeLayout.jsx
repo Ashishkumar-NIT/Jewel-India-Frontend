@@ -11,7 +11,7 @@ export default function EmployeeLayout({ employeeName, businessName, children })
     <div style={{ display: "flex", minHeight: "100vh", background: "#FAFAFA" }}>
       <EmployeeSidebar />
 
-      {/* Main content area — offset left by the sidebar width */}
+    
       <main
         style={{
           marginLeft: 60,
