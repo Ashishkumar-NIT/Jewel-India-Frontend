@@ -4,8 +4,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { signOut } from "../../lib/actions/auth";
+import { memo } from "react";
 
-export default function RetailerSidebar({ retailer }) {
+function RetailerSidebar({ retailer }) {
   const pathname = usePathname();
   const navItems = [
     {
@@ -108,3 +109,8 @@ export default function RetailerSidebar({ retailer }) {
     </aside>
   );
 }
+
+export default memo(RetailerSidebar, (prevProps, nextProps) => {
+  // Only rerender if retailer data actually changes
+  return prevProps.retailer === nextProps.retailer;
+});

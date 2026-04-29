@@ -6,7 +6,7 @@ export const metadata = {
   description: "Manage your catalogue, orders, and queries.",
 };
 
-export default function WholesalerLayout({ children }) {
+export default async function WholesalerLayout({ children }) {
   return (
     <div style={{ display: "flex", minHeight: "100vh" }}>
       <Sidebar />

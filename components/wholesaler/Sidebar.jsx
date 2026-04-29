@@ -3,8 +3,9 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
+import { memo } from "react";
 
-export default function Sidebar() {
+function Sidebar() {
   const pathname = usePathname();
 
   const navItems = [
@@ -159,3 +160,5 @@ export default function Sidebar() {
     </aside>
   );
 }
+
+export default memo(Sidebar);
