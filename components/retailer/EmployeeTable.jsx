@@ -11,6 +11,8 @@ export function EmployeeTable({ employees, onToggleStatus, onDelete, onUpdate })
 
   const [editDesignation, setEditDesignation] = useState("");
   const [isUpdatingDesignation, setIsUpdatingDesignation] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   // Defer search value to keep filter non-blocking during re-renders
   const search = useDeferredValue(searchInput);
@@ -33,13 +35,12 @@ export function EmployeeTable({ employees, onToggleStatus, onDelete, onUpdate })
   };
 
   const handleDelete = async (id) => {
-    if (confirm("Are you sure you want to permanently delete this employee? This action cannot be undone.")) {
-      setDeletingId(id);
-      await onDelete(id);
-      setDeletingId(null);
-      if (actionsEmployee?.id === id) {
-        setActionsEmployee(null);
-      }
+    setDeletingId(id);
+    await onDelete(id);
+    setDeletingId(null);
+    setShowDeleteConfirm(false);
+    if (actionsEmployee?.id === id) {
+      setActionsEmployee(null);
     }
   };
 
@@ -50,6 +51,8 @@ export function EmployeeTable({ employees, onToggleStatus, onDelete, onUpdate })
 
   const closeActions = () => {
     setActionsEmployee(null);
+    setShowPassword(false);
+    setShowDeleteConfirm(false);
   };
 
   const handleApplyDesignation = async () => {
@@ -109,12 +112,12 @@ export function EmployeeTable({ employees, onToggleStatus, onDelete, onUpdate })
           <table className="w-full min-w-[800px] text-left border-collapse">
             <thead>
               <tr>
-                <th className="px-6 py-4 text-[13px] font-normal text-[#6B7280]">Employee</th>
-                <th className="px-6 py-4 text-[13px] font-normal text-[#6B7280]">Contact</th>
-                <th className="px-6 py-4 text-[13px] font-normal text-[#6B7280]">Role</th>
-                <th className="px-6 py-4 text-[13px] font-normal text-[#6B7280]">Status</th>
-                <th className="px-6 py-4 text-[13px] font-normal text-[#6B7280]">Last Active</th>
-                <th className="px-6 py-4 text-[13px] font-normal text-[#6B7280] text-right">Actions</th>
+                <th className="px-6 py-4 text-[13px] font-bold text-[#6B7280]">Employee</th>
+                <th className="px-6 py-4 text-[13px] font-bold text-[#6B7280]">Contact</th>
+                <th className="px-6 py-4 text-[13px] font-bold text-[#6B7280]">Role</th>
+                <th className="px-6 py-4 text-[13px] font-bold text-[#6B7280]">Status</th>
+                <th className="px-6 py-4 text-[13px] font-bold text-[#6B7280]">Last Active</th>
+                <th className="px-6 py-4 text-[13px] font-bold text-[#6B7280] text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
@@ -240,17 +243,26 @@ export function EmployeeTable({ employees, onToggleStatus, onDelete, onUpdate })
                 <label className="text-[14px] font-bold text-[#111827]">Passwords</label>
                 <div className="relative">
                   <input
-                    type="text"
+                    type={showPassword ? "text" : "password"}
                     readOnly
-                    value="****************"
-                    className="w-full h-[48px] bg-[#F3F4F6] rounded-[10px] pl-[14px] pr-[48px] text-[15px] text-[#6B7280] outline-none tracking-widest"
+                    value={actionsEmployee.password_plain || "********"}
+                    className="w-full h-[48px] bg-[#F3F4F6] rounded-[10px] pl-[14px] pr-[84px] text-[15px] text-[#6B7280] outline-none tracking-widest"
                   />
-                  <button 
-                    onClick={() => copyToClipboard(actionsEmployee.password_plain)}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 p-2 hover:bg-gray-200 rounded-md transition-colors"
-                  >
-                    <Image src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777306236/retailerProfile_COPY_szewo3.svg" alt="Copy" width={20} height={20} loading="lazy" className="object-contain" />
-                  </button>
+                  <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
+                    <button 
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="p-1.5 text-[12px] font-bold hover:bg-gray-200 rounded-md transition-colors text-gray-500"
+                    >
+                      {showPassword ? "Hide" : "Show"}
+                    </button>
+                    <button 
+                      onClick={() => copyToClipboard(actionsEmployee.password_plain)}
+                      className="p-1.5 hover:bg-gray-200 rounded-md transition-colors"
+                      title="Copy Password"
+                    >
+                      <Image src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777306236/retailerProfile_COPY_szewo3.svg" alt="Copy" width={18} height={18} loading="lazy" className="object-contain" />
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -262,7 +274,7 @@ export function EmployeeTable({ employees, onToggleStatus, onDelete, onUpdate })
                     type="text"
                     value={editDesignation}
                     onChange={(e) => setEditDesignation(e.target.value)}
-                    className="h-[40px] bg-[#F3F4F6] rounded-[10px] pl-[14px] pr-[44px] text-[14px] text-[#4B5563] outline-none focus:ring-2 focus:ring-black/10 min-w-[140px] max-w-full"
+                    className="h-[40px] bg-[#F3F4F6] rounded-[10px] pl-[14px] pr-[44px] text-[14px] text-[#4B5563] outline-none focus:ring-2 focus:ring-black/10 min-w-[140px] max-w-full cursor-pointer"
                   />
                   <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none opacity-50">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -276,38 +288,59 @@ export function EmployeeTable({ employees, onToggleStatus, onDelete, onUpdate })
               {/* Info Box */}
               <div className="bg-[#EFF6FF] border border-[#BFDBFE] rounded-[10px] p-4 mt-2">
                 <p className="text-[13px] text-[#1D4ED8] leading-relaxed">
-                  <span className="font-bold">Auto-generated credentials:</span> Login credentials will be automatically generated and displayed after creation.
+                  <span className="font-bold">Login credentials:</span> The login email is generated automatically, but the password must be set securely by the store admin.
                 </p>
               </div>
 
               {/* Bottom Buttons */}
-              <div className="flex items-center justify-end gap-3 mt-4 pt-2">
-                <button
-                  onClick={() => handleDelete(actionsEmployee.id)}
-                  disabled={deletingId === actionsEmployee.id}
-                  className="flex items-center gap-2 h-[44px] px-5 bg-[#FEE2E2] text-[#B91C1C] font-bold text-[13px] rounded-full hover:bg-red-200 transition-colors mr-auto uppercase tracking-wide disabled:opacity-70"
-                >
-                  <Image src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777306235/retailerProfile_TRASH_v21ak2.svg" alt="Trash" width={16} height={16} loading="lazy" />
-                  {deletingId === actionsEmployee.id ? "Deleting..." : "Delete Account"}
-                </button>
+              {showDeleteConfirm ? (
+                <div className="flex flex-col gap-3 mt-4 pt-4 border-t border-gray-100">
+                  <span className="text-[14px] font-bold text-red-600">Are you sure you want to permanently delete this employee?</span>
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => setShowDeleteConfirm(false)}
+                      className="flex-1 h-[44px] px-6 bg-white border border-gray-300 text-[#111827] font-medium text-[14px] rounded-[10px] hover:bg-gray-50 transition-colors"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={() => handleDelete(actionsEmployee.id)}
+                      disabled={deletingId === actionsEmployee.id}
+                      className="flex-1 h-[44px] px-6 bg-[#DC2626] text-white font-medium text-[14px] rounded-[10px] hover:bg-red-700 transition-colors disabled:opacity-70 flex items-center justify-center"
+                    >
+                      {deletingId === actionsEmployee.id ? "Deleting..." : "Confirm Delete"}
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex items-center justify-between mt-4 pt-2">
+                  <div className="flex gap-2">
+                    <button
+                      onClick={closeActions}
+                      className="h-[44px] px-6 bg-white border border-gray-300 text-[#111827] font-medium text-[14px] rounded-[10px] hover:bg-gray-50 transition-colors"
+                    >
+                      Close
+                    </button>
+                    <button
+                      onClick={() => setShowDeleteConfirm(true)}
+                      className="flex items-center justify-center w-[44px] h-[44px] bg-[#FEE2E2] text-[#B91C1C] rounded-[10px] hover:bg-red-200 transition-colors"
+                      title="Delete Account"
+                    >
+                      <Image src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777306235/retailerProfile_TRASH_v21ak2.svg" alt="Trash" width={18} height={18} loading="lazy" />
+                    </button>
+                  </div>
 
-                {editDesignation !== actionsEmployee.designation ? (
-                  <button
-                    onClick={handleApplyDesignation}
-                    disabled={isUpdatingDesignation}
-                    className="h-[44px] px-6 bg-black text-white font-medium text-[14px] rounded-[10px] hover:bg-gray-800 transition-colors disabled:opacity-70"
-                  >
-                    {isUpdatingDesignation ? "Applying..." : "Apply"}
-                  </button>
-                ) : (
-                  <button
-                    onClick={closeActions}
-                    className="h-[44px] px-6 bg-white border border-gray-300 text-[#111827] font-medium text-[14px] rounded-[10px] hover:bg-gray-50 transition-colors"
-                  >
-                    Close
-                  </button>
-                )}
-              </div>
+                  {editDesignation !== actionsEmployee.designation && (
+                    <button
+                      onClick={handleApplyDesignation}
+                      disabled={isUpdatingDesignation}
+                      className="h-[44px] px-6 bg-black text-white font-medium text-[14px] rounded-[10px] hover:bg-gray-800 transition-colors disabled:opacity-70"
+                    >
+                      {isUpdatingDesignation ? "Applying..." : "Apply"}
+                    </button>
+                  )}
+                </div>
+              )}
             </div>
 
           </div>

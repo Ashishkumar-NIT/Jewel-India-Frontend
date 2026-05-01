@@ -108,26 +108,7 @@ function Sidebar() {
       </div>
 
       <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "16px", marginBottom: "8px" }}>
-        <button
-          style={{
-            background: "none",
-            border: "none",
-            cursor: "pointer",
-            opacity: 0.35,
-            transition: "all 0.15s ease",
-            padding: 0,
-            display: "flex",
-          }}
-          className="sidebar-profile"
-        >
-          <Image
-            src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777013959/profile_logo_jin2a8.svg"
-            alt="User Profile"
-            width={22}
-            height={22}
-            loading="lazy"
-          />
-        </button>
+
 
         <div
           style={{
@@ -160,11 +141,8 @@ function Sidebar() {
           }
         }
         .sidebar-item:hover {
-          opacity: 0.7 !important;
-          background-color: rgba(0, 0, 0, 0.06) !important;
-        }
-        .sidebar-profile:hover {
-          opacity: 0.7 !important;
+          opacity: 0.8 !important;
+          background-color: rgba(0, 0, 0, 0.08) !important;
         }
       `}</style>
     </aside>

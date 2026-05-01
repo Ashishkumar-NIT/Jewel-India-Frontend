@@ -114,13 +114,10 @@ export default function RetailerCataloguePage() {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex flex-col gap-1">
             <h1 className="text-[clamp(28px,3vw,32px)] font-extrabold text-[#111827] tracking-tight">
-              Catalogue ({totals.total}/50*)
+              Catalogue ({totals.total})
             </h1>
             <p className="text-[14px] text-[#6B7280]">
               Welcome back! look what all you have to offer
-            </p>
-            <p className="text-[12px] text-[#9CA3AF] mt-1">
-              *50 design upload limit on your current plan
             </p>
           </div>
           

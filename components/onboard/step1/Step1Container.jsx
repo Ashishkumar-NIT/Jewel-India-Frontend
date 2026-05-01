@@ -29,7 +29,7 @@ export function Step1Container() {
   };
 
   return (
-    <div className="flex flex-col gap-5 w-full mt-4">
+    <div className="flex flex-col gap-5 w-full mt-4 animate-fade-in-up">
       <IdentityForm
         name={name} setName={setName}
         aadhar={aadhar} setAadhar={setAadhar}

@@ -61,7 +61,7 @@
 
 .arrow {
   position: absolute;
-  top: clamp(10px, 1.5vw, 15px);
+  top: clamp(30px, 4vw, 45px);
   width: 33.33%;
   height: 30px;
   z-index: 0;

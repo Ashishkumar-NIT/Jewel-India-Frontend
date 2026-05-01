@@ -126,17 +126,17 @@ export default function AddEmployeeModal() {
       <div className="bg-white w-full max-w-[480px] rounded-[16px] border border-white shadow-[0_10px_40px_rgba(0,0,0,0.1)] relative flex flex-col p-6 sm:p-8">
         
         {/* Close Button */}
-        <button onClick={closeModal} className="absolute top-6 right-6 text-black hover:opacity-70 transition-opacity">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        <button onClick={closeModal} className="absolute top-6 right-6 text-[#111827] hover:opacity-70 transition-opacity">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <line x1="18" y1="6" x2="6" y2="18"></line>
             <line x1="6" y1="6" x2="18" y2="18"></line>
           </svg>
         </button>
 
         {/* Header */}
-        <div className="mb-6">
-          <h2 className="text-[20px] font-extrabold text-[#111827]">Add New Employee</h2>
-          <p className="text-[14px] text-[#9CA3AF] mt-0.5">New Member, New Access</p>
+        <div className="mb-8">
+          <h2 className="text-[24px] font-bold text-[#111827] leading-tight">Add New Employee</h2>
+          <p className="text-[15px] text-[#9CA3AF] mt-1">New Member, New Access</p>
         </div>
 
         {error && (
@@ -148,55 +148,55 @@ export default function AddEmployeeModal() {
         {/* Step 1: Personal Info */}
         {step === 1 && (
           <div className="flex flex-col gap-4">
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[13px] font-extrabold text-[#4B5563] uppercase tracking-wide">Employee Name</label>
+            <div className="flex flex-col gap-2">
+              <label className="text-[13px] font-bold text-[#111827] uppercase tracking-wide">Employee Name</label>
               <input
                 type="text"
                 placeholder="Eg. parash"
                 value={formData.full_name}
                 onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
-                className="w-full h-[56px] bg-[#F9FAFB] rounded-[10px] px-[16px] font-medium text-[15px] text-[#4B5563] outline-none focus:ring-2 focus:ring-black/5"
+                className="w-full h-[56px] bg-[#F8F8F8] rounded-[12px] px-[20px] font-medium text-[15px] text-[#111827] outline-none border border-transparent focus:bg-white focus:border-gray-100 transition-all"
               />
             </div>
             
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[13px] font-extrabold text-[#4B5563] uppercase tracking-wide">Mobile No</label>
+            <div className="flex flex-col gap-2">
+              <label className="text-[13px] font-bold text-[#111827] uppercase tracking-wide">Mobile No</label>
               <input
                 type="text"
                 placeholder="Eg. 9834874****"
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                className="w-full h-[56px] bg-[#F9FAFB] rounded-[10px] px-[16px] font-medium text-[15px] text-[#4B5563] outline-none focus:ring-2 focus:ring-black/5"
+                className="w-full h-[56px] bg-[#F8F8F8] rounded-[12px] px-[20px] font-medium text-[15px] text-[#111827] outline-none border border-transparent focus:bg-white focus:border-gray-100 transition-all"
               />
             </div>
             
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[13px] font-extrabold text-[#4B5563] uppercase tracking-wide">Email Id</label>
+            <div className="flex flex-col gap-2">
+              <label className="text-[13px] font-bold text-[#111827] uppercase tracking-wide">Email Id</label>
               <input
                 type="email"
                 placeholder="Eg. Parashe@gmail.com"
                 value={formData.personal_email}
                 onChange={(e) => setFormData({ ...formData, personal_email: e.target.value })}
-                className="w-full h-[56px] bg-[#F9FAFB] rounded-[10px] px-[16px] font-medium text-[15px] text-[#4B5563] outline-none focus:ring-2 focus:ring-black/5"
+                className="w-full h-[56px] bg-[#F8F8F8] rounded-[12px] px-[20px] font-medium text-[15px] text-[#111827] outline-none border border-transparent focus:bg-white focus:border-gray-100 transition-all"
               />
             </div>
             
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[13px] font-extrabold text-[#4B5563] uppercase tracking-wide">Designation</label>
+            <div className="flex flex-col gap-2">
+              <label className="text-[13px] font-bold text-[#111827] uppercase tracking-wide">Designation</label>
               <input
                 type="text"
                 placeholder="Eg. Sales"
                 value={formData.designation}
                 onChange={(e) => setFormData({ ...formData, designation: e.target.value })}
-                className="w-full h-[56px] bg-[#F9FAFB] rounded-[10px] px-[16px] font-medium text-[15px] text-[#4B5563] outline-none focus:ring-2 focus:ring-black/5"
+                className="w-full h-[56px] bg-[#F8F8F8] rounded-[12px] px-[20px] font-medium text-[15px] text-[#111827] outline-none border border-transparent focus:bg-white focus:border-gray-100 transition-all"
               />
             </div>
 
-            <div className="mt-4 flex justify-end">
+            <div className="mt-6 flex justify-end">
               <button
                 onClick={handleNextStep1}
                 disabled={isLoading}
-                className="h-[48px] px-6 bg-black text-white font-medium text-[15px] rounded-[12px] hover:bg-gray-800 transition-colors shadow-md shadow-black/20 disabled:opacity-70 disabled:cursor-not-allowed"
+                className="h-[52px] px-8 bg-black text-white font-bold text-[16px] rounded-[12px] hover:bg-black/90 transition-all shadow-[0_4px_14px_rgba(0,0,0,0.3)] disabled:opacity-70 disabled:cursor-not-allowed"
               >
                 {isLoading ? "Loading..." : "Set Password"}
               </button>

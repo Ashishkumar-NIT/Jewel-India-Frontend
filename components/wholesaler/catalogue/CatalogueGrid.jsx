@@ -266,7 +266,7 @@ const CatalogueProductCard = memo(function CatalogueProductCard({ product, onCli
   return (
     <article
       onClick={() => onClick && onClick(product)}
-      className="cursor-pointer group flex flex-col bg-celestique-light rounded-xl border border-[#eee] transition-all duration-200 ease shadow-[0_2px_12px_rgba(0,0,0,0.07)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.12)] hover:-translate-y-[2px]"
+      className="cursor-pointer group flex flex-col bg-celestique-light rounded-xl border border-[#eee] transition-all duration-200 ease shadow-[0_2px_12px_rgba(0,0,0,0.07)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.12)] hover:-translate-y-[2px] active:scale-[0.98]"
     >
       <div className="w-full aspect-square bg-[#f9f9f9] rounded-t-xl overflow-hidden relative">
         {imgUrl && !imgError ? (

@@ -31,9 +31,9 @@ export default async function RetailerLayout({ children }) {
   }
 
   return (
-    <div className="flex min-h-screen bg-[#FAFAFA] font-sans">
+    <div className="flex min-h-screen bg-[#F0F2F5] font-sans">
       <RetailerSidebar retailer={retailerData} />
-      <main className="flex-1 ml-[70px] md:ml-[200px] lg:ml-[220px] min-h-screen flex flex-col transition-all duration-300">
+      <main className="flex-1 ml-[86px] md:ml-[256px] min-h-screen flex flex-col transition-all duration-300">
         {children}
       </main>
       

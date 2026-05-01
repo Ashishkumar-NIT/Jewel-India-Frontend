@@ -11,6 +11,13 @@ export default function ReferralManager({ initialLinks = [] }) {
   const [copiedId, setCopiedId] = useState(null);
   const [activeLink, setActiveLink] = useState("");
 
+  const validLinks = links.filter(l => {
+    const d = new Date(l.created_at);
+    const diffTime = Math.abs(new Date() - d);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays <= 30;
+  });
+
   const handleGenerate = useCallback(async () => {
     setGenerating(true);
     setGenerateError(null);
@@ -170,7 +177,7 @@ export default function ReferralManager({ initialLinks = [] }) {
             PREVIOUS LINK
           </h3>
           <div style={{ display: "flex", flexDirection: "column" }}>
-            {links.map((link, index) => (
+            {validLinks.map((link, index) => (
               <div
                 key={link.id}
                 className={styles.linkRow}

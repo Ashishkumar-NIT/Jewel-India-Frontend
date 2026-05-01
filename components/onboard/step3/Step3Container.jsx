@@ -16,7 +16,7 @@ export function Step3Container() {
 
   const isFormValid = panFile !== null && gstFile !== null;
   return (
-    <div className="flex flex-col gap-8 w-full mt-10">
+    <div className="flex flex-col gap-8 w-full mt-10 animate-fade-in-up">
       <DocumentUpload
         panFile={panFile} setPanFile={setPanFile}
         gstFile={gstFile} setGstFile={setGstFile}

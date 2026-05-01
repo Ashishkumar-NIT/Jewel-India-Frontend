@@ -120,24 +120,45 @@ export function ChatWindow({ conversation, currentUserType }) {
           </div>
         </div>
 
-        {/* Product context mini-card */}
-        {conversation.product && (
-          <div className="hidden sm:flex items-center gap-3 bg-gray-50 rounded-lg pr-3 pl-1 py-1 border border-gray-100">
-            <div className="w-8 h-8 rounded bg-gray-200 overflow-hidden shrink-0">
-              {productImageUrl ? (
-                <img src={productImageUrl} alt={conversation.product.title} className="w-full h-full object-cover" />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-[8px] text-gray-400">No Img</div>
-              )}
+        <div className="flex items-center gap-4">
+          {/* Product context mini-card */}
+          {conversation.product && (
+            <div className="hidden sm:flex items-center gap-3 bg-gray-50 rounded-lg pr-3 pl-1 py-1 border border-gray-100">
+              <div className="w-8 h-8 rounded bg-gray-200 overflow-hidden shrink-0">
+                {productImageUrl ? (
+                  <img src={productImageUrl} alt={conversation.product.title} className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-[8px] text-gray-400">No Img</div>
+                )}
+              </div>
+              <div className="flex flex-col max-w-[150px]">
+                <span className="text-[10px] uppercase text-gray-400 font-semibold leading-none">Regarding</span>
+                <span className="text-[12px] font-medium text-gray-900 truncate leading-tight">
+                  {conversation.product.title || "Product"}
+                </span>
+              </div>
             </div>
-            <div className="flex flex-col max-w-[150px]">
-              <span className="text-[10px] uppercase text-gray-400 font-semibold leading-none">Regarding</span>
-              <span className="text-[12px] font-medium text-gray-900 truncate leading-tight">
-                {conversation.product.title || "Product"}
-              </span>
-            </div>
-          </div>
-        )}
+          )}
+
+          {currentUserType === "wholesaler" && (
+            <button
+              onClick={async () => {
+                if (confirm("Are you sure you want to delete this conversation?")) {
+                  try {
+                    await fetch(`/api/chat/conversation/${conversation.id}`, { method: "DELETE" });
+                    window.location.reload();
+                  } catch (e) {
+                    console.error(e);
+                  }
+                }
+              }}
+              className="text-red-500 hover:bg-red-50 p-2 rounded-md text-[13px] font-medium transition-colors border border-transparent hover:border-red-200"
+              title="Delete conversation"
+            >
+              Delete Chat
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Messages Area */}

@@ -10,11 +10,11 @@ function DashboardStats({
   archivedDesigns,
   isLoading,
 }) {
-  const statCardClasses = "bg-white border border-gray-100 rounded-[16px] p-6 flex flex-col justify-between shadow-[0_2px_10px_rgba(0,0,0,0.03)] relative overflow-hidden h-[160px]";
+  const statCardClasses = "bg-white border border-gray-100 rounded-[20px] p-6 flex flex-col justify-between shadow-[0_2px_12px_rgba(0,0,0,0.02)] relative overflow-hidden h-[160px]";
   
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-3xl">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
         <div className={`${statCardClasses} animate-pulse`}>
           <div className="h-4 bg-gray-200 rounded w-1/3 mb-2"></div>
           <div className="h-10 bg-gray-200 rounded w-1/4"></div>
@@ -30,7 +30,7 @@ function DashboardStats({
   const inactiveEmployees = (employeesCount || 0) - (activeEmployeesCount || 0);
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-3xl">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
       {/* Total Employees */}
       <div className={statCardClasses}>
         <h3 className="text-[#6B7280] font-medium text-[14px]">Total Employee</h3>
@@ -39,7 +39,7 @@ function DashboardStats({
             <span className="text-[48px] font-bold text-[#111827] leading-none tracking-tight">
               {activeEmployeesCount || 0}
             </span>
-            <span className="text-[14px] text-[#6B7280] font-medium">Active</span>
+            <span className="text-[15px] text-[#6B7280] font-bold ml-1 mb-1">Active</span>
           </div>
         </div>
         <div className="mt-auto pt-4">

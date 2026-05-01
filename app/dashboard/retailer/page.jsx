@@ -58,14 +58,14 @@ export default async function RetailerDashboardPage() {
       totalDesigns = totalDesignResult.count || 0;
       activeDesigns = activeDesignResult.count || 0;
       archivedDesigns = totalDesigns - activeDesigns;
-      recentEmployees = recentEmpData || [];
+      recentEmployees = recentEmpData.data || [];
     }
   }
 
   return (
     <div className="flex flex-col min-h-screen">
-      <div className="flex-1 w-full max-w-7xl mx-auto px-4 md:px-10 py-10">
-        <div className="flex flex-col gap-8">
+      <div className="flex-1 w-full max-w-7xl mx-auto px-6 md:px-8 py-8">
+        <div className="flex flex-col gap-6">
           {/* Welcome Section */}
           <div>
             <h1 className="text-[clamp(28px,3vw,32px)] font-extrabold text-[#111827] tracking-tight mb-1">
@@ -77,48 +77,50 @@ export default async function RetailerDashboardPage() {
           </div>
           
           {/* Stats Cards */}
-          <DashboardStats 
-            employeesCount={employeesCount}
-            activeEmployeesCount={activeEmployeesCount}
-            activeDesigns={activeDesigns} 
-            totalDesigns={totalDesigns}
-            archivedDesigns={archivedDesigns}
-            isLoading={false} 
-          />
+          <div className="w-full max-w-6xl">
+            <DashboardStats 
+              employeesCount={employeesCount}
+              activeEmployeesCount={activeEmployeesCount}
+              activeDesigns={activeDesigns} 
+              totalDesigns={totalDesigns}
+              archivedDesigns={archivedDesigns}
+              isLoading={false} 
+            />
+          </div>
 
           {/* Quick Action Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-3xl">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-6xl">
             <Link
               href="?modal=add-employee"
               scroll={false}
-              className="bg-white rounded-[16px] p-6 flex flex-col justify-center gap-4 shadow-[0_2px_10px_rgba(0,0,0,0.03)] hover:shadow-md transition-shadow border border-gray-100 min-h-[130px]"
+              className="bg-white rounded-[20px] p-5 flex flex-row items-center gap-5 shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-[0_4px_24px_rgba(0,0,0,0.06)] transition-all border border-[#E5E7EB] min-h-[110px]"
             >
-              <div className="w-[48px] h-[48px] rounded-[14px] bg-[#E0E7FF] flex items-center justify-center shrink-0">
-                <Image src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777306236/retailerProfile_addEmployee_bayej7.svg" alt="Add Employee" width={20} height={20} loading="lazy" className="w-[20px] h-[20px] object-contain" />
+              <div className="w-[56px] h-[56px] rounded-[16px] bg-[#E0E7FF] flex items-center justify-center shrink-0">
+                <Image src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777306236/retailerProfile_addEmployee_bayej7.svg" alt="Add Employee" width={24} height={24} loading="lazy" className="object-contain" />
               </div>
-              <div className="flex flex-col gap-0.5">
+              <div className="flex flex-col gap-1">
                 <h3 className="text-[16px] font-bold text-[#111827]">Add New Employee</h3>
-                <p className="text-[13px] text-[#6B7280]">Create employee accounts and login credentials</p>
+                <p className="text-[13px] text-[#6B7280] leading-snug">Create employee accounts and login credentials</p>
               </div>
             </Link>
 
             <Link
               href="/dashboard/retailer/catalogue"
-              className="bg-white rounded-[16px] p-6 flex flex-col justify-center gap-4 shadow-[0_2px_10px_rgba(0,0,0,0.03)] hover:shadow-md transition-shadow border border-gray-100 min-h-[130px]"
+              className="bg-white rounded-[20px] p-5 flex flex-row items-center gap-5 shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-[0_4px_24px_rgba(0,0,0,0.06)] transition-all border border-[#E5E7EB] min-h-[110px]"
             >
-              <div className="w-[48px] h-[48px] rounded-[14px] bg-[#F3E8FF] flex items-center justify-center shrink-0">
-                <Image src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777306237/retailerProfile_upload_u1mi2x.svg" alt="Upload Design" width={20} height={20} loading="lazy" className="w-[20px] h-[20px] object-contain" />
+              <div className="w-[56px] h-[56px] rounded-[16px] bg-[#F3E8FF] flex items-center justify-center shrink-0">
+                <Image src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777306237/retailerProfile_upload_u1mi2x.svg" alt="Upload Design" width={24} height={24} loading="lazy" className="object-contain" />
               </div>
-              <div className="flex flex-col gap-0.5">
+              <div className="flex flex-col gap-1">
                 <h3 className="text-[16px] font-bold text-[#111827]">Upload Design</h3>
-                <p className="text-[13px] text-[#6B7280]">Add new jewellery designs to your private catalogue</p>
+                <p className="text-[13px] text-[#6B7280] leading-snug">Add new jewellery designs to your private catalogue</p>
               </div>
             </Link>
           </div>
 
           {/* Employee Directory */}
-          <div className="w-full max-w-3xl bg-white rounded-[16px] shadow-[0_2px_10px_rgba(0,0,0,0.03)] border border-gray-100 overflow-hidden">
-            <div className="px-6 py-5 border-b border-gray-100">
+          <div className="w-full max-w-6xl bg-white rounded-[20px] shadow-[0_2px_12px_rgba(0,0,0,0.02)] border border-gray-100 overflow-hidden">
+            <div className="px-6 py-5 border-b border-gray-50">
               <h2 className="text-[18px] font-bold text-[#111827]">Employee Directory</h2>
             </div>
             {recentEmployees.length > 0 ? (

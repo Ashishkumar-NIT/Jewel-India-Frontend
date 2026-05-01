@@ -62,7 +62,7 @@ const DesignCard = memo(function DesignCard({ design, onArchiveToggle }) {
         )}
       </div>
 
-      <div className="flex flex-col px-3.5 py-3.5">
+      <div className="flex flex-col p-5">
         <div className="flex items-center justify-between mb-2">
           <h3 className="text-[14px] font-bold text-[#111827] truncate pr-2">
             {title}
@@ -94,7 +94,7 @@ export function RetailerCatalogueGrid({ designs, isLoading, onArchiveToggle }) {
         {Array.from({ length: 6 }).map((_, index) => (
           <div key={index} className="rounded-[14px] bg-white overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.04)] animate-pulse">
             <div className="aspect-square bg-gray-100" />
-            <div className="px-3.5 py-3.5 space-y-3">
+            <div className="p-5 space-y-3">
               <div className="flex justify-between">
                 <div className="h-4 w-1/2 bg-gray-100 rounded" />
                 <div className="h-4 w-12 bg-gray-100 rounded" />

@@ -23,7 +23,7 @@ export function Step2Container() {
     selectedCity !== '' &&
     logoImage !== null;
   return (
-    <div className="flex flex-col gap-[clamp(12px,1.5vw,20px)] w-full mt-4">
+    <div className="flex flex-col gap-[clamp(12px,1.5vw,20px)] w-full mt-4 animate-fade-in-up">
       <BusinessForm
         businessName={businessName} setBusinessName={setBusinessName}
         selectedState={selectedState} setSelectedState={setSelectedState}
