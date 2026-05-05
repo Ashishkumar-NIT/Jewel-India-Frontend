@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { initiateGoogleOAuth } from "../../lib/actions/oauth";
+import { validateIndianMobile } from "../../lib/utils/credentials";
 
 export function EntryForm() {
   const router = useRouter();
@@ -43,20 +44,13 @@ export function EntryForm() {
     const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedIdentity);
 
     if (!isEmail) {
-      let phoneNum = normalizedIdentity.replace(/[^\d+]/g, '');
-      if (/^\d{10}$/.test(phoneNum)) {
-        phoneNum = '+91' + phoneNum;
-      } else if (/^91\d{10}$/.test(phoneNum)) {
-        phoneNum = '+' + phoneNum;
-      } else if (!phoneNum.startsWith('+')) {
-        phoneNum = '+' + phoneNum;
-      }
-      if (phoneNum.length < 10 || phoneNum.length > 16) {
-        setError("Please enter a valid 10-digit mobile number.");
+      const mobileCheck = validateIndianMobile(normalizedIdentity);
+      if (!mobileCheck.valid) {
+        setError("Please enter a valid 10-digit Indian mobile number.");
         setLoading(false);
         return;
       }
-      normalizedIdentity = phoneNum;
+      normalizedIdentity = mobileCheck.normalized;
     }
 
     try {

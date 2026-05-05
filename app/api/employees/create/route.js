@@ -4,6 +4,7 @@ import { supabaseAdmin } from "../../../../lib/supabase/admin";
 import {
   generateEmployeeCredentials,
   isValidEmailFormat,
+  validateIndianMobile,
 } from "../../../../lib/utils/credentials";
 
 export const runtime = 'nodejs';
@@ -31,8 +32,18 @@ export async function POST(request) {
     const fullName = typeof full_name === "string" ? full_name.trim() : "";
     const designationValue =
       typeof designation === "string" ? designation.trim() : "";
-    const phoneValue =
-      typeof phone === "string" && phone.trim().length > 0 ? phone.trim() : null;
+
+    let phoneValue = null;
+    if (typeof phone === "string" && phone.trim().length > 0) {
+      const mobileCheck = validateIndianMobile(phone.trim());
+      if (!mobileCheck.valid) {
+        return NextResponse.json(
+          { error: "Please provide a valid 10-digit Indian mobile number." },
+          { status: 400 }
+        );
+      }
+      phoneValue = mobileCheck.normalized;
+    }
 
     if (!fullName || !designationValue) {
       return NextResponse.json({ error: "Full name and designation are required" }, { status: 400 });

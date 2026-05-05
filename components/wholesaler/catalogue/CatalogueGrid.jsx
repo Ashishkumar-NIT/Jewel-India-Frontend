@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 
 // ── Product Detail Modal ──────────────────────────────────────────────────────
-function ProductDetailModal({ product, onClose, artisanNameFallback }) {
+function ProductDetailModal({ product, onClose }) {
   if (!product) return null;
 
   // TODO: replace with Supabase product/processed/{product.sku} fetch once SKU is available
@@ -339,7 +339,6 @@ export default function CatalogueGrid({
   isError = false,
   onRetry,
   activeCategory = "All",
-  artisanName = "",
 }) {
   const router = useRouter();
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -410,10 +409,9 @@ export default function CatalogueGrid({
         ))}
       </div>
       {selectedProduct && (
-        <ProductDetailModal 
-          product={selectedProduct} 
-          onClose={() => setSelectedProduct(null)} 
-          artisanNameFallback={artisanName}
+        <ProductDetailModal
+          product={selectedProduct}
+          onClose={() => setSelectedProduct(null)}
         />
       )}
     </>

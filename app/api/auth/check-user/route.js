@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "../../../../lib/supabase/admin";
+import { validateIndianMobile } from "../../../../lib/utils/credentials";
 
 /**
  * POST /api/auth/check-user
@@ -17,15 +18,16 @@ export async function POST(request) {
       return NextResponse.json({ error: "Identity is required" }, { status: 400 });
     }
 
-    const normalized = identity.trim().toLowerCase();
+    const trimmed = identity.trim();
+    const normalized = trimmed.toLowerCase();
 
-  
     const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalized);
-    const isPhone = /^\+?[0-9\s\-().]{7,15}$/.test(identity.trim());
+    const mobileCheck = validateIndianMobile(trimmed);
+    const isPhone = mobileCheck.valid;
 
     if (!isEmail && !isPhone) {
       return NextResponse.json(
-        { error: "Please enter a valid email address or phone number." },
+        { error: "Please enter a valid email address or 10-digit Indian mobile number." },
         { status: 400 }
       );
     }
@@ -53,9 +55,9 @@ export async function POST(request) {
         provider = userMatch.app_metadata?.provider || null;
       }
     } else {
-      // Normalize phone: strip spaces/dashes/parens AND plus signs for comparison
+      // Use validated normalized E.164 phone for comparison
       // Supabase stores phone numbers like '911234567890' without the '+'
-      const normalizedPhone = identity.trim().replace(/[\s\-.()+]/g, "");
+      const normalizedPhone = mobileCheck.normalized.replace(/[+]/g, "");
       const userMatch = data.users.find(
         (u) => u.phone?.replace(/[\s\-.()+]/g, "") === normalizedPhone
       );

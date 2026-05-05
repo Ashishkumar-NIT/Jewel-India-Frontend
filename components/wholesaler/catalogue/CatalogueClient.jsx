@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
-import { useRouter } from "next/navigation";
 import Image from "next/image";
 import CatalogueGrid from "./CatalogueGrid";
 import { createClient } from "../../../lib/supabase/client";
@@ -18,30 +17,30 @@ const productsCache = {
 };
 
 const FILTER_CONFIG = [
-  { 
-    id: "trending", 
-    label: "Trending", 
-    options: ["Most saved", "Most Liked", "Most viewed"] 
+  {
+    id: "trending",
+    label: "Trending",
+    options: ["Most saved", "Most Liked", "Most viewed"]
   },
-  { 
-    id: "size", 
-    label: "Size", 
-    options: ["XS", "S", "M", "L", "XL", "Free Size"] 
+  {
+    id: "size",
+    label: "Size",
+    options: ["XS", "S", "M", "L", "XL", "Free Size"]
   },
-  { 
-    id: "weight", 
-    label: "Weight", 
-    options: ["0-2 g", "2-4 g", "4-6 g", "6-10 g", "10-20 g", "20-35 g", "35-50 g", "50-75 g", "75-100 g", "100+ g"] 
+  {
+    id: "weight",
+    label: "Weight",
+    options: ["0-2 g", "2-4 g", "4-6 g", "6-10 g", "10-20 g", "20-35 g", "35-50 g", "50-75 g", "75-100 g", "100+ g"]
   },
-  { 
-    id: "availability", 
-    label: "Availability", 
-    options: ["In stock", "Within 5 days", "Within 15 days", "Within 30 days", "More than 30 days"] 
+  {
+    id: "availability",
+    label: "Availability",
+    options: ["In stock", "Within 5 days", "Within 15 days", "Within 30 days", "More than 30 days"]
   },
-  { 
-    id: "purity", 
-    label: "Purity", 
-    options: ["24K (999)", "22K (916)", "18K (750)", "14K (585)", "925 Silver", "950 Platinum"] 
+  {
+    id: "purity",
+    label: "Purity",
+    options: ["24K (999)", "22K (916)", "18K (750)", "14K (585)", "925 Silver", "950 Platinum"]
   }
 ];
 
@@ -49,12 +48,8 @@ export default function CatalogueClient({
   initialProducts,
   initialCount,
   initialCategory,
-  dynamicCategories,
-  wholesalerId,
-  userEmail,
-  artisanName
+  dynamicCategories
 }) {
-  const router = useRouter();
   const supabase = useMemo(() => createClient(), []);
 
   const [activeCategory, setActiveCategory] = useState(() => {
@@ -172,12 +167,6 @@ export default function CatalogueClient({
       fetchProducts(activeCategory, page, filters);
     }
   }, [page, filters, activeCategory]); // eslint-disable-line
-
-  // Sign out
-  const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    router.push("/signin"); // or "/"
-  };
 
   // Category Row interactions
   const handleCategoryClick = (slug) => {
@@ -371,13 +360,12 @@ export default function CatalogueClient({
         </div>
 
         {/* ── Product Grid ── */}
-        <CatalogueGrid 
+        <CatalogueGrid
           products={products}
           isLoading={isLoading}
           isError={isError}
           onRetry={() => fetchProducts(activeCategory, page, filters)}
           activeCategory={getActiveCatName()}
-          artisanName={artisanName}
         />
 
         {/* ── Pagination ── */}

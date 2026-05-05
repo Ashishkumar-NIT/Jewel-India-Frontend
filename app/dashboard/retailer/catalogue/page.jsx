@@ -90,22 +90,6 @@ export default function RetailerCataloguePage() {
     }
   };
 
-  const handleDelete = async (design) => {
-    const confirmed = window.confirm("Delete this design permanently? This cannot be undone.");
-    if (!confirmed) return;
-
-    designsCache.data = designsCache.data.filter((item) => item.id !== design.id);
-    setDesigns(designsCache.data);
-
-    const response = await fetch(`/api/designs/${design.id}`, {
-      method: "DELETE",
-    });
-
-    if (!response.ok) {
-      fetchDesigns(true); // Re-fetch on failure to restore correct state
-    }
-  };
-
   return (
     <div className="flex flex-col min-h-screen relative bg-[#FAFAFA]">
       <main className="flex-1 w-full max-w-7xl mx-auto px-4 md:px-10 py-10 flex flex-col gap-8">
@@ -155,7 +139,6 @@ export default function RetailerCataloguePage() {
           designs={designs}
           isLoading={isLoading}
           onArchiveToggle={handleArchiveToggle}
-          onDelete={handleDelete}
         />
 
       </main>

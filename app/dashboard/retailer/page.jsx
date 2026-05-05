@@ -13,7 +13,6 @@ export default async function RetailerDashboardPage() {
   let activeDesigns = 0;
   let totalDesigns = 0;
   let archivedDesigns = 0;
-  let businessName = "";
   let recentEmployees = [];
 
   if (user) {
@@ -24,8 +23,6 @@ export default async function RetailerDashboardPage() {
       .single();
 
     if (retailer) {
-      businessName = retailer.business_name;
-
       const [empCountResult, activeEmpResult, totalDesignResult, activeDesignResult, recentEmpData] = await Promise.all([
         supabase
           .from("employees")

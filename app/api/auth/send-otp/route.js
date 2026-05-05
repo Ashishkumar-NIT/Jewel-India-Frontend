@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "../../../../lib/supabase/admin";
 import { createClient } from "../../../../lib/supabase/server";
+import { validateIndianMobile } from "../../../../lib/utils/credentials";
 
 const MAX_RESENDS = 5;          // max resend attempts per identity
 const LOCK_DURATION_HOURS = 24; // lockout duration after exhausting resends
@@ -14,8 +15,19 @@ export async function POST(request) {
       return NextResponse.json({ error: "Identity is required" }, { status: 400 });
     }
 
-    const normalized = identity.trim().toLowerCase();
+    const trimmed = identity.trim();
+    const normalized = trimmed.toLowerCase();
     const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalized);
+    const mobileCheck = validateIndianMobile(trimmed);
+
+    if (!isEmail && !mobileCheck.valid) {
+      return NextResponse.json(
+        { error: "Please enter a valid email address or 10-digit Indian mobile number." },
+        { status: 400 }
+      );
+    }
+
+    const phoneIdentity = mobileCheck.valid ? mobileCheck.normalized : normalized;
 
     // ── Rate limit check ─────────────────────────────────────────────────────
     const { data: rateLimit, error: rlFetchError } = await supabaseAdmin
@@ -96,7 +108,7 @@ export async function POST(request) {
       otpError = resp.error;
     } else {
       const resp = await supabase.auth.signInWithOtp({
-        phone: normalized,
+        phone: phoneIdentity,
         options: { shouldCreateUser: true },
       });
       otpError = resp.error;

@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import Image from "next/image";
+import { validateIndianMobile } from "../../lib/utils/credentials";
 
 export default function AddEmployeeModal() {
   const searchParams = useSearchParams();
@@ -49,6 +50,11 @@ export default function AddEmployeeModal() {
   const handleNextStep1 = async () => {
     if (!formData.full_name || !formData.phone || !formData.personal_email || !formData.designation) {
       setError("Please fill all fields.");
+      return;
+    }
+    const mobileCheck = validateIndianMobile(formData.phone);
+    if (!mobileCheck.valid) {
+      setError("Please enter a valid 10-digit Indian mobile number.");
       return;
     }
     setError("");
@@ -163,11 +169,20 @@ export default function AddEmployeeModal() {
               <label className="text-[13px] font-bold text-[#111827] uppercase tracking-wide">Mobile No</label>
               <input
                 type="text"
+                inputMode="numeric"
+                maxLength={10}
                 placeholder="Eg. 9834874****"
                 value={formData.phone}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                className="w-full h-[56px] bg-[#F8F8F8] rounded-[12px] px-[20px] font-medium text-[15px] text-[#111827] outline-none border border-transparent focus:bg-white focus:border-gray-100 transition-all"
+                onChange={(e) => {
+                  const val = e.target.value.replace(/\D/g, '').slice(0, 10);
+                  setFormData({ ...formData, phone: val });
+                  if (error.includes("mobile")) setError("");
+                }}
+                className={`w-full h-[56px] bg-[#F8F8F8] rounded-[12px] px-[20px] font-medium text-[15px] text-[#111827] outline-none border transition-all focus:bg-white ${error.includes("mobile") ? 'border-red-400 focus:border-red-400' : 'border-transparent focus:border-gray-100'}`}
               />
+              {error.includes("mobile") && (
+                <span className="text-[12px] text-red-500 font-medium">{error}</span>
+              )}
             </div>
             
             <div className="flex flex-col gap-2">

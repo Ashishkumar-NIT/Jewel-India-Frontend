@@ -1,4 +1,3 @@
-import Footer from "../../../components/wholesaler/Footer";
 import Sidebar from "../../../components/wholesaler/Sidebar";
 
 export const metadata = {
@@ -12,7 +11,6 @@ export default async function WholesalerLayout({ children }) {
       <Sidebar />
       <main style={{ flex: 1, marginLeft: "70px", minHeight: "100vh" }}>
         {children}
-        {/* <Footer /> */}
       </main>
     </div>
   );

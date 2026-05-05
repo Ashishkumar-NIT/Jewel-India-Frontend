@@ -4,8 +4,6 @@ import HeroUploadSection from "../../../components/wholesaler/HeroUploadSection"
 import OverviewSection from "../../../components/wholesaler/OverviewSection";
 import WeeklyReviewBanner from "../../../components/wholesaler/WeeklyReviewBanner";
 import CatalogueSection from "../../../components/wholesaler/CatalogueSection";
-import { SignOutButton } from "../../../components/auth/SignOutButton";
-
 export default async function WholesalerDashboardPage() {
   const user = await getAuthUser();
   const supabase = await createClient();
@@ -42,12 +40,9 @@ export default async function WholesalerDashboardPage() {
         .from("wholesalers")
         .update({ has_visited_dashboard: true })
         .eq("user_id", user.id)
-        .then(() => {})
         .catch(() => {});
     }
   }
-
-  const userIdentifier = user?.email || user?.phone || "";
 
   return (
     <main className="min-h-screen bg-white pb-20">
