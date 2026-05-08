@@ -2,7 +2,6 @@ import { getAuthUser } from "../../../../lib/supabase/queries";
 import { redirect } from "next/navigation";
 import { AddProductForm } from "../../../../components/product/AddProductForm";
 import { BackToDashboardButton } from "../../../../components/product/BackToDashboardButton";
-import { SignOutButton } from "../../../../components/auth/SignOutButton";
 
 export const metadata = { title: "Add Product — Celestique" };
 
@@ -14,13 +13,7 @@ export default async function AddProductPage() {
   return (
     <div className="min-h-screen bg-white flex flex-col">
       <header className="sticky top-0 z-50 flex items-center justify-between border-b border-[#e5e5e5] bg-white px-4 md:px-10 py-2.5">
-        {/* Left - Back to dashboard */}
         <BackToDashboardButton />
-        {/* Right - User info and sign out */}
-        <div className="flex flex-row items-center gap-4">
-          <span className="hidden md:inline text-[13px] text-[#6B7280] font-sfpro">{user.email}</span>
-          <SignOutButton />
-        </div>
       </header>
 
       {/* Main Content */}

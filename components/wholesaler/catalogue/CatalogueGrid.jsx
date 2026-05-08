@@ -106,7 +106,7 @@ function ProductDetailModal({ product, onClose }) {
                 <button
                   key={idx}
                   onClick={() => setActiveImageIndex(idx)}
-                  className={`shrink-0 w-[64px] h-[64px] md:w-[72px] md:h-[72px] rounded-[10px] bg-[#f5f5f5] overflow-hidden transition-all border-2 ${activeImageIndex === idx ? 'border-[#111]' : 'border-transparent opacity-60 hover:opacity-100'}`}
+                  className={`shrink-0 w-[64px] h-[64px] md:w-[72px] md:h-[72px] rounded-[10px] bg-[#f5f5f5] overflow-hidden transition-all border-2 ${activeImageIndex === idx ? 'border-[#111] opacity-30' : 'border-transparent opacity-100'}`}
                 >
                   <Image
                     src={imgUrl}
@@ -178,7 +178,7 @@ function ProductDetailModal({ product, onClose }) {
 
           {/* Publish Toggle */}
           <div className="flex items-center justify-between mt-auto pt-4 border-t border-[#f0f0f0]">
-            <span className="text-[15px] font-semibold text-[#1A1A1A]">Publish to Collection</span>
+            <span className="text-[15px] font-semibold text-[#1A1A1A]">Publish to Retailer</span>
             <button
               onClick={handleTogglePublish}
               disabled={isUpdatingPublish}

@@ -2,6 +2,9 @@ import { createClient } from "../../../lib/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default async function EmployeeDashboardPage() {
   const supabase = await createClient();
 
@@ -40,7 +43,8 @@ export default async function EmployeeDashboardPage() {
   const { count: productsCount } = await supabase
     .from("products")
     .select("*", { count: "exact", head: true })
-    .not("processed_image_url", "is", null);
+    .not("processed_image_url", "is", null)
+    .eq("is_published", true);
 
   // ── Recent designs (last 6) ─────────────────────────────────────
   const { data: recentDesigns } = await supabase

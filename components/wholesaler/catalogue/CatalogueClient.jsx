@@ -12,21 +12,11 @@ const productsCache = {
   data: null,
   count: 0,
   category: "all",
-  filters: { trending: [], size: [], weight: [], availability: [], purity: [] },
+  filters: { weight: [], availability: [], purity: [] },
   page: 1
 };
 
 const FILTER_CONFIG = [
-  {
-    id: "trending",
-    label: "Trending",
-    options: ["Most saved", "Most Liked", "Most viewed"]
-  },
-  {
-    id: "size",
-    label: "Size",
-    options: ["XS", "S", "M", "L", "XL", "Free Size"]
-  },
   {
     id: "weight",
     label: "Weight",
@@ -64,8 +54,6 @@ export default function CatalogueClient({
     const hasCachedFilters = productsCache.filters &&
       Object.values(productsCache.filters).some(arr => arr.length > 0);
     return hasCachedFilters ? productsCache.filters : {
-      trending: [],
-      size: [],
       weight: [],
       availability: [],
       purity: []
@@ -143,7 +131,6 @@ export default function CatalogueClient({
       params.set("page", String(p));
       params.set("limit", String(LIMIT));
 
-      if (f.size.length) f.size.forEach(v => params.append("size[]", v));
       if (f.weight.length) f.weight.forEach(v => params.append("weight[]", v));
       if (f.availability.length) f.availability.forEach(v => params.append("availability[]", v));
       if (f.purity.length) f.purity.forEach(v => params.append("purity[]", v));
@@ -198,7 +185,7 @@ export default function CatalogueClient({
     
     // Reset all filters and set page 1
     setActiveCategory(newCat);
-    setFilters({ trending: [], size: [], weight: [], availability: [], purity: [] });
+    setFilters({ weight: [], availability: [], purity: [] });
     setPage(1);
     setOpenDropdown(null);
 
@@ -253,7 +240,7 @@ export default function CatalogueClient({
 
         {/* ── Category Row ── */}
         <div className="relative mb-[28px] flex items-center pr-24">
-          <div className="flex items-center gap-6 overflow-x-auto whitespace-nowrap scroll-smooth pb-4 pt-2 px-2 custom-scrollbar">
+          <div className="flex items-center gap-6 overflow-x-auto whitespace-nowrap scroll-smooth pb-8 pt-6 px-4 custom-scrollbar">
             {dynamicCategories?.map((cat) => {
               const isActive = activeCategory === cat.slug;
               return (
@@ -263,8 +250,8 @@ export default function CatalogueClient({
                   className="flex flex-col items-center gap-2 group outline-none shrink-0"
                 >
                   <div 
-                    className={`w-[90px] h-[90px] rounded-[10px] overflow-hidden transition-all duration-300 ease-out ${isActive ? "scale-115 border-[2px] border-[#111] shadow-md" : "hover:shadow-sm"}`}
-                    style={isActive ? { transform: 'scale(1.15)' } : {}}
+                    className={`w-[90px] h-[90px] rounded-[12px] overflow-hidden transition-all duration-300 ease-out relative ${isActive ? "scale-110 ring-2 ring-[#111] ring-offset-1 shadow-lg z-10" : "hover:shadow-sm opacity-70 hover:opacity-100"}`}
+                    style={isActive ? { transform: 'scale(1.1)' } : {}}
                   >
                     {cat.image ? (
                       <Image

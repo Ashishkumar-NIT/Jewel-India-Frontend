@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
 import { createClient } from "../../../../lib/supabase/server";
+import { supabaseAdmin } from "../../../../lib/supabase/admin";
 
 export async function POST(request) {
   try {
-    const { identity, token } = await request.json();
+    const { identity, token, referralCode } = await request.json();
 
     if (!identity || !token) {
       return NextResponse.json({ error: "Identity and token are required." }, { status: 400 });
@@ -39,6 +40,26 @@ export async function POST(request) {
         { error: "Invalid OTP. Please check the code and try again." },
         { status: 401 }
       );
+    }
+
+    // ── Referral Link Expiration ──────────────────────────────────
+    if (referralCode) {
+      try {
+        // Increment use count and expire the link immediately
+        await supabaseAdmin
+          .from("referral_links")
+          .update({ 
+            is_active: false,
+            // We can also increment uses_count if we want to be thorough
+            // but is_active: false is enough to "expire" it.
+          })
+          .eq("code", referralCode);
+        
+        console.log(`[verify-otp] Expired referral code: ${referralCode}`);
+      } catch (err) {
+        console.error("[verify-otp] Failed to expire referral code:", err);
+        // Don't fail the whole login if just the referral expiration fails
+      }
     }
 
     // Check if the user is completely new (has no role assigned yet).

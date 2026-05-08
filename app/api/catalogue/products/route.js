@@ -41,6 +41,7 @@ export async function GET(request) {
        processed_image_url,
        generated_image_urls,
        wholesaler_email,
+       is_published,
        created_at`,
       { count: "exact" }
     )

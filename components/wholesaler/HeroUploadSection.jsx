@@ -25,13 +25,7 @@ export default function HeroUploadSection({ businessName = "" }) {
         />
         
         {/* Content */}
-        <div className="relative z-10 h-full flex flex-col justify-center px-6 md:px-10 max-w-xl">
-          <h2 className="text-[28px] md:text-3xl text-[#8C6A3E] mb-1" style={{ fontFamily: "ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif", fontWeight: 600 }}>
-            Add Jewellery
-          </h2>
-          <p className="text-[#6B7280] text-sm md:text-base font-sfpro mb-5">
-            Showcase your new designs for retailers to see
-          </p>
+        <div className="relative z-10 h-full flex flex-col justify-end items-center px-6 md:px-10 w-full pb-6">
           <div>
             <UploadButton />
           </div>

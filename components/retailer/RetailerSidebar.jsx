@@ -22,6 +22,11 @@ const NAV_ITEMS = [
     icon: "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777306237/retailerProfile_CATALOGUE_icjpw6.svg",
     href: "/dashboard/retailer/catalogue",
   },
+  {
+    name: "Your Taste",
+    icon: "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777351888/saved_logo_bscslf.svg", // Re-using saved logo or similar icon
+    href: "/dashboard/retailer/your-taste",
+  },
 ];
 
 function RetailerSidebar({ retailer }) {

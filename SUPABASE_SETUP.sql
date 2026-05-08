@@ -23,6 +23,7 @@ alter table if exists public.products
   add column if not exists stone_weight        numeric,
   add column if not exists raw_image_url       text,
   add column if not exists processed_image_url text,
+  add column if not exists is_published        boolean default true,
   add column if not exists created_at          timestamptz default now();
 
 -- Drop old policies (if any) so we can recreate them safely
@@ -87,6 +88,7 @@ create table if not exists public.products (
   stone_weight         numeric,
   raw_image_url        text,
   processed_image_url  text,
+  is_published         boolean  default true,
   created_at           timestamptz default now()
 );
 
@@ -149,7 +151,43 @@ create trigger on_auth_user_created
   for each row execute procedure public.handle_new_user();
 
 
--- ── 4. VERIFY (run these after setup) ────────────────────────
--- select * from profiles;
--- select * from products;
--- select rolname from pg_roles where rolname = 'anon';
+-- ── 5. RETAILER SELECTIONS TABLE ─────────────────────────────
+-- Stores which wholesaler products a retailer has selected for "Your Taste"
+
+create table if not exists public.retailer_selections (
+  retailer_id uuid references public.retailers(id) on delete cascade,
+  product_id  uuid references public.products(id) on delete cascade,
+  created_at  timestamptz default now(),
+  primary key (retailer_id, product_id)
+);
+
+alter table public.retailer_selections enable row level security;
+
+drop policy if exists "Retailers can view own selections" on public.retailer_selections;
+drop policy if exists "Retailers can insert own selections" on public.retailer_selections;
+drop policy if exists "Retailers can delete own selections" on public.retailer_selections;
+
+create policy "Retailers can view own selections"
+  on retailer_selections for select using (
+    retailer_id in (select id from retailers where user_id = auth.uid())
+  );
+
+create policy "Retailers can insert own selections"
+  on retailer_selections for insert with check (
+    retailer_id in (select id from retailers where user_id = auth.uid())
+  );
+
+create policy "Retailers can delete own selections"
+  on retailer_selections for delete using (
+    retailer_id in (select id from retailers where user_id = auth.uid())
+  );
+
+-- Allow employees to READ retailer_selections for their linked retailer
+-- This lets the employee gallery page fetch selections without needing the service role.
+drop policy if exists "Employees can view their retailer selections" on public.retailer_selections;
+create policy "Employees can view their retailer selections"
+  on retailer_selections for select using (
+    retailer_id in (
+      select retailer_id from employees where auth_user_id = auth.uid()
+    )
+  );

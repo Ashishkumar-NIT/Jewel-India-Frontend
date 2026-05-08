@@ -181,10 +181,12 @@ export function OtpForm() {
     setVerifying(true);
     setError(null);
 
+    const referralCode = sessionStorage.getItem("referral_code");
+
     const res = await fetch("/api/auth/verify-otp", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ identity, token }),
+      body: JSON.stringify({ identity, token, referralCode }),
     });
     const data = await res.json();
 
