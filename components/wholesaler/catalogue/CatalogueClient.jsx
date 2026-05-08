@@ -92,8 +92,32 @@ export default function CatalogueClient({
   });
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
+  const [showFilters, setShowFilters] = useState(true);
+  const lastScrollY = useRef(0);
 
   const totalPages = Math.max(1, Math.ceil(totalCount / LIMIT));
+
+  // Handle scroll to show/hide filters
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      
+      if (Math.abs(currentScrollY - lastScrollY.current) < 10) {
+        return;
+      }
+      
+      if (currentScrollY > lastScrollY.current && currentScrollY > 150) {
+        setShowFilters(false);
+      } else {
+        setShowFilters(true);
+      }
+      
+      lastScrollY.current = currentScrollY;
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   // Handle outside click for dropdown
   useEffect(() => {
@@ -278,7 +302,13 @@ export default function CatalogueClient({
         </div>
 
         {/* ── Filter Bar ── */}
-        <div id="product-grid" className="flex flex-wrap items-center gap-3 pb-6 pt-2 mb-2 relative" ref={dropdownRef}>
+        <div 
+          id="product-grid" 
+          className={`sticky z-40 bg-[#f9f9f9] flex flex-wrap items-center gap-3 pb-4 pt-4 mb-2 transition-transform duration-300 ease-in-out ${
+            showFilters ? "translate-y-0 top-0" : "-translate-y-full top-0"
+          }`} 
+          ref={dropdownRef}
+        >
           {FILTER_CONFIG.map(fc => {
             const activeOptions = filters[fc.id];
             const isActive = activeOptions.length > 0;

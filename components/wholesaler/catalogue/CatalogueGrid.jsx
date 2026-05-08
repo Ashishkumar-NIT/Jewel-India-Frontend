@@ -130,25 +130,16 @@ function ProductDetailModal({ product, onClose }) {
             <button onClick={handleEdit} className="text-[#999] hover:text-[#111] transition-colors bg-transparent border-none p-0 outline-none cursor-pointer" aria-label="Edit">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
             </button>
-            <button onClick={handleShare} className="text-[#999] hover:text-[#111] transition-colors bg-transparent border-none p-0 outline-none cursor-pointer" aria-label="Share">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
-            </button>
             <button onClick={onClose} className="text-[#999] hover:text-[#111] transition-colors ml-2 bg-transparent border-none p-0 outline-none cursor-pointer" aria-label="Close">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
             </button>
           </div>
 
           <div className="pr-[100px] mb-6">
-            <h2 className="text-[20px] font-bold text-[#1A1A1A] leading-tight break-all sm:break-normal">{skuStr}</h2>
-            <p className="text-[14px] text-[#888] mt-1">{category}</p>
+            <h2 className="text-[20px] font-bold text-[#1A1A1A] leading-tight break-all sm:break-normal">{title}</h2>
+            <p className="text-[14px] text-[#888] mt-1">{category} • {skuStr}</p>
           </div>
 
-          {/* Stats Row */}
-          <div className="flex items-center gap-6 mb-6 text-[13px] text-[#999]">
-            <span className="flex items-center gap-1.5"><span className="text-[14px]">🔖</span> {savesCount} saves</span>
-            <span className="flex items-center gap-1.5"><span className="text-[14px]">❤️</span> {likesCount} likes</span>
-            <span className="flex items-center gap-1.5"><span className="text-[14px]">👁</span> {viewsCount} views</span>
-          </div>
 
           {/* Stock Line */}
           <div className="flex items-center gap-3 mb-8">
@@ -224,6 +215,7 @@ export function CatalogueCardSkeleton() {
 // ── Product Card ──────────────────────────────────────────────────────────────
 // Memoize to prevent re-renders when parent re-renders but product hasn't changed.
 const CatalogueProductCard = memo(function CatalogueProductCard({ product, onClick }) {
+  const router = useRouter();
   const [imgError, setImgError] = useState(false);
   const [isInStock, setIsInStock] = useState(product.stock_available ?? false);
   const [isUpdating, setIsUpdating] = useState(false);
@@ -234,9 +226,6 @@ const CatalogueProductCard = memo(function CatalogueProductCard({ product, onCli
   const title = product.title || (product.jewellery_type ? product.jewellery_type.charAt(0).toUpperCase() + product.jewellery_type.slice(1) : "Jewelry Piece");
   const weight = product.net_weight ? `${product.net_weight}g` : "";
 
-  // Mock likes & orders per prompt
-  const likes = product.likes ?? 0; // TODO: wire to retailer phase
-  const orders = product.order_count ?? 0; // TODO: wire to retailer phase
 
   const handleToggle = async (e) => {
     e.stopPropagation(); // prevent card click if we add one later
@@ -288,24 +277,27 @@ const CatalogueProductCard = memo(function CatalogueProductCard({ product, onCli
       </div>
 
       <div className="border-t border-[#eee] p-3 md:p-4 flex flex-col gap-2">
-        <div className="flex flex-col">
-          <h3 className="font-bold text-[14px] text-[#111] leading-tight truncate">
-            {title}
-          </h3>
-          {product.jewellery_type && (
-            <span className="text-[11px] text-[#aaaaaa] mt-0.5">
-              {product.jewellery_type.charAt(0).toUpperCase() + product.jewellery_type.slice(1)}
-            </span>
-          )}
-        </div>
-
-        <div className="text-[13px] text-[#666] flex items-center gap-2">
-          <span>
-            <span className="text-red-500 mr-1">❤</span>
-            {likes}
-          </span>
-          <span className="text-[#e0e0e0]">|</span>
-          <span>{orders} orders</span>
+        <div className="flex flex-row justify-between items-start">
+          <div className="flex flex-col">
+            <h3 className="font-bold text-[14px] text-[#111] leading-tight truncate">
+              {title}
+            </h3>
+            {product.jewellery_type && (
+              <span className="text-[11px] text-[#aaaaaa] mt-0.5">
+                {product.jewellery_type.charAt(0).toUpperCase() + product.jewellery_type.slice(1)}
+              </span>
+            )}
+          </div>
+          <button 
+            onClick={(e) => {
+              e.stopPropagation();
+              router.push(`/dashboard/wholesaler/edit-product/${product.id}`);
+            }}
+            className="text-[#999] hover:text-[#111] transition-colors p-1"
+            title="Edit Product"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          </button>
         </div>
 
         <div className="flex items-center justify-between mt-1">
