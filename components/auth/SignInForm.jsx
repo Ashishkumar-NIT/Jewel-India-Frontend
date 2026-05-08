@@ -66,31 +66,32 @@ export function SignInForm() {
 
   return (
     <form className="mt-8 flex flex-col gap-5" onSubmit={handleSubmit}>
-      {/* Email / Phone Field */}
+      {/* Email / Phone Field - Read Only Display */}
       <div className="flex flex-col gap-1.5">
         <label className="text-[13.5px] text-[#6B7280] font-normal">
           Email or Phone number
         </label>
-        <div className="flex h-[48px] w-full items-center">
-          {isPhone && (
-            <div className="h-full px-4 border-[1.5px] border-r-0 border-[#E5E7EB] bg-white rounded-l-[8px] flex items-center justify-center text-[#111827] text-[15px] shrink-0 min-w-[70px]">
-              +91
-            </div>
-          )}
-          <input
-            name="email"
-            type="text"
-            placeholder="abc123@gmail.com"
-            value={identity}
-            onChange={(e) => setIdentity(e.target.value)}
-            className={`h-full w-full border-[1.5px] border-[#E5E7EB] bg-white px-[12px] text-[15px] text-[#111827] placeholder:text-[#9CA3AF] focus:outline-none transition-colors ${
-              isPhone ? "rounded-r-[8px]" : "rounded-[8px]"
-            }`}
-            required
-            autoCapitalize="none"
-            autoCorrect="off"
-            autoComplete="username"
-          />
+        <div className="flex h-[48px] w-full items-center justify-between px-[12px] border-[1.5px] border-[#E5E7EB] bg-[#F9FAFB] rounded-[8px] transition-colors">
+          <div className="flex items-center gap-2 overflow-hidden">
+            {isPhone && (
+              <span className="text-[#111827] text-[15px] font-medium shrink-0">
+                +91
+              </span>
+            )}
+            <span className="text-[15px] text-[#111827] font-medium truncate">
+              {identity}
+            </span>
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              sessionStorage.removeItem("auth_identity");
+              router.push("/entry_page/signup");
+            }}
+            className="text-[13px] text-[#374151] font-semibold hover:text-black hover:underline shrink-0"
+          >
+            Change
+          </button>
         </div>
       </div>
 
