@@ -44,6 +44,12 @@ export default async function WholesalerDashboardPage() {
     }
   }
 
+  // 1. Fetch real live products count (all products in catalogue)
+  const { count: liveProductsCount } = await supabase
+    .from("products")
+    .select("*", { count: "exact", head: true })
+    .eq("wholesaler_id", user?.id);
+
   return (
     <main className="min-h-screen bg-white pb-20">
       {/* Header */}
@@ -52,8 +58,8 @@ export default async function WholesalerDashboardPage() {
       </header>
 
       <HeroUploadSection businessName={businessName} />
-      <OverviewSection />
-      <WeeklyReviewBanner />
+      <OverviewSection productCount={liveProductsCount || 0} />
+      {/* <WeeklyReviewBanner /> */}
       <CatalogueSection />
     </main>
   );
