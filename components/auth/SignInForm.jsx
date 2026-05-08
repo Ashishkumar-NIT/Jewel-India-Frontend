@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
+import Link from "next/link";
 import { Button } from "../ui/Button";
 import { signIn } from "../../lib/actions/auth";
 
@@ -133,12 +134,12 @@ export function SignInForm() {
 
       {/* Forgot password */}
       <div className="flex items-center -mt-[4px]">
-        <button
-          type="button"
+        <Link
+          href="/forgot-password"
           className="text-[13px] text-[#374151] font-normal hover:underline focus:outline-none"
         >
           Forgot Password?
-        </button>
+        </Link>
       </div>
 
       {/* Remember me row */}

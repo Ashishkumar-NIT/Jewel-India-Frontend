@@ -59,6 +59,11 @@ export async function GET(request) {
         return NextResponse.redirect(`${origin}${redirectDest}`);
       }
 
+      const next = searchParams.get("next");
+      if (next) {
+        return NextResponse.redirect(`${origin}${next}`);
+      }
+
       if (role === "wholesaler") {
         // If the role was missing from the JWT but found in the database, inject it now
         if (!user?.user_metadata?.role) {
