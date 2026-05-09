@@ -10,98 +10,47 @@ function formatWeight(val) {
 function ProductCard({ product, onClick }) {
   const [imgError, setImgError] = useState(false);
 
-  const imageUrl = product.processed_image_url || product.raw_image_url;
+  const imageUrl = product.processed_image_url || product.raw_image_url || product.image_url;
   const title = product.title || product.jewellery_type || "Untitled";
-  const category = product.category || product.jewellery_type || "Uncategorized";
 
   return (
-    <article 
+    <div
       onClick={() => onClick && onClick(product)}
-      className="group flex flex-col rounded-[16px] border border-gray-200 bg-white overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+      className="flex flex-col cursor-pointer group/card"
     >
-      {/* Image */}
-      <div className="relative aspect-square w-full bg-gray-50 overflow-hidden">
+      {/* Image — editorial style */}
+      <div
+        className="w-full bg-[#f8f8f8] p-4 flex items-center justify-center overflow-hidden"
+        style={{ aspectRatio: "5/4" }}
+      >
         {!imgError && imageUrl ? (
           <img
             src={imageUrl}
             alt={title}
-            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+            className="w-full h-full object-contain transition-transform group-hover/card:scale-105 duration-700"
             onError={() => setImgError(true)}
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center text-[12px] text-gray-400">
-            No image
-          </div>
-        )}
-
-        {/* Category badge */}
-        <div className="absolute top-3 left-3">
-          <span className="rounded-full bg-black/70 px-3 py-1 text-[10px] uppercase tracking-widest text-white">
-            {category}
-          </span>
-        </div>
-
-        {/* Stock badge */}
-        {product.stock_available !== null && product.stock_available !== undefined && (
-          <div className="absolute top-3 right-3">
-            <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${
-              product.stock_available > 0
-                ? "bg-emerald-100 text-emerald-700"
-                : "bg-red-100 text-red-600"
-            }`}>
-              {product.stock_available > 0 ? "In Stock" : "Made to Order"}
-            </span>
-          </div>
+          <span className="text-[12px] text-gray-300 font-light">No image</span>
         )}
       </div>
 
-      {/* Details */}
-      <div className="flex flex-col gap-2.5 px-4 py-4">
-        <div>
-          <h3 className="text-[14px] font-bold text-[#111827] leading-snug line-clamp-2">
-            {title}
-          </h3>
-          {product.style && (
-            <p className="text-[12px] text-[#6B7280] mt-0.5">{product.style}</p>
-          )}
-        </div>
-
-        {/* Specs row */}
-        <div className="flex flex-wrap gap-x-3 gap-y-1">
-          {product.metal_purity && (
-            <span className="text-[11px] text-[#6B7280]">
-              <span className="font-semibold text-[#374151]">{product.metal_purity}</span>
-            </span>
-          )}
-          {formatWeight(product.net_weight) && (
-            <span className="text-[11px] text-[#6B7280]">
-              Net: <span className="font-semibold text-[#374151]">{formatWeight(product.net_weight)}</span>
-            </span>
-          )}
-          {formatWeight(product.gross_weight) && (
-            <span className="text-[11px] text-[#6B7280]">
-              Gross: <span className="font-semibold text-[#374151]">{formatWeight(product.gross_weight)}</span>
-            </span>
-          )}
-        </div>
-
-        {/* Wholesaler info */}
-        {product.wholesaler_email && (
-          <div className="flex items-center gap-2 pt-1 border-t border-gray-100">
-            <div className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center text-[10px] font-bold text-gray-500 shrink-0">
-              W
-            </div>
-            <span className="text-[11px] text-[#6B7280] truncate" title={product.wholesaler_email}>
-              {product.wholesaler_email}
-            </span>
-          </div>
+      {/* Label */}
+      <div className="mt-4 text-center px-1">
+        <span className="font-serif text-[12px] text-gray-500 italic tracking-wide line-clamp-1">
+          {title}
+        </span>
+        {(product.metal_purity || product.net_weight) && (
+          <p className="text-[10px] text-gray-300 mt-1 tracking-wide">
+            {[product.metal_purity, product.net_weight ? `${product.net_weight}g` : null].filter(Boolean).join(" · ")}
+          </p>
         )}
       </div>
-    </article>
+    </div>
   );
 }
 
-import { ProductInfoModal } from "../../../../components/employee/ProductInfoModal";
+import { ProductInfoModal } from "@/components/employee/ProductInfoModal";
 
 /**
  * Client component for the wholesaler gallery.
@@ -255,7 +204,7 @@ export default function WholesalerGalleryClient({ products, categoryTabs, initia
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-3 gap-x-6 gap-y-12">
           {filteredProducts.map((product) => (
             <ProductCard 
               key={product.id} 

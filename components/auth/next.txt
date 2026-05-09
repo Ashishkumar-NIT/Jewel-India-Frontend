@@ -1,0 +1,57 @@
+1) url=  www.jewelindia.shop/signin
+2)  retialers
+retailer (your taste): icon to be changes
+retailer invites employee---> new employee login page [only --> email & password (input feild)]
+
+retailer (employee): Activate/Deactivate functionality mising.
+
+
+retailer (your taste) :  true in stock ---> remove
+
+
+
+
+Employee===> what to remove first before using the new flow
+
+1) remove the sidebar nav completely......
+2) changes in the homepage: redesign the content
+
+=====================NEWWWWW  FLOWWWW===========================
+NAVIGATION OF HOMESCREEN --> Home | Catalogue | Queries | Orders 
+Onclick of Catalogue --> redirect to Catalogue page and Wholesaler's design to be shown, 
+refer to the design
+
+Onclick of Queries --> redirect to the Queries page
+Onclick of Orders --> redirect to the order page
+
+HOME SCREEN, users have two option btn and can scroll to see the retailer design, 
+a) Start with some question 
+->(all the options in the questions are radio buttons--> user cannot select multiple preference (eg. in q1,  either wedding or festival not both))
+-> back button on every q page,will redirect to the previous page so that if user has to change it's preference, he can do.
+
+	q1)what's the occasion with 5 options
+	q2)select material with 5 option
+	q3)what are you  drawn to
+	q4)jewel type with 6 options--> view all means(all the 5 option checked)
+	q5)what weight you are looking for? with 4 options,  
+		
+b) skip --> [ onclicking the skip btn, user will directly jump/navigate to the Playground section (meaning he will Skip all the q1)q2)q3)q4)q5) Questions. ]
+		what to show in the playground when skip is clicked--> every single item approved by the retailer (i.e from the Your taste page)
+
+
+
+Onscrolling of homepage--> currently there are 4 tempelate, 
+	when employee enters his cred--> any one of the tempelate randomly will be assigned, 
+	(diff b/w in the 4 templates is only 1 static vertical image)
+
+and the retailers approved/publish design, randomly will be shown in the Designer Collection page(home page scrollable will give you designer collection), 
+[nothing like category wise(first necklace, then ring--> nothing like this)]  ----> so end goal is that, on every employee side in Designer Collection section --> the retialers design should not be same shown, and the view all option IN THE BOTTOM will redirect to the Catalogue and WILL ONLY SHOW (retailer
+ collection)there user have option with category wise(necklace,pendants,mangalsutras,chains,bangles,rings,earrings,nosepin,acessories) and filter (size,weight,availability,purity) here
+	
+
+
+
+
+
+
+

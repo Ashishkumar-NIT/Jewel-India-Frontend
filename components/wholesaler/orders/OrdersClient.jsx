@@ -1,361 +1,368 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
-import s from "./orders.module.css";
-import Image from "next/image";
+import { OrderDetailModal } from "../../../components/employee/OrderDetailModal";
+import { BusinessProfileModal } from "../../../components/shared/BusinessProfileModal";
 
-// Module-level cache that persists across navigation
-const ordersCache = {
-  activeTab: "new",
-  modalVisible: false
-};
+function HourglassIcon({ className }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 4H3M21 20H3M9 4v4l3 4-3 4v4M15 4v4l-3 4 3 4v4"/>
+    </svg>
+  );
+}
 
-/* ── SVG Icons ── */
-const ChevronLeftIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M10 12L6 8l4-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-  </svg>
-);
+function WholesalerOrderCard({ order, onUpdateStatus, onReject, onViewDetails, onBusinessClick }) {
+  const p = order.products || {};
+  const r = order.retailers || {};
+  const imgUrl = p.processed_image_url || p.raw_image_url;
 
-const FunnelIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M2.5 5h15M5 10h10M7.5 15h5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-  </svg>
-);
-
-const HourglassIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M4 4h16v4l-4.5 4.5L20 17v3H4v-3l4.5-4.5L4 8V4z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-    <path d="M8 4v2" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-    <path d="M16 4v2" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-  </svg>
-);
-
-const WrenchIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6c-2.4 2.8-5 6.3-8.8 8.1-1.3.6-2.7-1-2.1-2.2 1.8-3.8 5.3-6.4 8.1-8.8l1.6 1.6a1 1 0 0 0 1.4 0l2.8-2.8a1 1 0 0 0 0-1.4L18.4 2.9a1 1 0 0 0-1.4 0l-2.3 2.3z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-  </svg>
-);
-
-const BoxIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-    <path d="M3.27 6.96L12 12.01l8.73-5.05M12 22.08V12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-  </svg>
-);
-
-const WarningIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-    <path d="M12 9v4M12 17h.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-  </svg>
-);
-
-const DeliveryIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M5 8h14M5 8a2 2 0 1 1 0-4h14a2 2 0 1 1 0 4M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8m-9 4h4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-  </svg>
-);
-
-const EyeIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-    <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-  </svg>
-);
-
-const LocationPinIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-    <circle cx="12" cy="10" r="3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-  </svg>
-);
-
-const PhoneIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-  </svg>
-);
-
-const DiamondIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M6 3h12l4 6-10 12L2 9l4-6z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-    <path d="M2 9h20M12 21V9M6 3l6 6M18 3l-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-  </svg>
-);
-
-const CheckCircleIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-  </svg>
-);
-
-/* ── Static Data ── */
-const baseOrderInfo = {
-  product: "Necklace",
-  variant: "Semi long",
-  sku: "#JK65-JI-1983844",
-  orderValue: "₹2,00,000",
-  qty: "x3",
-  weight: "14 g,12g,2g",
-  makeTime: "3-4 days",
-  retailer: "JK Jewellers",
-  deliverTo: "bangalore, Karnataka",
-  image: "https://images.unsplash.com/photo-1599643478514-4a1101859efc?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-};
-
-const NEW_ORDERS = [
-  {
-    id: "n1",
-    ...baseOrderInfo,
-    image: "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1775182710/i1_pvx1me.jpg",
-    statusText: "Respond in next 18 hours",
-    statusVariant: "statusUrgentAmber",
-    statusIcon: <HourglassIcon />,
-  },
-  {
-    id: "n2",
-    ...baseOrderInfo,
-    image: "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1775182709/i2_id50hp.jpg",
-    statusText: "Respond in next 4 hours",
-    statusVariant: "statusUrgentRed",
-    statusIcon: <HourglassIcon />,
-  }
-];
-
-const ACTIVE_ORDERS = [
-  {
-    id: "a1",
-    ...baseOrderInfo,
-    image: "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1775182710/i3_sh9jhf.jpg",
-    statusText: "In production",
-    statusVariant: "statusProductionAmber",
-    statusIcon: <WrenchIcon />,
-    subtext: null,
-    button: <button className={`${s.btn} ${s.btnOutline}`}>Marked as packed</button>
-  },
-  {
-    id: "a2",
-    ...baseOrderInfo,
-    image: "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1775182710/i4_riqeyj.jpg",
-    statusText: "Packed",
-    statusVariant: "statusPackedTeal",
-    statusIcon: <BoxIcon />,
-    subtext: "retailer notified",
-    button: <button className={`${s.btn} ${s.btnPrimary}`}>Dispatched</button>
-  },
-  {
-    id: "a3",
-    ...baseOrderInfo,
-    image: "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1775182710/i5_dptbuo.jpg",
-    statusText: "Overdue by 1 day !!",
-    statusVariant: "statusUrgentRed",
-    statusIcon: <WarningIcon />,
-    subtext: "retailer have been informed",
-    button: <button className={`${s.btn} ${s.btnOutline}`}>Marked as packed</button>
-  }
-];
-
-const COMPLETED_ORDERS = [
-  {
-    id: "c1",
-    ...baseOrderInfo,
-    image: "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1775182710/i6_gwzbmu.jpg",
-    statusText: "Delivered on 15 march",
-    statusVariant: "statusDeliveredGreen",
-    statusIcon: <DeliveryIcon />,
-  },
-  {
-    id: "c2",
-    ...baseOrderInfo,
-    image: "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1775182711/i7_dblidz.jpg",
-    statusText: "Delivered on 14 march",
-    statusVariant: "statusDeliveredGreen",
-    statusIcon: <DeliveryIcon />,
-  }
-];
-
-/* ── Main Component ── */
-export default function OrdersClient() {
-  // Restore state from cache on mount
-  const [activeTab, setActiveTab] = useState(ordersCache.activeTab || "new");
-  const [modalVisible, setModalVisible] = useState(ordersCache.modalVisible || false);
-
-  // Persist state changes to cache
-  useEffect(() => {
-    ordersCache.activeTab = activeTab;
-  }, [activeTab]);
-
-  useEffect(() => {
-    ordersCache.modalVisible = modalVisible;
-  }, [modalVisible]);
-
-  function getListData() {
-    if (activeTab === "new") return NEW_ORDERS;
-    if (activeTab === "active") return ACTIVE_ORDERS;
-    return COMPLETED_ORDERS;
+  // Derive time remaining or status text
+  let statusBadge = null;
+  if (order.status === "pending") {
+    statusBadge = (
+      <div className="flex items-center gap-1.5 text-[#d97706] font-medium text-[13px]">
+        <HourglassIcon className="w-4 h-4" />
+        <span>Respond in next 18 hours</span>
+      </div>
+    );
+  } else if (order.status === "accepted") {
+    statusBadge = (
+      <div className="flex items-center gap-1.5 text-blue-600 font-medium text-[13px]">
+        <HourglassIcon className="w-4 h-4" />
+        <span>Awaiting Production</span>
+      </div>
+    );
+  } else if (order.status === "in_production") {
+    statusBadge = (
+      <div className="flex items-center gap-1.5 text-purple-600 font-medium text-[13px]">
+        <span>In Production</span>
+      </div>
+    );
+  } else if (order.status === "packed") {
+    statusBadge = (
+      <div className="flex items-center gap-1.5 text-orange-600 font-medium text-[13px]">
+        <span>Packed</span>
+      </div>
+    );
+  } else if (order.status === "dispatched") {
+    statusBadge = (
+      <div className="flex items-center gap-1.5 text-indigo-600 font-medium text-[13px]">
+        <span>Dispatched</span>
+      </div>
+    );
+  } else if (order.status === "received" || order.status === "completed") {
+    statusBadge = (
+      <div className="flex items-center gap-1.5 text-green-600 font-medium text-[13px]">
+        <span>Completed</span>
+      </div>
+    );
+  } else if (order.status === "rejected") {
+    statusBadge = (
+      <div className="flex items-center gap-1.5 text-red-600 font-medium text-[13px]">
+        <span>Rejected</span>
+      </div>
+    );
   }
 
-  const currentList = getListData();
+  const categoryLabel = p.category ? p.category.charAt(0).toUpperCase() + p.category.slice(1) : "Jewellery";
+  const typeLabel = p.jewellery_type ? p.jewellery_type.charAt(0).toUpperCase() + p.jewellery_type.slice(1) : "Item";
 
   return (
-    <div className={s.page}>
-      {/* ── Page Header ── */}
-      <Link href="/dashboard/wholesaler" className={s.backLink}>
-        <ChevronLeftIcon /> Back to home
-      </Link>
+    <div className="flex flex-col md:flex-row gap-8 py-10 border-b border-gray-200 w-full relative">
       
-      <div className={s.headerText}>
-        <h1 className={s.title}>Orders</h1>
-        <p className={s.subtitle}>Review and respond to orders from retailers.</p>
+      {/* Left Image */}
+      <div className="w-[240px] h-[240px] bg-gray-50 rounded-sm overflow-hidden shrink-0 border border-gray-100">
+        {imgUrl ? (
+          <img src={imgUrl} alt={p.title} className="w-full h-full object-cover" />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-[12px] text-gray-400">No Image</div>
+        )}
       </div>
 
-      <div className={s.tabsContainer}>
-        <div className={s.tabsRow}>
-          <div className={s.tabsLeft}>
-            <button 
-              className={`${s.tabBtn} ${activeTab === "new" ? s.tabBtnActive : ""}`}
-              onClick={() => setActiveTab("new")}
-            >
-              New Orders <span className={s.tabBadge}>2</span>
-            </button>
-            <button 
-              className={`${s.tabBtn} ${activeTab === "active" ? s.tabBtnActive : ""}`}
-              onClick={() => setActiveTab("active")}
-            >
-              Active Orders <span className={s.tabBadge}>3</span>
-            </button>
-            <button 
-              className={`${s.tabBtn} ${activeTab === "completed" ? s.tabBtnActive : ""}`}
-              onClick={() => setActiveTab("completed")}
-            >
-              Completed <span className={s.tabBadge}>2</span>
+      {/* Right Content */}
+      <div className="flex-1 flex flex-col justify-start relative">
+        
+        {/* Header row */}
+        <div className="flex justify-between items-start w-full mb-1">
+          <h3 className="text-[26px] font-bold text-[#111827] leading-none">
+            {typeLabel}
+          </h3>
+          <div className="mt-1">
+            {statusBadge}
+          </div>
+        </div>
+
+        {/* Sub-meta */}
+        <p className="text-[12px] text-gray-500 mb-5">
+          {categoryLabel} • SKU #{order.id.split("-")[0].toUpperCase()} Q1
+        </p>
+
+        {/* Customization Note Box */}
+        {order.customization_note ? (
+          <div className="w-full max-w-[480px] bg-[#fafafa] border border-dashed border-gray-300 rounded-[6px] p-4 relative mb-5">
+            <p className="text-[13px] text-gray-600 pr-16 leading-relaxed">
+              {order.customization_note}
+            </p>
+            <button className="absolute bottom-3 right-4 text-[10px] font-semibold text-gray-500 uppercase tracking-wider hover:text-black">
+              Read More
             </button>
           </div>
-          {activeTab === "completed" && (
-            <button className={s.filterBtn}>
-              <FunnelIcon /> Filters
+        ) : (
+          <div className="w-full max-w-[480px] bg-[#fafafa] border border-dashed border-gray-300 rounded-[6px] p-4 relative mb-5 flex items-center justify-center h-[80px]">
+             <p className="text-[12px] text-gray-400 italic">No customization notes provided.</p>
+          </div>
+        )}
+
+        {/* Order Meta details */}
+        <p className="text-[13px] text-gray-600 mb-2">
+          Make to order <span className="font-semibold text-black">{p.make_to_order_days ? `${p.make_to_order_days} days` : "N/A"}</span> <span className="mx-2 text-gray-300">|</span> <span onClick={() => onBusinessClick(r)} className="underline decoration-gray-300 underline-offset-4 hover:decoration-gray-500 cursor-pointer">{r.business_name || "Unknown Retailer"}</span>
+        </p>
+        
+        <p className="text-[13px] text-gray-600 mb-8">
+          Deliver to: <span className="font-bold text-black">{r.city || "Unknown City"}, {r.state || "State"}</span>
+        </p>
+
+        {/* Bottom Right Actions */}
+        <div className="absolute bottom-0 right-0 flex items-center gap-3">
+          {order.status === "pending" && (
+            <>
+              <button 
+                onClick={() => onReject(order)}
+                className="px-6 py-2.5 text-[13px] font-medium text-[#ef4444] border border-[#fca5a5] rounded-[6px] hover:bg-red-50 transition-colors"
+              >
+                Reject order
+              </button>
+              <button 
+                onClick={() => onUpdateStatus(order.id, "accepted")}
+                className="px-6 py-2.5 text-[13px] font-medium bg-[#111827] text-white rounded-[6px] hover:bg-black transition-colors"
+              >
+                Confirm order
+              </button>
+            </>
+          )}
+
+          {order.status === "accepted" && (
+            <button 
+              onClick={() => onUpdateStatus(order.id, "in_production")}
+              className="px-6 py-2.5 text-[13px] font-medium bg-purple-600 text-white rounded-[6px] hover:bg-purple-700 transition-colors"
+            >
+              Start Production
             </button>
           )}
+
+          {order.status === "in_production" && (
+            <button 
+              onClick={() => onUpdateStatus(order.id, "packed")}
+              className="px-6 py-2.5 text-[13px] font-medium bg-orange-600 text-white rounded-[6px] hover:bg-orange-700 transition-colors"
+            >
+              Mark as Packed
+            </button>
+          )}
+
+          {order.status === "packed" && (
+            <button 
+              onClick={() => onUpdateStatus(order.id, "dispatched")}
+              className="px-6 py-2.5 text-[13px] font-medium bg-indigo-600 text-white rounded-[6px] hover:bg-indigo-700 transition-colors"
+            >
+              Dispatch Order
+            </button>
+          )}
+
+          {/* Fallback View Details for other states */}
+          {!["pending", "accepted", "in_production", "packed"].includes(order.status) && (
+             <button 
+               onClick={() => onViewDetails(order)}
+               className="px-6 py-2.5 text-[13px] font-medium border border-gray-300 text-gray-700 rounded-[6px] hover:bg-gray-50 transition-colors"
+             >
+               View Details
+             </button>
+          )}
+        </div>
+
+      </div>
+    </div>
+  );
+}
+
+export default function OrdersClient({ initialOrders }) {
+  const [orders, setOrders] = useState(initialOrders);
+  const [activeTab, setActiveTab] = useState("new");
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [selectedBusiness, setSelectedBusiness] = useState(null);
+  
+  // Rejection modal
+  const [rejectOrder, setRejectOrder] = useState(null);
+  const [rejectReason, setRejectReason] = useState("");
+
+  const handleUpdateStatus = async (orderId, newStatus, reason = null) => {
+    if (!reason && !confirm(`Update order status to ${newStatus}?`)) return;
+    
+    setIsUpdating(true);
+    try {
+      const payload = { status: newStatus };
+      if (reason) payload.rejection_reason = reason;
+
+      const res = await fetch(`/api/orders/${orderId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error("Failed to update status");
+      
+      const { data } = await res.json();
+      setOrders(prev => prev.map(o => o.id === orderId ? { ...o, ...data } : o));
+      
+      setRejectOrder(null);
+      setRejectReason("");
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  const submitReject = () => {
+    if (!rejectReason.trim()) {
+      alert("Please provide a rejection reason.");
+      return;
+    }
+    handleUpdateStatus(rejectOrder.id, "rejected", rejectReason);
+  };
+
+  const filteredOrders = orders.filter(o => {
+    if (activeTab === "new") return o.status === "pending";
+    if (activeTab === "active") return ["accepted", "in_production", "packed", "dispatched"].includes(o.status);
+    if (activeTab === "completed") return ["received", "completed"].includes(o.status);
+    if (activeTab === "rejected") return o.status === "rejected";
+    return true;
+  });
+
+  const counts = {
+    new: orders.filter(o => o.status === "pending").length,
+    active: orders.filter(o => ["accepted", "in_production", "packed", "dispatched"].includes(o.status)).length,
+    completed: orders.filter(o => ["received", "completed"].includes(o.status)).length,
+    rejected: orders.filter(o => o.status === "rejected").length,
+  };
+
+  return (
+    <div className="w-full bg-white min-h-screen pb-24">
+      
+      {/* Header Area */}
+      <div className="w-full max-w-5xl mx-auto px-6 pt-10 pb-8 flex flex-col relative">
+        <Link 
+          href="/dashboard/wholesaler" 
+          className="absolute left-6 top-12 flex items-center gap-2 text-[13px] font-medium text-gray-700 hover:text-black transition-colors"
+        >
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+          </svg>
+          Back to home
+        </Link>
+
+        <div className="w-full flex flex-col items-center mt-2">
+          <h1 className="text-[36px] font-serif text-[#111827] tracking-wide mb-2">Orders</h1>
+          <p className="text-[13px] text-gray-500">Review and respond to orders from retailers.</p>
         </div>
       </div>
 
-      {/* ── Order List ── */}
-      <div className={s.orderList}>
-        {currentList.map((order) => (
-          <div key={order.id} className={s.card}>
-            {/* Image */}
-            <div className={s.cardImageArea}>
-              <Image
-                src={order.image}
-                alt={order.product}
-                width={230}
-                height={230}
-                loading="lazy"
-                className={s.productImage}
-              />
-            </div>
-
-            {/* Details */}
-            <div className={s.cardDetails}>
-              <h2 className={s.productName}>{order.product}</h2>
-              <p className={s.productMeta}>{order.variant} • SKU {order.sku}</p>
-
-              <div className={s.detailsGrid}>
-                <span className={s.detailLabel}>Order value</span>
-                <span className={s.detailValue}>{order.orderValue}</span>
-
-                <span className={s.detailLabel}>Quantity</span>
-                <span className={s.detailValue}>{order.qty}</span>
-
-                <span className={s.detailLabel}>Weight</span>
-                <span className={s.detailValue}>{order.weight}</span>
-
-                <span className={s.detailLabel}>Make to order</span>
-                <span className={s.detailValue}>
-                  {order.makeTime} <span style={{ color: '#E5E7EB', margin: '0 8px' }}>|</span> 
-                  <span className={s.retailerLink} onClick={() => setModalVisible(true)}>{order.retailer}</span>
+      <div className="w-full max-w-5xl mx-auto px-6">
+        {/* Segmented Tabs */}
+        <div className="inline-flex items-center bg-[#f4f5f7] rounded-full p-1 mb-8">
+          {[
+            { id: "new", label: "New Orders" },
+            { id: "active", label: "Active Orders" },
+            { id: "completed", label: "Completed" },
+            { id: "rejected", label: "Rejected" },
+          ].map(tab => {
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex items-center gap-2 px-5 py-2 rounded-full text-[13px] font-medium transition-all ${
+                  isActive 
+                    ? "bg-white text-black shadow-[0_1px_3px_rgba(0,0,0,0.1)]" 
+                    : "text-gray-500 hover:text-gray-800"
+                }`}
+              >
+                {tab.label}
+                <span className={`flex items-center justify-center min-w-[20px] h-[20px] rounded-full text-[10px] px-1.5 ${
+                  isActive ? "bg-gray-100 text-gray-800" : "bg-gray-200/60 text-gray-500"
+                }`}>
+                  {counts[tab.id]}
                 </span>
+              </button>
+            );
+          })}
+        </div>
 
-                <span className={s.detailLabel}>Deliver to:</span>
-                <span className={`${s.detailValue} ${s.normal}`}>{order.deliverTo}</span>
-              </div>
-            </div>
-
-            {/* Actions & Status */}
-            <div className={s.cardActions}>
-              <div>
-                <div className={`${s.statusIndicator} ${s[order.statusVariant]}`}>
-                  {order.statusIcon} {order.statusText}
-                </div>
-                {order.subtext && <div className={s.statusSubtext}>{order.subtext}</div>}
-              </div>
-
-              <div className={s.buttonsStack}>
-                {activeTab === "new" && (
-                  <>
-                    <button className={`${s.btn} ${s.btnReject}`}>Reject order</button>
-                    <button className={`${s.btn} ${s.btnPrimary}`}>Confirm order</button>
-                  </>
-                )}
-                {activeTab === "active" && order.button}
-                {activeTab === "completed" && (
-                  <>
-                    <button className={`${s.btn} ${s.btnOutline}`}><EyeIcon /> View Details</button>
-                    <button className={`${s.btn} ${s.btnPrimary}`}>Download Invoice</button>
-                  </>
-                )}
-              </div>
-            </div>
+        {/* List */}
+        {filteredOrders.length === 0 ? (
+          <div className="py-24 text-center border-t border-gray-200 mt-4">
+            <p className="text-gray-400 font-medium text-[14px]">No orders found in this category.</p>
           </div>
-        ))}
+        ) : (
+          <div className="flex flex-col border-t border-gray-200">
+            {filteredOrders.map(order => (
+              <WholesalerOrderCard 
+                key={order.id} 
+                order={order} 
+                onUpdateStatus={handleUpdateStatus} 
+                onReject={(o) => setRejectOrder(o)}
+                onViewDetails={(o) => setSelectedOrder(o)}
+                onBusinessClick={(r) => setSelectedBusiness(r)}
+              />
+            ))}
+          </div>
+        )}
       </div>
 
-      {/* ── Retailer Modal / Drawer ── */}
-      {modalVisible && (
-        <div className={s.modalOverlay} onClick={() => setModalVisible(false)}>
-          <div className={s.modalContent} onClick={e => e.stopPropagation()}>
+      {/* Detail Modal */}
+      {selectedOrder && (
+        <OrderDetailModal 
+          order={selectedOrder} 
+          onClose={() => setSelectedOrder(null)} 
+          isEmployee={false}
+        />
+      )}
+
+      {/* Business Profile Modal */}
+      {selectedBusiness && (
+        <BusinessProfileModal 
+          business={selectedBusiness} 
+          onClose={() => setSelectedBusiness(null)} 
+        />
+      )}
+
+      {/* Reject Modal */}
+      {rejectOrder && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setRejectOrder(null)} />
+          <div className="bg-white w-full max-w-md rounded-[20px] shadow-2xl relative z-10 p-6 animate-fade-in-up">
+            <h2 className="text-[18px] font-extrabold text-[#111827] mb-2">Reject Order</h2>
+            <p className="text-[13px] text-gray-500 mb-5">Please provide a reason for rejecting this request.</p>
             
-            <div className={s.modalTop}>
-              <div className={s.avatar}>
-                JK
-              </div>
-              <div className={s.modalInfo}>
-                <div className={s.modalNameRow}>
-                  <h3 className={s.modalTitle}>JK Jewellers</h3>
-                  <span className={s.verifiedBadge}><CheckCircleIcon /> Verified</span>
-                </div>
-                <p className={s.memberSince}>Member since February 2026</p>
-              </div>
+            <textarea 
+              value={rejectReason}
+              onChange={(e) => setRejectReason(e.target.value)}
+              className="w-full h-32 border border-gray-200 rounded-[12px] p-4 text-[14px] focus:ring-2 focus:ring-black/10 outline-none resize-none mb-5"
+              placeholder="E.g., Out of stock for this material..."
+            ></textarea>
+            
+            <div className="flex justify-end gap-3">
+              <button onClick={() => setRejectOrder(null)} className="px-5 py-2.5 text-[13px] font-bold text-gray-600 hover:bg-gray-50 rounded-[8px]">Cancel</button>
+              <button onClick={submitReject} className="px-5 py-2.5 text-[13px] font-bold bg-red-600 text-white rounded-[8px] shadow-md hover:bg-red-700">Confirm Rejection</button>
             </div>
-
-            <hr className={s.modalDivider} />
-
-            <div className={s.contactList}>
-              <div className={s.contactRow}>
-                <LocationPinIcon />
-                <span>Bandra, Mumbai</span>
-              </div>
-              <div className={s.contactRow}>
-                <PhoneIcon />
-                <span>+91 98765 22222</span>
-              </div>
-              <div className={s.contactRow}>
-                <DiamondIcon />
-                <span>Specialises in: Contemporary & Designer jewellery</span>
-              </div>
-            </div>
-
-            <hr className={s.modalDivider} />
-
-            <div className={s.modalBottom}>
-              <button className={s.btnCloseModal} onClick={() => setModalVisible(false)}>
-                Back to orders
-              </button>
-            </div>
-
           </div>
+        </div>
+      )}
+
+      {isUpdating && (
+        <div className="fixed inset-0 z-[100] bg-white/50 backdrop-blur-sm flex items-center justify-center">
+          <div className="animate-spin rounded-full h-10 w-10 border-4 border-black border-t-transparent"></div>
         </div>
       )}
     </div>

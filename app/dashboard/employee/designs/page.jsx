@@ -1,4 +1,5 @@
 import { createClient } from "../../../../lib/supabase/server";
+import { supabaseAdmin } from "../../../../lib/supabase/admin";
 import { redirect } from "next/navigation";
 import { categories as baseCategories } from "../../../../lib/config/catalogueCategories";
 import EmployeeDesignsClient from "./EmployeeDesignsClient";
@@ -34,7 +35,7 @@ export default async function EmployeeDesignsPage() {
     .single();
 
   // Fetch non-archived designs from the parent retailer
-  const { data: designs } = await supabase
+  const { data: designs } = await supabaseAdmin
     .from("retailer_designs")
     .select("id, image_url, title, category, tags, created_at")
     .eq("retailer_id", employee.retailer_id)

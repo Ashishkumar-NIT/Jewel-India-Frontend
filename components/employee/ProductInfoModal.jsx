@@ -20,7 +20,12 @@ export function ProductInfoModal({ isOpen, onClose, product }) {
   if (!isOpen || !product) return null;
 
   const images = [];
+  // Handle all possible image field names across different data sources
   if (product.processed_image_url) images.push(product.processed_image_url);
+  if (product.image_url && !images.includes(product.image_url)) images.push(product.image_url);
+  if (product.image_urls && Array.isArray(product.image_urls)) {
+    product.image_urls.forEach(url => { if (!images.includes(url)) images.push(url); });
+  }
   if (product.generated_image_urls && Array.isArray(product.generated_image_urls)) {
     product.generated_image_urls.forEach(url => {
       if (!images.includes(url)) images.push(url);
@@ -31,7 +36,7 @@ export function ProductInfoModal({ isOpen, onClose, product }) {
   }
 
   const activeImageUrl = images[activeImageIndex] || null;
-  const title = product.title || product.jewellery_type || "Untitled Product";
+  const title = product.title || (product.jewellery_type ? product.jewellery_type.charAt(0).toUpperCase() + product.jewellery_type.slice(1) : "Untitled Product");
   const category = product.category || product.jewellery_type || "Uncategorized";
 
   return (
@@ -87,22 +92,52 @@ export function ProductInfoModal({ isOpen, onClose, product }) {
         {/* Info Section */}
         <div className="w-full md:w-1/2 flex flex-col p-6 md:p-8 max-h-[80vh] overflow-y-auto">
           <div className="flex-1">
+            {/* Category Badge */}
             <span className="inline-block rounded-full bg-gray-100 px-3 py-1 text-[11px] uppercase tracking-widest text-gray-600 font-bold mb-4">
               {category}
             </span>
+
+            {/* Title */}
             <h2 className="text-[24px] md:text-[28px] font-extrabold text-[#111827] leading-tight mb-2">
               {title}
             </h2>
+
             {product.style && (
-              <p className="text-[14px] text-gray-500 font-medium mb-6">{product.style}</p>
+              <p className="text-[14px] text-gray-500 font-medium mb-4">{product.style}</p>
             )}
 
+            {/* Tags (designer collection designs) */}
+            {Array.isArray(product.tags) && product.tags.length > 0 && (
+              <div className="flex flex-wrap gap-2 mb-6">
+                {product.tags.map((tag) => (
+                  <span key={tag} className="rounded-full bg-gray-100 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-gray-500">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            )}
+
+            {/* Date added (designer collection) */}
+            {product.created_at && !product.wholesaler_email && !product.metal_purity && (
+              <div className="mb-6 pt-4 border-t border-gray-100">
+                <p className="text-[11px] uppercase tracking-wider text-gray-400 font-semibold mb-1">Added On</p>
+                <p className="text-[14px] font-bold text-gray-800">
+                  {new Date(product.created_at).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })}
+                </p>
+              </div>
+            )}
+
+            {/* Wholesaler product specs */}
             <div className="grid grid-cols-2 gap-y-6 gap-x-4 mb-8">
               {product.stock_available !== null && product.stock_available !== undefined && (
                 <div>
                   <p className="text-[11px] uppercase tracking-wider text-gray-400 font-semibold mb-1">Availability</p>
-                  <p className={`text-[14px] font-bold ${product.stock_available > 0 ? "text-emerald-600" : "text-amber-600"}`}>
-                    {product.stock_available > 0 ? `${product.stock_available} in stock` : "Made to order"}
+                  <p className={`text-[14px] font-bold ${typeof product.stock_available === 'number' && product.stock_available > 0 ? "text-emerald-600" : (product.stock_available === true || product.stock_available === 'true') ? "text-emerald-600" : "text-amber-600"}`}>
+                    {typeof product.stock_available === 'number' && product.stock_available > 0 
+                      ? `${product.stock_available} in stock` 
+                      : (product.stock_available === true || product.stock_available === 'true')
+                        ? "In stock"
+                        : "Made to order"}
                   </p>
                 </div>
               )}
@@ -143,17 +178,20 @@ export function ProductInfoModal({ isOpen, onClose, product }) {
               )}
             </div>
             
-            <div className="pt-6 border-t border-gray-100">
-              <p className="text-[11px] uppercase tracking-wider text-gray-400 font-semibold mb-2">Wholesaler</p>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-[14px] font-bold text-blue-600 shrink-0">
-                  W
-                </div>
-                <div>
-                  <p className="text-[14px] font-bold text-gray-900">{product.wholesaler_email}</p>
+            {/* Wholesaler info */}
+            {product.wholesaler_email && (
+              <div className="pt-6 border-t border-gray-100">
+                <p className="text-[11px] uppercase tracking-wider text-gray-400 font-semibold mb-2">Wholesaler</p>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-[14px] font-bold text-blue-600 shrink-0">
+                    W
+                  </div>
+                  <div>
+                    <p className="text-[14px] font-bold text-gray-900">{product.wholesaler_email}</p>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
 
 

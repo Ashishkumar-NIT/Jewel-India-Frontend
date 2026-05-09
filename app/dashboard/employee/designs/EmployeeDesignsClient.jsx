@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { ProductInfoModal } from "@/components/employee/ProductInfoModal";
 
 function formatDate(dateStr) {
   if (!dateStr) return "";
@@ -11,93 +12,116 @@ function formatDate(dateStr) {
   });
 }
 
-function DesignCard({ design }) {
+function DesignCard({ design, onClick }) {
   const [imgError, setImgError] = useState(false);
   const title = design.title || "Untitled design";
-  const category = design.category || "Uncategorized";
   const tags = Array.isArray(design.tags) ? design.tags : [];
   return (
-    <article className="group flex flex-col rounded-[16px] border border-gray-200 bg-white overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-      <div className="relative aspect-square w-full bg-gray-50 overflow-hidden">
+    <div
+      className="flex flex-col cursor-pointer group/card"
+      onClick={onClick}
+    >
+      {/* Image container — editorial style matching home page */}
+      <div
+        className="w-full bg-[#f8f8f8] p-4 flex items-center justify-center overflow-hidden"
+        style={{ aspectRatio: "5/4" }}
+      >
         {!imgError && design.image_url ? (
           <img
             src={design.image_url}
             alt={title}
-            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+            className="w-full h-full object-contain transition-transform group-hover/card:scale-105 duration-700"
             onError={() => setImgError(true)}
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center text-[12px] text-gray-400">
-            No image
-          </div>
+          <span className="text-[12px] text-gray-300 font-light">No image</span>
         )}
-        <div className="absolute top-3 left-3">
-          <span className="rounded-full bg-black/70 px-3 py-1 text-[10px] uppercase tracking-widest text-white">
-            {category}
-          </span>
-        </div>
       </div>
-
-      <div className="flex flex-col gap-2 px-4 py-4">
-        <div>
-          <h3 className="text-[14px] font-bold text-[#111827] leading-snug line-clamp-2">
-            {title}
-          </h3>
-          <p className="text-[11px] text-gray-400 mt-0.5">
-            {formatDate(design.created_at)}
-          </p>
-        </div>
-
+      {/* Label */}
+      <div className="mt-4 text-center px-1">
+        <span className="font-serif text-[12px] text-gray-500 italic tracking-wide line-clamp-1">
+          {title}
+        </span>
         {tags.length > 0 && (
-          <div className="flex flex-wrap gap-1.5">
-            {tags.slice(0, 3).map((tag) => (
-              <span
-                key={tag}
-                className="rounded-full bg-gray-100 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-gray-500"
-              >
-                {tag}
-              </span>
-            ))}
-            {tags.length > 3 && (
-              <span className="rounded-full bg-gray-100 px-2.5 py-0.5 text-[10px] font-semibold text-gray-500">
-                +{tags.length - 3}
-              </span>
-            )}
-          </div>
+          <p className="text-[10px] text-gray-300 mt-1 tracking-wide">
+            {tags.slice(0, 2).join(" · ")}
+          </p>
         )}
       </div>
-    </article>
+    </div>
   );
 }
 
 /**
  * Client component for the employee designs page.
  * Receives server-fetched designs and category tabs.
- * Provides category filtering (read-only — no archive/delete controls).
+ * Provides category filtering and search mirroring the WholesalerGallery layout.
  */
 export default function EmployeeDesignsClient({ designs, categoryTabs, businessName }) {
   const [activeCategory, setActiveCategory] = useState("all");
+  const [search, setSearch] = useState("");
+  const [selectedProduct, setSelectedProduct] = useState(null);
 
   const filteredDesigns = useMemo(() => {
-    if (activeCategory === "all") return designs;
-    return designs.filter(
-      (d) => (d.category || "uncategorized").toLowerCase() === activeCategory
-    );
-  }, [designs, activeCategory]);
+    let result = designs;
+
+    // Category filter
+    if (activeCategory !== "all") {
+      result = result.filter(
+        (d) => (d.category || "uncategorized").toLowerCase() === activeCategory
+      );
+    }
+
+    // Search filter
+    if (search.trim()) {
+      const q = search.trim().toLowerCase();
+      result = result.filter((d) => {
+        const searchable = [
+          d.title,
+          d.category,
+          ...(Array.isArray(d.tags) ? d.tags : []),
+        ]
+          .filter(Boolean)
+          .join(" ")
+          .toLowerCase();
+        return searchable.includes(q);
+      });
+    }
+
+    return result;
+  }, [designs, activeCategory, search]);
 
   return (
     <div className="flex-1 w-full max-w-7xl mx-auto px-4 md:px-8 py-8 flex flex-col gap-6">
       {/* Header */}
-      <div>
-        <p className="text-[11px] uppercase tracking-[0.2em] text-gray-400 font-semibold">
-          {businessName}
-        </p>
-        <h1 className="text-[22px] font-extrabold text-[#111827] tracking-tight">
-          Our Designs ({designs.length})
-        </h1>
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+          <p className="text-[11px] uppercase tracking-[0.2em] text-gray-400 font-semibold">
+            {businessName}
+          </p>
+          <h1 className="text-[22px] font-extrabold text-[#111827] tracking-tight">
+            Designer Collection ({designs.length})
+          </h1>
+        </div>
+
+        {/* Search */}
+        <div className="relative w-full max-w-sm">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-4 h-4 text-gray-400">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+          <input
+            type="text"
+            placeholder="Search designs..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full bg-white border border-gray-200 rounded-[10px] pl-10 pr-4 py-2.5 text-[14px] outline-none focus:ring-2 focus:ring-black/5"
+          />
+        </div>
       </div>
 
-      {/* Category filters */}
+      {/* Category filter tabs */}
       <div className="flex flex-wrap items-center gap-2">
         {categoryTabs.map((tab) => {
           const key = tab.toLowerCase();
@@ -121,18 +145,31 @@ export default function EmployeeDesignsClient({ designs, categoryTabs, businessN
       {/* Grid */}
       {filteredDesigns.length === 0 ? (
         <div className="rounded-[16px] border border-dashed border-gray-200 bg-gray-50 px-6 py-16 text-center">
-          <p className="text-[14px] font-semibold text-gray-500">No designs in this category.</p>
+          <p className="text-[14px] font-semibold text-gray-500">No designs found.</p>
           <p className="text-[12px] text-gray-400 mt-2">
-            Your store admin can upload designs from the retailer dashboard.
+            {search.trim() 
+              ? "Try adjusting your search or category filter." 
+              : "Your store admin has not uploaded any designs yet."}
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-3 gap-x-6 gap-y-12">
           {filteredDesigns.map((design) => (
-            <DesignCard key={design.id} design={design} />
+            <DesignCard 
+              key={design.id} 
+              design={design} 
+              onClick={() => setSelectedProduct(design)}
+            />
           ))}
         </div>
       )}
+
+      {/* Product Detail Modal */}
+      <ProductInfoModal 
+        isOpen={!!selectedProduct} 
+        onClose={() => setSelectedProduct(null)} 
+        product={selectedProduct} 
+      />
     </div>
   );
 }

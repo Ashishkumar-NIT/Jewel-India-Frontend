@@ -1,0 +1,438 @@
+mployee Dashboard — Complete Implementation Plan
+Based on 
+end.txt
+
+Generated: 2026-05-09
+
+Architecture Overview
+Order Flow
+Catalogue Page
+Employee Home Screen
+Start with Questions
+Skip
+View All
+Accept
+Reject + Reason
+Top Nav: Home | Catalogue | Queries | Orders
+Hero Section + Random Template Image
+Two CTAs
+5-Step Questionnaire
+Playground (all retailer-approved products)
+Filtered Playground (based on answers)
+Scroll Down → Designer Collection (randomized retailer designs)
+Catalogue → Retailer Collection tab with filters
+Wholesaler Products Tab
+Retailer Collection Tab with category + filters
+Employee selects items
+Selection Review Cards (full product info)
+Send Request + customization note
+Creates order in DB
+Wholesaler Orders (dynamic)
+In Production → Packed → Dispatched
+Employee sees rejection
+Employee marks 'Received'
+Order Completed
+Current State Audit
+Component	Current State	Action Needed
+EmployeeSidebar.jsx
+60px fixed vertical sidebar with 6 nav icons	Remove entirely
+EmployeeLayout.jsx
+Wraps sidebar + content with marginLeft: 60	Replace with full-width layout + top nav
+Employee homepage
+Stats cards + quick actions + recent designs grid	Full redesign
+Employee orders
+Static "Coming Soon" placeholder	Build dynamic orders page
+Wholesaler OrdersClient
+Fully static/hardcoded data	Make dynamic with real DB
+Orders database table	Does not exist	Create orders table + APIs
+Questionnaire flow	Does not exist	Build from scratch
+Phase 1 — Remove Sidebar & Add Horizontal Top Navigation
+Goal: Replace the 60px vertical sidebar with a clean horizontal navigation bar containing: Home | Catalogue | Queries | Orders + a logout action.
+
+Files to Modify
+File	Action
+EmployeeLayout.jsx
+Rewrite — remove sidebar import, remove marginLeft: 60, add <EmployeeTopNav />
+EmployeeSidebar.jsx
+Delete (or keep for reference)
+employeeSidebar.module.css
+Delete
+Files to Create
+File	Purpose
+components/employee/EmployeeTopNav.jsx	Horizontal nav bar with 4 links + JI logo + logout
+components/employee/employeeTopNav.module.css	Styling for the top nav
+Implementation Details
+EmployeeTopNav.jsx should include:
+
+Full-width sticky top bar (height ~56px)
+Left: JI logo
+Center: Home | Catalogue | Queries | Orders — with active state underline
+Right: Employee avatar/initials + logout button
+Route mapping:
+Home → /dashboard/employee
+Catalogue → /dashboard/employee/wholesaler-gallery
+Queries → /dashboard/employee/queries (new page, placeholder for now)
+Orders → /dashboard/employee/orders
+EmployeeLayout.jsx new structure:
+
+jsx
+<div style={{ minHeight: "100vh", background: "#FAFAFA" }}>
+  <EmployeeTopNav />
+  <main style={{ flex: 1, width: "100%", minHeight: "100vh" }}>
+    {children}
+  </main>
+</div>
+✅ Testing Checklist — Phase 1
+ Sidebar is completely gone from all employee pages
+ Top nav renders on every /dashboard/employee/* route
+ Active state highlights correctly on each nav link
+ All 4 nav links navigate to the correct pages
+ Logout button works and redirects to login
+ Layout is full-width (no marginLeft offset)
+ Mobile responsive (nav items don't overflow)
+Phase 2 — Redesign Employee Homepage (Template + Designer Collection)
+Goal: Redesign the homepage with a random hero template, two CTA buttons ("Start with Questions" / "Skip"), and a scrollable "Designer Collection" section showing randomized retailer designs.
+
+Files to Modify
+File	Action
+Employee page.jsx
+Full rewrite of the server component
+Files to Create
+File	Purpose
+components/employee/EmployeeHomeClient.jsx	Client component for the interactive homepage
+components/employee/DesignerCollectionSection.jsx	Randomized retailer designs grid + "View All" link
+Implementation Details
+Random Template Assignment:
+
+Store 4 static vertical hero images (Cloudinary URLs or /public assets)
+On server-side render, use a seeded random selection per employee: templateIndex = employee.id.charCodeAt(0) % 4
+This ensures the same employee always sees the same template but different employees see different ones
+Homepage Layout (top → bottom):
+
+Hero Section: Full-width image (from assigned template) + overlay text + two buttons
+Button A: "Start with Questions" → navigates to /dashboard/employee/questionnaire
+Button B: "Skip to Playground" → navigates to /dashboard/employee/playground
+Designer Collection Section (scrollable):
+Title: "Designer Collection"
+Fetch retailer's own designs (retailer_designs table) where is_archived = false
+Randomize order per employee using a shuffle seeded by employee.id
+Show a grid of product cards (no category grouping — everything mixed)
+Bottom: "View All →" button → links to Catalogue page with ?tab=retailer to show only Retailer Collection
+Data Fetching (server component):
+
+employee → retailer_id → retailer_designs (shuffled) → pass to client
+✅ Testing Checklist — Phase 2
+ Homepage shows hero section with a template image
+ Different employees see different template images
+ "Start with Questions" button navigates to /dashboard/employee/questionnaire
+ "Skip to Playground" button navigates to /dashboard/employee/playground
+ Designer Collection shows retailer's own designs in random order
+ Different employees see designs in different order
+ "View All" at bottom navigates to catalogue with retailer collection filter
+ Page looks premium and matches the platform's design language
+Phase 3 — 5-Step Questionnaire Flow
+Goal: Build a multi-step questionnaire with radio-button selections and back navigation. The answers will be used to filter products in the Playground.
+
+Files to Create
+File	Purpose
+app/dashboard/employee/questionnaire/page.jsx	Server wrapper
+components/employee/QuestionnaireFlow.jsx	Client component — multi-step form
+Questionnaire Structure
+Step	Question	Options (Radio — single select)
+Q1	What's the occasion?	Wedding, Festival, Daily Wear, Gifting, Party
+Q2	Select material	Gold, Silver, Diamond, Platinum, Artificial
+Q3	What are you drawn to?	Traditional, Modern, Minimalist, Statement, Fusion
+Q4	Jewel type	Necklaces, Rings, Bangles, Earrings, Pendants, View All (= all 5 selected)
+Q5	What weight are you looking for?	Light (0–5g), Medium (5–15g), Heavy (15–30g), Statement (30g+)
+Implementation Details
+QuestionnaireFlow.jsx:
+
+useState for currentStep (0–4) and answers object
+Each step renders a question title + radio button options (only one selectable)
+Back button on every step (except step 0) → decrements currentStep
+Next button → increments currentStep
+On final step submit → encode answers as query params and navigate to:
+/dashboard/employee/playground?occasion=wedding&material=gold&style=traditional&type=necklaces&weight=light
+Clean, card-based UI with progress indicator (step dots or progress bar)
+✅ Testing Checklist — Phase 3
+ Questionnaire loads at /dashboard/employee/questionnaire
+ Each question shows exactly the right number of radio options
+ Only one option can be selected per question (radio behavior)
+ Back button goes to previous question with previous answer preserved
+ "View All" in Q4 selects all jewel types
+ On submit, navigates to playground with correct query params
+ Cannot proceed without selecting an option
+ UI is smooth with transitions between steps
+Phase 4 — Playground Page (Filtered Products)
+Goal: Build the Playground page that shows wholesaler products approved by the retailer, filtered by questionnaire answers (or unfiltered if "Skip" was clicked).
+
+Files to Create
+File	Purpose
+app/dashboard/employee/playground/page.jsx	Server component — fetches products from retailer_selections + applies filters
+components/employee/PlaygroundClient.jsx	Client component — product grid + selection + product detail modal
+Implementation Details
+Data Source: Products come from the retailer's "Your Taste" selections:
+
+employee → retailer_id → retailer_selections → products (where is_published = true)
+Filtering Logic (server-side):
+
+If query params are present (from questionnaire):
+occasion → match against product style or category fields
+material → match against metal_purity (gold/silver/etc.)
+type → match against jewellery_type or category
+weight → filter by net_weight ranges
+If no query params (Skip was clicked): show all retailer-approved products
+Client Component Features:
+
+Product grid (similar to existing WholesalerGalleryClient)
+Product cards with image, title, weight, toggle/select functionality
+Clicking a product → opens ProductInfoModal (already exists)
+Selection mechanism: Employee can tap/click to select items → selected items get a visual indicator (checkmark overlay)
+"View Selected" floating button appears when items are selected → navigates to the Selection Review page (Phase 5)
+✅ Testing Checklist — Phase 4
+ /dashboard/employee/playground loads correctly
+ With no query params (skip), shows all retailer-approved products
+ With query params (from questionnaire), shows filtered products
+ Products can be selected/deselected with visual feedback
+ ProductInfoModal opens on product click
+ "View Selected" button appears when items are selected
+ Empty state shown when no products match filters
+Phase 5 — Selection Review + Send Request Flow
+Goal: After selecting products in the Playground, the employee can review their selections, see full product details, and send a customization request to the wholesaler.
+
+Files to Create
+File	Purpose
+app/dashboard/employee/selection-review/page.jsx	Server wrapper
+components/employee/SelectionReviewClient.jsx	Review cards for selected products
+components/employee/SendRequestModal.jsx	Modal with description field + send button
+app/api/orders/create/route.js	API to create an order request
+Implementation Details
+Selection Review Page:
+
+Receives selected product IDs via query params or local state (sessionStorage)
+Displays each selected product as a detailed card showing:
+Product image, title, category, weight, metal purity, availability
+Wholesaler info (email)
+Two action buttons per card:
+"Send Request" → opens SendRequestModal
+"Chat with Us" → navigates to messages/chat (placeholder for now)
+SendRequestModal:
+
+Text area for customization description (e.g., "Need in 22K gold, size 7")
+Submit button → calls POST /api/orders/create
+Order Creation API (/api/orders/create):
+
+js
+// Request body:
+{
+  product_id: "uuid",
+  customization_note: "string",
+}
+// Server logic:
+// 1. Get employee from auth
+// 2. Get product details (including wholesaler_id from products table)
+// 3. Insert into orders table with status = "pending"
+// 4. Return success
+✅ Testing Checklist — Phase 5
+ Selection review page shows all selected product cards
+ Each card displays complete product information
+ "Send Request" opens modal with textarea
+ Submitting request creates an order in the database
+ Success feedback shown after sending request
+ "Chat with Us" button exists (can be placeholder)
+ Multiple requests can be sent for different products
+Phase 6 — Database Schema: Orders Table + APIs
+Goal: Create the orders table in Supabase and build all CRUD APIs needed for the full order lifecycle.
+
+IMPORTANT
+
+This phase MUST be completed before Phases 5 and 7 can work. Run the SQL in Supabase Dashboard → SQL Editor.
+
+SQL Migration to Create
+File	Purpose
+ORDERS_TABLE.sql	Full schema + RLS policies for the orders system
+Database Schema
+sql
+CREATE TABLE public.orders (
+  id              UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  
+  -- Parties
+  product_id      UUID NOT NULL REFERENCES public.products(id),
+  employee_id     UUID NOT NULL REFERENCES public.employees(id),
+  retailer_id     UUID NOT NULL REFERENCES public.retailers(id),
+  wholesaler_id   UUID NOT NULL REFERENCES public.wholesalers(id),
+  
+  -- Order Info
+  customization_note  TEXT,
+  rejection_reason    TEXT,
+  
+  -- Status Lifecycle
+  status          TEXT NOT NULL DEFAULT 'pending'
+                  CHECK (status IN (
+                    'pending',        -- Employee sent request, waiting for wholesaler
+                    'accepted',       -- Wholesaler accepted
+                    'rejected',       -- Wholesaler rejected (with reason)
+                    'in_production',  -- Wholesaler marks as in production
+                    'packed',         -- Wholesaler marks as packed
+                    'dispatched',     -- Wholesaler marks as dispatched
+                    'received',       -- Employee marks as received
+                    'completed'       -- Final state
+                  )),
+  
+  -- Timestamps
+  created_at      TIMESTAMPTZ DEFAULT now(),
+  accepted_at     TIMESTAMPTZ,
+  rejected_at     TIMESTAMPTZ,
+  production_at   TIMESTAMPTZ,
+  packed_at       TIMESTAMPTZ,
+  dispatched_at   TIMESTAMPTZ,
+  received_at     TIMESTAMPTZ,
+  completed_at    TIMESTAMPTZ,
+  updated_at      TIMESTAMPTZ DEFAULT now()
+);
+-- Indexes
+CREATE INDEX idx_orders_employee   ON public.orders(employee_id);
+CREATE INDEX idx_orders_wholesaler ON public.orders(wholesaler_id);
+CREATE INDEX idx_orders_retailer   ON public.orders(retailer_id);
+CREATE INDEX idx_orders_status     ON public.orders(status);
+-- RLS
+ALTER TABLE public.orders ENABLE ROW LEVEL SECURITY;
+-- Employees can see their own orders
+CREATE POLICY "employees_own_orders" ON public.orders
+  FOR SELECT USING (
+    employee_id IN (
+      SELECT id FROM public.employees WHERE auth_user_id = auth.uid()
+    )
+  );
+-- Wholesalers can see orders for their products
+CREATE POLICY "wholesalers_own_orders" ON public.orders
+  FOR SELECT USING (
+    wholesaler_id IN (
+      SELECT id FROM public.wholesalers WHERE user_id = auth.uid()
+    )
+  );
+-- Service role for inserts/updates (through API routes)
+API Routes to Create
+Route	Method	Purpose
+app/api/orders/create/route.js	POST	Employee sends a request
+app/api/orders/[id]/route.js	PATCH	Update order status (accept/reject/pack/dispatch/receive)
+app/api/orders/list/route.js	GET	List orders (filtered by role: employee or wholesaler)
+Order Status Lifecycle
+Employee sends request
+Wholesaler accepts
+Wholesaler rejects (+ reason)
+Wholesaler marks
+Wholesaler marks
+Wholesaler marks
+Employee marks
+Auto-complete
+pending
+accepted
+rejected
+in_production
+packed
+dispatched
+received
+completed
+✅ Testing Checklist — Phase 6
+ SQL runs without errors in Supabase
+ POST /api/orders/create creates an order with status "pending"
+ PATCH /api/orders/[id] can update status through lifecycle
+ GET /api/orders/list returns orders filtered by logged-in user's role
+ RLS allows employees to see only their own orders
+ RLS allows wholesalers to see only their relevant orders
+ Rejection requires a rejection_reason
+ Timestamps are recorded at each status transition
+Phase 7 — Dynamic Orders Pages (Employee + Wholesaler)
+Goal: Make both the employee and wholesaler orders pages fully dynamic, powered by the real orders table.
+
+Files to Modify
+File	Action
+Employee orders page
+Full rewrite — dynamic data
+Wholesaler OrdersClient
+Full rewrite — replace static data with API calls
+Files to Create
+File	Purpose
+components/employee/EmployeeOrdersClient.jsx	Employee orders UI with status tracking
+components/employee/OrderDetailModal.jsx	Detailed view of a single order
+Employee Orders Page — Tabs & Actions
+Tab	Shows Orders With Status	Employee Actions
+Active	pending, accepted, in_production, packed, dispatched	Mark "Received" (when dispatched)
+Completed	received, completed	View details
+Rejected	rejected	View rejection reason
+Employee Order Card shows:
+
+Product image + title + category
+Current status with visual timeline/stepper
+Customization note they wrote
+If rejected: rejection reason from wholesaler
+If dispatched: "Mark as Received" button
+Order timestamps
+Wholesaler Orders Page — Tabs & Actions
+Tab	Shows Orders With Status	Wholesaler Actions
+New Orders	pending	Accept or Reject (with reason)
+Active Orders	accepted, in_production, packed	Mark as: In Production → Packed → Dispatched
+Completed	dispatched, received, completed	View details
+Wholesaler Order Card shows:
+
+Product image + title + SKU
+Requesting employee name + retailer store name
+Customization note from employee
+Action buttons based on current status:
+pending → "Accept" / "Reject" (reject opens reason modal)
+accepted → "Mark In Production"
+in_production → "Mark as Packed"
+packed → "Mark as Dispatched"
+Order timeline with timestamps
+Wholesaler Rejection Modal
+Opens when "Reject" is clicked
+Required textarea: "Reason for rejection"
+On submit: PATCH /api/orders/[id] with { status: "rejected", rejection_reason: "..." }
+✅ Testing Checklist — Phase 7
+ Employee orders page shows real data from DB
+ Employee can see orders grouped by Active/Completed/Rejected tabs
+ Employee can mark dispatched orders as "Received"
+ Rejection reason is displayed clearly to employee
+ Wholesaler orders page shows real data (no more hardcoded)
+ Wholesaler can accept orders → status changes to "accepted"
+ Wholesaler can reject orders → must provide reason
+ Wholesaler can progress: accepted → in_production → packed → dispatched
+ Employee receives status updates in real-time (on page refresh)
+ After employee marks "Received", wholesaler sees "Completed"
+ Both sides have a "Completed/History" section for past orders
+ Order detail view shows full timeline with timestamps
+Execution Order & Dependencies
+Phase 1: Remove Sidebar
+Phase 2: Homepage Redesign
+Phase 3: Questionnaire
+Phase 4: Playground
+Phase 6: DB Schema
+Phase 5: Send Request
+Phase 7: Dynamic Orders
+WARNING
+
+Phase 6 (Database) should be done BEFORE Phase 5 and Phase 7. The recommended execution order is: P1 → P2 → P3 → P6 → P4 → P5 → P7
+
+Summary of All New Routes
+Route	Type	Purpose
+/dashboard/employee	Page	Redesigned homepage
+/dashboard/employee/questionnaire	Page	5-step question flow
+/dashboard/employee/playground	Page	Product browsing + selection
+/dashboard/employee/selection-review	Page	Review selected items before ordering
+/dashboard/employee/orders	Page	Dynamic employee orders
+/dashboard/employee/queries	Page	Queries page (placeholder initially)
+/api/orders/create	API	Create new order request
+/api/orders/[id]	API	Update order status
+/api/orders/list	API	List orders by role
+Summary of All New Components
+Component	Purpose
+EmployeeTopNav.jsx	Horizontal navigation bar
+EmployeeHomeClient.jsx	Interactive homepage client component
+DesignerCollectionSection.jsx	Randomized retailer designs section
+QuestionnaireFlow.jsx	5-step multi-step form
+PlaygroundClient.jsx	Product browsing + selection
+SelectionReviewClient.jsx	Selected products review cards
+SendRequestModal.jsx	Customization request modal
+EmployeeOrdersClient.jsx	Employee dynamic orders page
+OrderDetailModal.jsx	Order detail view

@@ -1,29 +1,52 @@
+import { createClient } from "../../../../lib/supabase/server";
+import { redirect } from "next/navigation";
+import EmployeeOrdersClient from "../../../../components/employee/EmployeeOrdersClient";
+
 export const metadata = {
-  title: "Orders — Jewel India",
-  description: "Track your jewellery orders.",
+  title: "Orders — Employee Dashboard",
 };
-export default function OrdersPage() {
-  return (
-    <div className="flex-1 w-full max-w-5xl mx-auto px-4 md:px-8 py-8">
-      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-amber-50 to-orange-100 flex items-center justify-center">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777351889/order_logo_lnaqrz.svg"
-            alt="Orders"
-            className="w-7 h-7 opacity-60"
-          />
-        </div>
-        <h1 className="text-[22px] font-bold text-[#111827] tracking-tight">
-          Orders
-        </h1>
-        <p className="text-[15px] text-[#6B7280] text-center max-w-xs">
-          Your order history and tracking will live here. Coming soon.
-        </p>
-        <span className="inline-block mt-2 text-[12px] font-semibold text-white bg-[#1A1A1A] px-4 py-1.5 rounded-full tracking-wide uppercase">
-          Coming Soon
-        </span>
-      </div>
-    </div>
-  );
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+export default async function EmployeeOrdersPage() {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) redirect("/entry_page/signin");
+
+  const { data: employee } = await supabase
+    .from("employees")
+    .select("id")
+    .eq("auth_user_id", user.id)
+    .single();
+
+  if (!employee) redirect("/entry_page/signin");
+
+  // Fetch orders from API or server-side (server-side here saves a hop)
+  const { data: orders, error } = await supabase
+    .from("orders")
+    .select(`
+      *,
+      products (
+        id, title, raw_image_url, processed_image_url, jewellery_type, metal_purity, net_weight, category, make_to_order_days
+      ),
+      retailers (
+        id, business_name, city, state, created_at
+      ),
+      wholesalers (
+        id, business_name, city, state, created_at
+      )
+    `)
+    .eq("employee_id", employee.id)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("[employee/orders] fetch error:", error.message);
+  }
+
+  return <EmployeeOrdersClient initialOrders={orders || []} />;
 }

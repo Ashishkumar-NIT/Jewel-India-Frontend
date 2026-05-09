@@ -29,8 +29,8 @@ export function EmployeeTable({ employees, onToggleStatus, onDelete, onUpdate })
 
   const handleToggle = async (emp) => {
     setTogglingId(emp.id);
-    const newStatus = emp.status === "active" ? false : (emp.is_active ? false : true);
-    await onToggleStatus(emp.id, newStatus);
+    const newStatusIsActive = emp.status !== "active";
+    await onToggleStatus(emp.id, newStatusIsActive);
     setTogglingId(null);
   };
 
@@ -84,7 +84,7 @@ export function EmployeeTable({ employees, onToggleStatus, onDelete, onUpdate })
   };
 
   const getStatus = (emp) => {
-    if (emp.status === "active" || emp.is_active === true) return "Active";
+    if (emp.status === "active") return "Active";
     return "Inactive";
   };
 

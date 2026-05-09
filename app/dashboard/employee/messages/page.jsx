@@ -8,7 +8,7 @@ export const metadata = {
   description: "Chat with wholesalers.",
 };
 
-export default async function EmployeeMessagesPage() {
+export default async function EmployeeMessagesPage({ searchParams }) {
   const supabase = await createClient();
 
   const {
@@ -38,10 +38,14 @@ export default async function EmployeeMessagesPage() {
     .eq("employee_id", employee.id)
     .order("updated_at", { ascending: false });
 
+  const resolvedParams = await searchParams;
+  const productId = resolvedParams?.productId || null;
+
   return (
     <MessagesClient 
       initialConversations={initialConversations} 
       currentUserType="employee"
+      openProductId={productId}
     />
   );
 }

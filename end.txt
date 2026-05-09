@@ -1,0 +1,47 @@
+1) remove the sidebar nav completely......
+2) changes in the homepage: redesign the content
+
+=====================NEWWWWW  FLOWWWW===========================
+NAVIGATION OF HOMESCREEN --> Home | Catalogue | Queries | Orders 
+Onclick of Catalogue(in homescreen when emp enters after his login) -->  Wholesaler's design to be shown, 
+refer to the design
+
+Onclick of Queries --> redirect to the Queries page
+Onclick of Orders --> redirect to the order page
+
+HOME SCREEN, users have two option btn and can scroll to see the retailer design, 
+a) Start with some question 
+->(all the options in the questions are radio buttons--> user cannot select multiple preference (eg. in q1,  either wedding or festival not both))
+-> back button on every q page,will redirect to the previous page so that if user has to change it's preference, he can do.
+
+	q1)what's the occasion with 5 options
+	q2)select material with 5 option
+	q3)what are you  drawn to
+	q4)jewel type with 6 options--> view all means(all the 5 option checked)
+	q5)what weight you are looking for? with 4 options,  
+		
+b) skip --> [ onclicking the skip btn, user will directly jump/navigate to the Playground section (meaning he will Skip all the q1)q2)q3)q4)q5) Questions. ]
+		what to show in the playground when skip is clicked--> every single item approved by the retailer (i.e from the Your taste page)
+
+
+
+Onscrolling of homepage--> currently there are 4 tempelate, 
+	when employee enters his cred--> any one of the tempelate randomly will be assigned, 
+	(diff b/w in the 4 templates is only 1 static vertical image)
+
+and the retailers own designs , randomly will be shown in the Designer Collection page(home page scrollable will give you designer collection), 
+[nothing like category wise(first necklace, then ring--> nothing like this)]  ----> so end goal is that, on every employee side in Designer Collection section --> the retialers design should not be same shown, and the view all option IN THE BOTTOM will redirect to the Catalogue and WILL ONLY SHOW (retailer
+ collection)there user have option with category wise(necklace,pendants,mangalsutras,chains,bangles,rings,earrings,nosepin,acessories) a just system as in wholesalers and retailers dashbaord filtering and all and filter (size,weight,availability,purity) here
+
+c) after emp fills all the questions based on that products should be shown those products ar of wholesaler which was published ok nby retaielrers basically from your taste of retailers section
+
+
+d) now here emp selects the item he needs and clicking on the selected items in another ui section he can see their cards with alll necessary info before he can send request and chat with wholesaler 
+e) in this card emp gets to send request or chat with us if clicked on send request we will be asked to write a small decription saying customization sneeded
+
+---now its crucial----
+f)after emp clicks send request the request regarding that selected product is send to wholesalers orders section right now that order section of wholesaler is static no real dataa, aafter this implementation it will be dynamic
+
+g)we have orders section for both employee and wholesaler now after the sent request wholesaler can  either selct or reject the request in his own order setion if rejects he needs to specify reason there on rejection the message along with rejection is shown to emp in hos order section after accepting the main context starts here 
+the emp gets shown - in production and in wholesaler section the wholesaler is having the contol of marking packed, and dispatched at end and all this marking should be shown to that requested employee and after disaptched from wholesaler employee can mark the item as item recieved then its complete the wholesaler should  get the meassge completed 
+this acrchitecture is complex so use ur own intelligence to fill the gaps in this if any also both wholsaler and emp should a section as order details or completed where they can see the order disptched or recieved items detail

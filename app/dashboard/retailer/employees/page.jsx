@@ -60,7 +60,6 @@ export default function RetailerEmployeesPage() {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          is_active: isActive,
           status: isActive ? "active" : "inactive"
         }),
       });
@@ -68,9 +67,9 @@ export default function RetailerEmployeesPage() {
 
       // Update cache in-place without refetch
       employeesCache.data = employeesCache.data.map(e =>
-        e.id === id ? { ...e, is_active: isActive } : e
+        e.id === id ? { ...e, status: isActive ? "active" : "inactive" } : e
       );
-      setEmployees(employeesCache.data);
+      setEmployees([...employeesCache.data]);
     } catch (err) {
       alert(err.message);
     }

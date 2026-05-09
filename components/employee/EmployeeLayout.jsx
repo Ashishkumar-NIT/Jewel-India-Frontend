@@ -1,23 +1,18 @@
 "use client";
 
-import EmployeeSidebar from "./EmployeeSidebar";
-
 /**
- * Client wrapper that renders the permanent sidebar + main content area.
- * The sidebar is fixed at 60px; content is offset by the same amount.
+ * Client wrapper for the employee dashboard main content area.
+ * The bottom nav is rendered only on the home page (EmployeeHomeClient).
  */
-export default function EmployeeLayout({ employeeName, businessName, children }) {
+export default function EmployeeLayout({ children }) {
   return (
-    <div style={{ display: "flex", minHeight: "100vh", background: "#FAFAFA" }}>
-      <EmployeeSidebar />
-
-    
+    <div style={{ minHeight: "100vh", background: "#FAFAFA", display: "flex", flexDirection: "column" }}>
       <main
         style={{
-          marginLeft: 60,
           flex: 1,
-          width: "calc(100% - 60px)",
-          minHeight: "100vh",
+          width: "100%",
+          display: "flex",
+          flexDirection: "column",
         }}
       >
         {children}
