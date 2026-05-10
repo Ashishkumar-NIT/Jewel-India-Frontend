@@ -9,71 +9,21 @@ export const metadata = {
 
 export default function EmployeeLoginPage() {
   return (
-    <div
-      style={{
-        display: "flex",
-        height: "100vh",
-        width: "100%",
-        overflow: "hidden",
-        background: "#fff",
-      }}
-    >
-      {/* Left Side — Jewellery Photo (hidden on mobile) */}
-      <div
-        style={{
-          position: "relative",
-          width: "50%",
-          height: "100%",
-          flexShrink: 0,
-          overflow: "hidden",
-        }}
-        className="hidden md:block"
-      >
+    <div className="flex flex-col md:flex-row w-full min-h-screen bg-white overflow-hidden p-4">
+      {/* Left Side — Full-height image */}
+      <div className="relative w-full h-[40vh] md:w-[60%] lg:w-[65%] md:h-[calc(100vh-2rem)] flex-shrink-0 overflow-hidden">
         <Image
-          src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1774883373/authImg_ivftu7.png"
-          alt="Jewellery"
+          src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1778315194/emp_invite_image_tlmjyv.svg"
+          alt="Employee Invite"
           fill
-          style={{ objectFit: "cover", objectPosition: "center top" }}
+          style={{ objectFit: "cover", objectPosition: "center" }}
           priority
-        />
-
-        {/* Subtle gradient overlay at the edge for a polished bleed */}
-        <div
-          style={{
-            position: "absolute",
-            top: 0,
-            right: 0,
-            width: "80px",
-            height: "100%",
-            background:
-              "linear-gradient(to right, transparent, rgba(255,255,255,0.05))",
-            pointerEvents: "none",
-          }}
         />
       </div>
 
       {/* Right Side — Login Form */}
-      <div
-        style={{
-          flex: 1,
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-          padding: "40px 32px",
-          minHeight: "100vh",
-          background: "#fff",
-        }}
-      >
-        <div
-          style={{
-            width: "100%",
-            maxWidth: "380px",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "flex-start",
-          }}
-        >
+      <div className="w-full md:w-[40%] lg:w-[35%] flex-shrink-0 flex flex-col bg-white px-[20px] pt-[16px] md:px-[24px] lg:px-[40px]">
+        <div className="w-full max-w-[400px] mx-auto">
           <Suspense>
             <EmployeeLoginForm />
           </Suspense>

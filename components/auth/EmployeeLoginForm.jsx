@@ -7,6 +7,10 @@ export function EmployeeLoginForm() {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const isFormValid = email.trim() !== "" && password.trim() !== "";
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -25,29 +29,29 @@ export function EmployeeLoginForm() {
 
   return (
     <form
-      className="flex flex-col gap-6 w-full max-w-[340px]"
+      className="flex flex-col w-full"
       onSubmit={handleSubmit}
       style={{ fontFamily: "'Gilroy', 'SF Pro', system-ui, sans-serif" }}
     >
       {/* Heading */}
-      <h1
-        style={{
-          fontFamily: "Georgia, 'Bodoni Moda', serif",
-          fontSize: "clamp(32px, 4.5vw, 44px)",
-          fontWeight: 400,
-          color: "#111111",
-          lineHeight: 1.15,
-          letterSpacing: "-0.01em",
-          margin: "0 0 8px",
-        }}
-      >
-        The catalogue
-        <br />
-        is waiting.
-      </h1>
+      <div className="w-full flex justify-center mb-[160px]">
+        <h1
+          className="text-[#111111] text-left text-[1.6rem] md:text-[1.8rem] lg:text-[2.5rem]"
+          style={{
+            fontFamily: "Georgia, 'Bodoni Moda', serif",
+            fontWeight: 400,
+            lineHeight: 1.15,
+            letterSpacing: "-0.01em",
+          }}
+        >
+          The catalogue
+          <br />
+          is waiting.
+        </h1>
+      </div>
 
       {/* Email */}
-      <div className="flex flex-col gap-1.5">
+      <div className="flex flex-col gap-1.5 mb-[24px]">
         <label
           htmlFor="emp-email"
           style={{
@@ -64,28 +68,16 @@ export function EmployeeLoginForm() {
           name="email"
           type="email"
           placeholder="Enter"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
           required
           autoComplete="email"
-          className="employee-login-input"
-          style={{
-            height: "48px",
-            width: "100%",
-            border: "1.5px solid #E5E7EB",
-            borderRadius: "6px",
-            padding: "0 14px",
-            fontSize: "15px",
-            color: "#111827",
-            background: "#fff",
-            outline: "none",
-            transition: "border-color 0.2s",
-          }}
-          onFocus={(e) => (e.target.style.borderColor = "#111")}
-          onBlur={(e) => (e.target.style.borderColor = "#E5E7EB")}
+          className="employee-login-input w-full h-[48px] border-[1.5px] border-[#E5E7EB] rounded-[6px] px-[14px] text-[15px] text-[#111827] bg-white outline-none transition-colors focus:border-[#111]"
         />
       </div>
 
       {/* Password */}
-      <div className="flex flex-col gap-1.5">
+      <div className="flex flex-col gap-1.5 mb-[32px]">
         <label
           htmlFor="emp-password"
           style={{
@@ -103,22 +95,11 @@ export function EmployeeLoginForm() {
             name="password"
             type={showPassword ? "text" : "password"}
             placeholder="••••••••••••"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             required
             autoComplete="current-password"
-            style={{
-              height: "48px",
-              width: "100%",
-              border: "1.5px solid #E5E7EB",
-              borderRadius: "6px",
-              padding: "0 44px 0 14px",
-              fontSize: "15px",
-              color: "#111827",
-              background: "#fff",
-              outline: "none",
-              transition: "border-color 0.2s",
-            }}
-            onFocus={(e) => (e.target.style.borderColor = "#111")}
-            onBlur={(e) => (e.target.style.borderColor = "#E5E7EB")}
+            className="w-full h-[48px] border-[1.5px] border-[#E5E7EB] rounded-[6px] pl-[14px] pr-[44px] text-[15px] text-[#111827] bg-white outline-none transition-colors focus:border-[#111]"
           />
           <button
             type="button"
@@ -187,6 +168,7 @@ export function EmployeeLoginForm() {
             background: "#FEF2F2",
             border: "1px solid #FECACA",
             borderRadius: "8px",
+            marginBottom: "16px",
           }}
         >
           <span
@@ -208,28 +190,12 @@ export function EmployeeLoginForm() {
       <button
         type="submit"
         id="employee-login-btn"
-        disabled={loading}
-        style={{
-          width: "100%",
-          height: "50px",
-          background: loading ? "#374151" : "#111111",
-          color: "#fff",
-          fontSize: "15px",
-          fontWeight: 600,
-          letterSpacing: "0.02em",
-          borderRadius: "8px",
-          border: "none",
-          cursor: loading ? "not-allowed" : "pointer",
-          transition: "all 0.2s ease",
-          opacity: loading ? 0.8 : 1,
-          marginTop: "4px",
-        }}
-        onMouseEnter={(e) => {
-          if (!loading) e.target.style.background = "#000";
-        }}
-        onMouseLeave={(e) => {
-          if (!loading) e.target.style.background = "#111111";
-        }}
+        disabled={loading || !isFormValid}
+        className={`w-full flex items-center justify-center text-center font-semibold tracking-[0.02em] rounded-[8px] transition-all duration-200 h-[44px] text-[15px] ${
+          loading || !isFormValid
+            ? "bg-[#E5E7EB] text-[#9CA3AF] cursor-not-allowed"
+            : "bg-black text-white cursor-pointer hover:bg-[#222222] hover:shadow-md"
+        }`}
       >
         {loading ? "Signing in..." : "Get Started"}
       </button>
