@@ -18,23 +18,38 @@ const navItems = [
     name: "Catalogue", 
     href: "/dashboard/employee/wholesaler-gallery",
     icon: (
-      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <line x1="8" y1="6" x2="21" y2="6"></line>
-        <line x1="8" y1="12" x2="21" y2="12"></line>
-        <line x1="8" y1="18" x2="21" y2="18"></line>
-        <line x1="3" y1="6" x2="3.01" y2="6"></line>
-        <line x1="3" y1="12" x2="3.01" y2="12"></line>
-        <line x1="3" y1="18" x2="3.01" y2="18"></line>
-      </svg>
+      <div style={{
+        width: "17px",
+        height: "17px",
+        backgroundColor: "currentColor",
+        WebkitMaskImage: "url('https://res.cloudinary.com/dcs0vuzwg/image/upload/v1778318363/catalogue_icon_rf0pjq.svg')",
+        WebkitMaskSize: "contain",
+        WebkitMaskRepeat: "no-repeat",
+        WebkitMaskPosition: "center",
+        maskImage: "url('https://res.cloudinary.com/dcs0vuzwg/image/upload/v1778318363/catalogue_icon_rf0pjq.svg')",
+        maskSize: "contain",
+        maskRepeat: "no-repeat",
+        maskPosition: "center"
+      }} />
     )
   },
   { 
     name: "Queries", 
     href: "/dashboard/employee/messages",
     icon: (
-      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-      </svg>
+      <div style={{
+        width: "17px",
+        height: "17px",
+        backgroundColor: "currentColor",
+        WebkitMaskImage: "url('https://res.cloudinary.com/dcs0vuzwg/image/upload/v1778318363/query_icon_p7xfqk.svg')",
+        WebkitMaskSize: "contain",
+        WebkitMaskRepeat: "no-repeat",
+        WebkitMaskPosition: "center",
+        maskImage: "url('https://res.cloudinary.com/dcs0vuzwg/image/upload/v1778318363/query_icon_p7xfqk.svg')",
+        maskSize: "contain",
+        maskRepeat: "no-repeat",
+        maskPosition: "center"
+      }} />
     )
   },
   { 
