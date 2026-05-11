@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { BusinessProfileModal } from "../shared/BusinessProfileModal";
+import { ConfirmationModal } from "../shared/ConfirmationModal";
 
 function HourglassIcon({ className }) {
   return (
@@ -239,6 +240,7 @@ export default function EmployeeOrdersClient({ initialOrders }) {
   const [activeTab, setActiveTab] = useState(isValidTab ? tabParam : "requested");
   const [isUpdating, setIsUpdating] = useState(false);
   const [selectedBusiness, setSelectedBusiness] = useState(null);
+  const [orderToDelete, setOrderToDelete] = useState(null);
 
   // Sync activeTab with URL
   const handleTabChange = (tabId) => {
@@ -256,7 +258,6 @@ export default function EmployeeOrdersClient({ initialOrders }) {
   }, [tabParam]);
 
   const handleDeleteOrder = async (orderId) => {
-    if (!confirm("Are you sure you want to delete this rejected order? This action cannot be undone.")) return;
     setIsUpdating(true);
     try {
       const res = await fetch(`/api/orders/${orderId}`, {
@@ -264,6 +265,7 @@ export default function EmployeeOrdersClient({ initialOrders }) {
       });
       if (!res.ok) throw new Error("Failed to delete order");
       setOrders(prev => prev.filter(o => o.id !== orderId));
+      setOrderToDelete(null);
     } catch (err) {
       alert(err.message);
     } finally {
@@ -359,7 +361,7 @@ export default function EmployeeOrdersClient({ initialOrders }) {
                 key={order.id}
                 order={order}
                 onUpdateStatus={handleUpdateStatus}
-                onDeleteOrder={handleDeleteOrder}
+                onDeleteOrder={(orderId) => setOrderToDelete(orderId)}
                 onBusinessClick={(b) => setSelectedBusiness(b)}
               />
             ))}
@@ -374,6 +376,17 @@ export default function EmployeeOrdersClient({ initialOrders }) {
           onClose={() => setSelectedBusiness(null)}
         />
       )}
+
+      {/* Delete Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={!!orderToDelete}
+        onClose={() => setOrderToDelete(null)}
+        onConfirm={() => handleDeleteOrder(orderToDelete)}
+        title="Delete Order?"
+        message="Are you sure you want to delete this rejected order? This action cannot be undone."
+        confirmText="Yes, Delete"
+        cancelText="No, Keep it"
+      />
 
       {/* Loading overlay */}
       {isUpdating && (

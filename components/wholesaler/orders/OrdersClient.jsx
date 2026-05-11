@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { OrderDetailModal } from "../../../components/employee/OrderDetailModal";
 import { BusinessProfileModal } from "../../../components/shared/BusinessProfileModal";
+import { ConfirmationModal } from "../../../components/shared/ConfirmationModal";
 
 function HourglassIcon({ className }) {
   return (
@@ -199,6 +200,7 @@ export default function OrdersClient({ initialOrders }) {
   const [isUpdating, setIsUpdating] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [selectedBusiness, setSelectedBusiness] = useState(null);
+  const [orderToDelete, setOrderToDelete] = useState(null);
 
   // Sync activeTab with URL
   const handleTabChange = (tabId) => {
@@ -220,7 +222,6 @@ export default function OrdersClient({ initialOrders }) {
   const [rejectReason, setRejectReason] = useState("");
 
   const handleDeleteOrder = async (orderId) => {
-    if (!confirm("Are you sure you want to delete this rejected order? This action cannot be undone.")) return;
     setIsUpdating(true);
     try {
       const res = await fetch(`/api/orders/${orderId}`, {
@@ -228,6 +229,7 @@ export default function OrdersClient({ initialOrders }) {
       });
       if (!res.ok) throw new Error("Failed to delete order");
       setOrders(prev => prev.filter(o => o.id !== orderId));
+      setOrderToDelete(null);
     } catch (err) {
       alert(err.message);
     } finally {
@@ -345,7 +347,7 @@ export default function OrdersClient({ initialOrders }) {
                 order={order} 
                 onUpdateStatus={handleUpdateStatus} 
                 onReject={(o) => setRejectOrder(o)}
-                onDeleteOrder={handleDeleteOrder}
+                onDeleteOrder={(orderId) => setOrderToDelete(orderId)}
                 onViewDetails={(o) => setSelectedOrder(o)}
                 onBusinessClick={(r) => setSelectedBusiness(r)}
               />
@@ -393,6 +395,17 @@ export default function OrdersClient({ initialOrders }) {
           </div>
         </div>
       )}
+
+      {/* Delete Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={!!orderToDelete}
+        onClose={() => setOrderToDelete(null)}
+        onConfirm={() => handleDeleteOrder(orderToDelete)}
+        title="Delete Order?"
+        message="Are you sure you want to delete this rejected order? This action cannot be undone."
+        confirmText="Yes, Delete"
+        cancelText="No, Keep it"
+      />
 
       {isUpdating && (
         <div className="fixed inset-0 z-[100] bg-white/50 backdrop-blur-sm flex items-center justify-center">
