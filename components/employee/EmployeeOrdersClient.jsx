@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { BusinessProfileModal } from "../shared/BusinessProfileModal";
 
@@ -213,11 +214,38 @@ function OrderCard({ order, onUpdateStatus, onBusinessClick }) {
   );
 }
 
+const tabs = [
+  { id: "requested", label: "Requested", statuses: ["pending", "accepted"] },
+  { id: "active",    label: "Active Orders", statuses: ["in_production", "packed"] },
+  { id: "shipped",   label: "Shipped", statuses: ["dispatched", "received", "completed"] },
+  { id: "rejected",  label: "Rejected", statuses: ["rejected"] },
+];
+
 export default function EmployeeOrdersClient({ initialOrders }) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const tabParam = searchParams.get("tab");
+  const isValidTab = tabs.some(t => t.id === tabParam);
+
   const [orders, setOrders] = useState(initialOrders);
-  const [activeTab, setActiveTab] = useState("requested");
+  const [activeTab, setActiveTab] = useState(isValidTab ? tabParam : "requested");
   const [isUpdating, setIsUpdating] = useState(false);
   const [selectedBusiness, setSelectedBusiness] = useState(null);
+
+  // Sync activeTab with URL
+  const handleTabChange = (tabId) => {
+    setActiveTab(tabId);
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("tab", tabId);
+    router.replace(`?${params.toString()}`, { scroll: false });
+  };
+
+  // Handle browser back/forward navigation
+  useEffect(() => {
+    if (tabParam && tabs.some(t => t.id === tabParam)) {
+      setActiveTab(tabParam);
+    }
+  }, [tabParam]);
 
   const handleUpdateStatus = async (orderId, newStatus) => {
     setIsUpdating(true);
@@ -237,12 +265,6 @@ export default function EmployeeOrdersClient({ initialOrders }) {
     }
   };
 
-  const tabs = [
-    { id: "requested", label: "Requested", statuses: ["pending", "accepted"] },
-    { id: "active",    label: "Active Orders", statuses: ["in_production", "packed"] },
-    { id: "shipped",   label: "Shipped", statuses: ["dispatched", "received", "completed"] },
-    { id: "rejected",  label: "Rejected", statuses: ["rejected"] },
-  ];
 
   const counts = tabs.reduce((acc, tab) => {
     acc[tab.id] = orders.filter(o => tab.statuses.includes(o.status)).length;
@@ -281,7 +303,7 @@ export default function EmployeeOrdersClient({ initialOrders }) {
             return (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
+                onClick={() => handleTabChange(tab.id)}
                 className={`flex items-center gap-2 px-5 py-3 text-[13px] font-medium border-b-2 transition-all -mb-px ${
                   isActive
                     ? "border-black text-black"

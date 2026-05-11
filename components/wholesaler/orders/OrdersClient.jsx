@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { OrderDetailModal } from "../../../components/employee/OrderDetailModal";
 import { BusinessProfileModal } from "../../../components/shared/BusinessProfileModal";
@@ -186,12 +187,39 @@ function WholesalerOrderCard({ order, onUpdateStatus, onReject, onViewDetails, o
   );
 }
 
+const tabs = [
+  { id: "new", label: "New Orders" },
+  { id: "active", label: "Active Orders" },
+  { id: "completed", label: "Completed" },
+  { id: "rejected", label: "Rejected" },
+];
+
 export default function OrdersClient({ initialOrders }) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const tabParam = searchParams.get("tab");
+  const isValidTab = tabs.some(t => t.id === tabParam);
+
   const [orders, setOrders] = useState(initialOrders);
-  const [activeTab, setActiveTab] = useState("new");
+  const [activeTab, setActiveTab] = useState(isValidTab ? tabParam : "new");
   const [isUpdating, setIsUpdating] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [selectedBusiness, setSelectedBusiness] = useState(null);
+
+  // Sync activeTab with URL
+  const handleTabChange = (tabId) => {
+    setActiveTab(tabId);
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("tab", tabId);
+    router.replace(`?${params.toString()}`, { scroll: false });
+  };
+
+  // Handle browser back/forward navigation
+  useEffect(() => {
+    if (tabParam && tabs.some(t => t.id === tabParam)) {
+      setActiveTab(tabParam);
+    }
+  }, [tabParam]);
   
   // Rejection modal
   const [rejectOrder, setRejectOrder] = useState(null);
@@ -271,17 +299,12 @@ export default function OrdersClient({ initialOrders }) {
       <div className="w-full max-w-5xl mx-auto px-6">
         {/* Segmented Tabs */}
         <div className="inline-flex items-center bg-[#f4f5f7] rounded-full p-1 mb-8">
-          {[
-            { id: "new", label: "New Orders" },
-            { id: "active", label: "Active Orders" },
-            { id: "completed", label: "Completed" },
-            { id: "rejected", label: "Rejected" },
-          ].map(tab => {
+          {tabs.map(tab => {
             const isActive = activeTab === tab.id;
             return (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
+                onClick={() => handleTabChange(tab.id)}
                 className={`flex items-center gap-2 px-5 py-2 rounded-full text-[13px] font-medium transition-all ${
                   isActive 
                     ? "bg-white text-black shadow-[0_1px_3px_rgba(0,0,0,0.1)]" 
