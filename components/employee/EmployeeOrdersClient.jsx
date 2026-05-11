@@ -216,8 +216,8 @@ function OrderCard({ order, onUpdateStatus, onBusinessClick }) {
 
 const tabs = [
   { id: "requested", label: "Requested", statuses: ["pending"] },
-  { id: "active",    label: "Active Orders", statuses: ["accepted", "in_production", "packed"] },
-  { id: "shipped",   label: "Shipped", statuses: ["dispatched", "received", "completed"] },
+  { id: "active",    label: "Active Orders", statuses: ["accepted", "in_production", "packed", "dispatched"] },
+  { id: "shipped",   label: "Shipped", statuses: ["received", "completed"] },
   { id: "rejected",  label: "Rejected", statuses: ["rejected"] },
 ];
 
