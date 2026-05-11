@@ -182,8 +182,8 @@ export default function WholesalerGalleryClient({ products, categoryTabs, initia
               key={tab}
               onClick={() => handleCategoryChange(key)}
               className={`rounded-full px-4 py-2 text-[12px] font-semibold transition-colors ${isActive
-                  ? "bg-black text-white"
-                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                ? "bg-black text-white"
+                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                 }`}
             >
               {tab}

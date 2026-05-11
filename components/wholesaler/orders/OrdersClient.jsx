@@ -28,14 +28,7 @@ function WholesalerOrderCard({ order, onUpdateStatus, onReject, onViewDetails, o
         <span>Respond in next 18 hours</span>
       </div>
     );
-  } else if (order.status === "accepted") {
-    statusBadge = (
-      <div className="flex items-center gap-1.5 text-blue-600 font-medium text-[13px]">
-        <HourglassIcon className="w-4 h-4" />
-        <span>Awaiting Production</span>
-      </div>
-    );
-  } else if (order.status === "in_production") {
+  } else if (order.status === "accepted" || order.status === "in_production") {
     statusBadge = (
       <div className="flex items-center gap-1.5 text-purple-600 font-medium text-[13px]">
         <span>In Production</span>
@@ -136,7 +129,7 @@ function WholesalerOrderCard({ order, onUpdateStatus, onReject, onViewDetails, o
                 Reject order
               </button>
               <button 
-                onClick={() => onUpdateStatus(order.id, "accepted")}
+                onClick={() => onUpdateStatus(order.id, "in_production")}
                 className="px-6 py-2.5 text-[13px] font-medium bg-[#111827] text-white rounded-[6px] hover:bg-black transition-colors"
               >
                 Confirm order
@@ -144,14 +137,6 @@ function WholesalerOrderCard({ order, onUpdateStatus, onReject, onViewDetails, o
             </>
           )}
 
-          {order.status === "accepted" && (
-            <button 
-              onClick={() => onUpdateStatus(order.id, "in_production")}
-              className="px-6 py-2.5 text-[13px] font-medium bg-purple-600 text-white rounded-[6px] hover:bg-purple-700 transition-colors"
-            >
-              Start Production
-            </button>
-          )}
 
           {order.status === "in_production" && (
             <button 

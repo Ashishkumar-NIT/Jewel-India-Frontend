@@ -24,7 +24,7 @@ function XCircleIcon({ className }) {
 }
 
 function StatusBadge({ status }) {
-  if (status === "pending" || status === "accepted") {
+  if (status === "pending") {
     return (
       <div className="flex items-center gap-1.5 text-amber-500 text-[12px] font-medium">
         <HourglassIcon className="w-3.5 h-3.5" />
@@ -32,7 +32,7 @@ function StatusBadge({ status }) {
       </div>
     );
   }
-  if (status === "in_production") {
+  if (status === "accepted" || status === "in_production") {
     return (
       <div className="flex items-center gap-1.5 text-purple-600 text-[12px] font-medium">
         <HourglassIcon className="w-3.5 h-3.5" />
@@ -215,8 +215,8 @@ function OrderCard({ order, onUpdateStatus, onBusinessClick }) {
 }
 
 const tabs = [
-  { id: "requested", label: "Requested", statuses: ["pending", "accepted"] },
-  { id: "active",    label: "Active Orders", statuses: ["in_production", "packed"] },
+  { id: "requested", label: "Requested", statuses: ["pending"] },
+  { id: "active",    label: "Active Orders", statuses: ["accepted", "in_production", "packed"] },
   { id: "shipped",   label: "Shipped", statuses: ["dispatched", "received", "completed"] },
   { id: "rejected",  label: "Rejected", statuses: ["rejected"] },
 ];
