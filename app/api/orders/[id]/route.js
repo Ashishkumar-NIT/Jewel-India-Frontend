@@ -63,3 +63,34 @@ export async function PATCH(request, context) {
     return NextResponse.json({ error: err.message || "Internal server error" }, { status: 500 });
   }
 }
+
+export async function DELETE(request, context) {
+  try {
+    const supabase = await createClient();
+
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    if (authError || !user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // Wait for params in Next.js 15+
+    const resolvedParams = await context.params;
+    const orderId = resolvedParams.id;
+
+    if (!orderId) {
+      return NextResponse.json({ error: "Order ID missing" }, { status: 400 });
+    }
+
+    const { error } = await supabaseAdmin
+      .from("orders")
+      .delete()
+      .eq("id", orderId);
+
+    if (error) throw error;
+
+    return NextResponse.json({ success: true });
+  } catch (err) {
+    console.error("[orders/delete] Error:", err);
+    return NextResponse.json({ error: err.message || "Internal server error" }, { status: 500 });
+  }
+}

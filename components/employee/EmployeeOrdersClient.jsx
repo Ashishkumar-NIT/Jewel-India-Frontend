@@ -120,7 +120,7 @@ function RejectionBox({ reason }) {
   );
 }
 
-function OrderCard({ order, onUpdateStatus, onBusinessClick }) {
+function OrderCard({ order, onUpdateStatus, onDeleteOrder, onBusinessClick }) {
   const p = order.products || {};
   const w = order.wholesalers || {};
   const imgUrl = p.processed_image_url || p.raw_image_url;
@@ -208,6 +208,14 @@ function OrderCard({ order, onUpdateStatus, onBusinessClick }) {
               Order shipped
             </button>
           )}
+          {order.status === "rejected" && (
+            <button
+              onClick={() => onDeleteOrder(order.id)}
+              className="px-5 py-2 bg-red-600 text-white text-[12px] font-medium rounded-full hover:bg-red-700 transition-colors shadow-sm"
+            >
+              Delete Order
+            </button>
+          )}
         </div>
       </div>
     </div>
@@ -246,6 +254,22 @@ export default function EmployeeOrdersClient({ initialOrders }) {
       setActiveTab(tabParam);
     }
   }, [tabParam]);
+
+  const handleDeleteOrder = async (orderId) => {
+    if (!confirm("Are you sure you want to delete this rejected order? This action cannot be undone.")) return;
+    setIsUpdating(true);
+    try {
+      const res = await fetch(`/api/orders/${orderId}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) throw new Error("Failed to delete order");
+      setOrders(prev => prev.filter(o => o.id !== orderId));
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setIsUpdating(false);
+    }
+  };
 
   const handleUpdateStatus = async (orderId, newStatus) => {
     setIsUpdating(true);
@@ -335,6 +359,7 @@ export default function EmployeeOrdersClient({ initialOrders }) {
                 key={order.id}
                 order={order}
                 onUpdateStatus={handleUpdateStatus}
+                onDeleteOrder={handleDeleteOrder}
                 onBusinessClick={(b) => setSelectedBusiness(b)}
               />
             ))}

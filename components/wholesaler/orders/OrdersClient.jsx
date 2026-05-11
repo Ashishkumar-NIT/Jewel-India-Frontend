@@ -14,7 +14,7 @@ function HourglassIcon({ className }) {
   );
 }
 
-function WholesalerOrderCard({ order, onUpdateStatus, onReject, onViewDetails, onBusinessClick }) {
+function WholesalerOrderCard({ order, onUpdateStatus, onReject, onDeleteOrder, onViewDetails, onBusinessClick }) {
   const p = order.products || {};
   const r = order.retailers || {};
   const imgUrl = p.processed_image_url || p.raw_image_url;
@@ -165,6 +165,15 @@ function WholesalerOrderCard({ order, onUpdateStatus, onReject, onViewDetails, o
                View Details
              </button>
           )}
+
+          {order.status === "rejected" && (
+            <button 
+              onClick={() => onDeleteOrder(order.id)}
+              className="px-6 py-2.5 text-[13px] font-medium text-white bg-red-600 rounded-[6px] hover:bg-red-700 transition-colors shadow-sm"
+            >
+              Delete Order
+            </button>
+          )}
         </div>
 
       </div>
@@ -209,6 +218,22 @@ export default function OrdersClient({ initialOrders }) {
   // Rejection modal
   const [rejectOrder, setRejectOrder] = useState(null);
   const [rejectReason, setRejectReason] = useState("");
+
+  const handleDeleteOrder = async (orderId) => {
+    if (!confirm("Are you sure you want to delete this rejected order? This action cannot be undone.")) return;
+    setIsUpdating(true);
+    try {
+      const res = await fetch(`/api/orders/${orderId}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) throw new Error("Failed to delete order");
+      setOrders(prev => prev.filter(o => o.id !== orderId));
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setIsUpdating(false);
+    }
+  };
 
   const handleUpdateStatus = async (orderId, newStatus, reason = null) => {
     if (!reason && !confirm(`Update order status to ${newStatus}?`)) return;
@@ -320,6 +345,7 @@ export default function OrdersClient({ initialOrders }) {
                 order={order} 
                 onUpdateStatus={handleUpdateStatus} 
                 onReject={(o) => setRejectOrder(o)}
+                onDeleteOrder={handleDeleteOrder}
                 onViewDetails={(o) => setSelectedOrder(o)}
                 onBusinessClick={(r) => setSelectedBusiness(r)}
               />
