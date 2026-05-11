@@ -12,6 +12,16 @@ function HourglassIcon({ className }) {
   );
 }
 
+function XCircleIcon({ className }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="10" />
+      <path d="m15 9-6 6" />
+      <path d="m9 9 6 6" />
+    </svg>
+  );
+}
+
 function StatusBadge({ status }) {
   if (status === "pending" || status === "accepted") {
     return (
@@ -56,7 +66,7 @@ function StatusBadge({ status }) {
   if (status === "rejected") {
     return (
       <div className="flex items-center gap-1.5 text-red-500 text-[12px] font-medium">
-        <HourglassIcon className="w-3.5 h-3.5" />
+        <XCircleIcon className="w-3.5 h-3.5" />
         <span>Rejected</span>
       </div>
     );
@@ -78,6 +88,29 @@ function NoteBox({ note }) {
         <button
           onClick={() => setExpanded(!expanded)}
           className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider hover:text-black mt-1"
+        >
+          {expanded ? "Show Less" : "Read More"}
+        </button>
+      )}
+    </div>
+  );
+}
+
+function RejectionBox({ reason }) {
+  const [expanded, setExpanded] = useState(false);
+  const isLong = reason && reason.length > 100;
+  const displayText = expanded || !isLong ? reason : reason.slice(0, 100) + "...";
+
+  return (
+    <div className="w-full max-w-[400px] bg-red-50 border border-dashed border-red-200 rounded-[4px] p-4 relative mb-5">
+      <p className="text-[11px] text-red-800 font-bold mb-1 uppercase tracking-wider">Rejection Reason</p>
+      <p className="text-[12px] text-red-700 leading-relaxed pr-4">
+        {reason ? displayText : <span className="italic text-red-400">No rejection reason provided.</span>}
+      </p>
+      {isLong && (
+        <button
+          onClick={() => setExpanded(!expanded)}
+          className="text-[10px] font-bold text-red-600 uppercase tracking-wider hover:text-red-800 mt-1"
         >
           {expanded ? "Show Less" : "Read More"}
         </button>
@@ -130,6 +163,11 @@ function OrderCard({ order, onUpdateStatus, onBusinessClick }) {
 
         {/* Note Box */}
         <NoteBox note={order.customization_note} />
+
+        {/* Rejection Reason (if rejected) */}
+        {order.status === "rejected" && (
+          <RejectionBox reason={order.rejection_reason} />
+        )}
 
         {/* Make to order + Wholesaler name */}
         <p className="text-[12px] text-gray-600 mb-1.5">
@@ -203,6 +241,7 @@ export default function EmployeeOrdersClient({ initialOrders }) {
     { id: "requested", label: "Requested", statuses: ["pending", "accepted"] },
     { id: "active",    label: "Active Orders", statuses: ["in_production", "packed"] },
     { id: "shipped",   label: "Shipped", statuses: ["dispatched", "received", "completed"] },
+    { id: "rejected",  label: "Rejected", statuses: ["rejected"] },
   ];
 
   const counts = tabs.reduce((acc, tab) => {
