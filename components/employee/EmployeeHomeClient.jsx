@@ -45,17 +45,7 @@ export default function EmployeeHomeClient({ employee, businessName, designs }) 
               />
             </div>
 
-            {/* Dark top overlay — only on top ~50% */}
-            <div
-              className="absolute top-0 left-0 right-0 bg-gradient-to-b from-black/70 via-black/40 to-transparent"
-              style={{ height: "58%" }}
-            />
-
-            {/* Dark bottom overlay for button area */}
-            <div
-              className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent"
-              style={{ height: "35%" }}
-            />
+            {/* No overlays as requested */}
 
             {/* Content — full height flex */}
             <div className="relative z-10 flex flex-col h-full p-8 pb-6">
@@ -74,13 +64,13 @@ export default function EmployeeHomeClient({ employee, businessName, designs }) 
               <div className="flex flex-col items-center gap-3">
                 <button
                   onClick={() => router.push('/dashboard/employee/questionnaire')}
-                  className="w-full py-3.5 rounded-none bg-[#1a1a1a]/90 backdrop-blur-sm text-white text-[13px] font-medium tracking-wide border border-white/10 hover:bg-[#111] transition-all"
+                  className="w-full py-3.5 rounded-none bg-[#1a1a1a]/90 backdrop-blur-sm text-white text-[15px] font-medium tracking-wide border border-white/10 hover:bg-[#111] transition-all"
                 >
                   Start with some question
                 </button>
                 <button
                   onClick={() => router.push('/dashboard/employee/playground')}
-                  className="text-white/75 text-[12px] font-medium hover:text-white transition-colors"
+                  className="text-white/75 text-[14px] font-medium hover:text-white transition-colors"
                 >
                   Skip
                 </button>

@@ -217,7 +217,7 @@ export default function QuestionnaireFlow({ businessName }) {
               <div className="mt-auto">
                 <button 
                   onClick={handleNext}
-                  className="w-full py-3 rounded-none bg-[#1a1a1a]/90 backdrop-blur-sm text-white text-[13px] font-medium tracking-wide border border-white/10 hover:bg-[#111] transition-all"
+                  className="w-full py-3 rounded-none bg-[#1a1a1a]/90 backdrop-blur-sm text-white text-[15px] font-medium tracking-wide border border-white/10 hover:bg-[#111] transition-all"
                 >
                   {currentStep === QUESTIONS.length - 1 ? 'Finish' : 'Next'}
                 </button>
