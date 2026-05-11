@@ -12,6 +12,7 @@ export default function OverviewSection({ productCount = 0, pendingCount = 0, ha
             icon={<Image src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777024605/live_products_nfjmtr.svg" alt="Live Products" width={16} height={16} loading="lazy" />}
             title="Live Products"
             value={productCount}
+            href="/dashboard/wholesaler/catalogue"
           />
           <BottomStatCard
             icon={<svg className="w-4 h-4 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
