@@ -26,6 +26,12 @@ export default async function WholesalerOrdersPage() {
 
   if (!wholesaler) redirect("/entry_page/signin");
 
+  // Reset new activity indicator
+  await supabase
+    .from("wholesalers")
+    .update({ last_checked_orders_at: new Date().toISOString() })
+    .eq("id", wholesaler.id);
+
   // Fetch orders
   const { data: orders, error } = await supabase
     .from("orders")

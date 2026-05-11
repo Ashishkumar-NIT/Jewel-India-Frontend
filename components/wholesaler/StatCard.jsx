@@ -18,13 +18,21 @@ function ChevronRight() {
   );
 }
 
-export function BottomStatCard({ icon, title, value, href }) {
+export function BottomStatCard({ icon, title, value, href, showBadge }) {
   const inner = (
     <div className="flex flex-row items-center justify-between">
       <div className="flex flex-col">
-        <span className="font-cirka text-[48px] font-medium leading-tight text-gray-900">
-          {value}
-        </span>
+        <div className="flex items-center gap-2">
+          <span className="font-cirka text-[48px] font-medium leading-tight text-gray-900">
+            {value}
+          </span>
+          {showBadge && (
+            <div className="relative flex h-2 w-2 -mt-6 ml-1">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+            </div>
+          )}
+        </div>
         <div className="flex flex-row items-center gap-2 mt-1">
           <span className="text-gray-700 w-4 h-4 flex items-center justify-center">
             {icon}
