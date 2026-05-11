@@ -201,6 +201,7 @@ export default function OrdersClient({ initialOrders }) {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [selectedBusiness, setSelectedBusiness] = useState(null);
   const [orderToDelete, setOrderToDelete] = useState(null);
+  const [pendingStatusChange, setPendingStatusChange] = useState(null);
 
   // Sync activeTab with URL
   const handleTabChange = (tabId) => {
@@ -238,8 +239,37 @@ export default function OrdersClient({ initialOrders }) {
   };
 
   const handleUpdateStatus = async (orderId, newStatus, reason = null) => {
-    if (!reason && !confirm(`Update order status to ${newStatus}?`)) return;
-    
+    // If not already confirmed (via modal), show modal for specific transitions
+    if (!reason && !pendingStatusChange) {
+      if (newStatus === "in_production") {
+        setPendingStatusChange({
+          orderId, newStatus,
+          title: "Confirm Order?",
+          message: "Are you sure you want to accept and start production for this order?",
+          variant: "primary"
+        });
+        return;
+      }
+      if (newStatus === "packed") {
+        setPendingStatusChange({
+          orderId, newStatus,
+          title: "Mark as Packed?",
+          message: "Has this order been fully packed and prepared for shipping?",
+          variant: "primary"
+        });
+        return;
+      }
+      if (newStatus === "dispatched") {
+        setPendingStatusChange({
+          orderId, newStatus,
+          title: "Dispatch Order?",
+          message: "Are you sure you want to mark this order as dispatched?",
+          variant: "success"
+        });
+        return;
+      }
+    }
+
     setIsUpdating(true);
     try {
       const payload = { status: newStatus };
@@ -257,6 +287,7 @@ export default function OrdersClient({ initialOrders }) {
       
       setRejectOrder(null);
       setRejectReason("");
+      setPendingStatusChange(null);
     } catch (err) {
       alert(err.message);
     } finally {
@@ -405,6 +436,18 @@ export default function OrdersClient({ initialOrders }) {
         message="Are you sure you want to delete this rejected order? This action cannot be undone."
         confirmText="Yes, Delete"
         cancelText="No, Keep it"
+      />
+
+      {/* Status Change Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={!!pendingStatusChange}
+        onClose={() => setPendingStatusChange(null)}
+        onConfirm={() => handleUpdateStatus(pendingStatusChange.orderId, pendingStatusChange.newStatus)}
+        title={pendingStatusChange?.title}
+        message={pendingStatusChange?.message}
+        variant={pendingStatusChange?.variant}
+        confirmText="Yes, Proceed"
+        cancelText="Cancel"
       />
 
       {isUpdating && (

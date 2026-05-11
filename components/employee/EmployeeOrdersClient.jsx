@@ -241,6 +241,7 @@ export default function EmployeeOrdersClient({ initialOrders }) {
   const [isUpdating, setIsUpdating] = useState(false);
   const [selectedBusiness, setSelectedBusiness] = useState(null);
   const [orderToDelete, setOrderToDelete] = useState(null);
+  const [pendingStatusChange, setPendingStatusChange] = useState(null);
 
   // Sync activeTab with URL
   const handleTabChange = (tabId) => {
@@ -274,6 +275,19 @@ export default function EmployeeOrdersClient({ initialOrders }) {
   };
 
   const handleUpdateStatus = async (orderId, newStatus) => {
+    // If not already confirmed (via modal), show modal for specific transitions
+    if (!pendingStatusChange) {
+      if (newStatus === "received") {
+        setPendingStatusChange({
+          orderId, newStatus,
+          title: "Mark as Received?",
+          message: "Are you sure you want to mark this order as received? This will move it to your Shipped tab.",
+          variant: "success"
+        });
+        return;
+      }
+    }
+
     setIsUpdating(true);
     try {
       const res = await fetch(`/api/orders/${orderId}`, {
@@ -284,6 +298,7 @@ export default function EmployeeOrdersClient({ initialOrders }) {
       if (!res.ok) throw new Error("Failed to update status");
       const { data } = await res.json();
       setOrders(prev => prev.map(o => o.id === orderId ? { ...o, ...data } : o));
+      setPendingStatusChange(null);
     } catch (err) {
       alert(err.message);
     } finally {
@@ -386,6 +401,18 @@ export default function EmployeeOrdersClient({ initialOrders }) {
         message="Are you sure you want to delete this rejected order? This action cannot be undone."
         confirmText="Yes, Delete"
         cancelText="No, Keep it"
+      />
+
+      {/* Status Change Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={!!pendingStatusChange}
+        onClose={() => setPendingStatusChange(null)}
+        onConfirm={() => handleUpdateStatus(pendingStatusChange.orderId, pendingStatusChange.newStatus)}
+        title={pendingStatusChange?.title}
+        message={pendingStatusChange?.message}
+        variant={pendingStatusChange?.variant}
+        confirmText="Yes, Proceed"
+        cancelText="Cancel"
       />
 
       {/* Loading overlay */}
