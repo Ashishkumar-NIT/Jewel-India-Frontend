@@ -127,11 +127,11 @@ export default function WholesalerGalleryClient({ products, categoryTabs, initia
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ product_id: product.id }),
       });
-      
+
       if (!res.ok) {
         throw new Error("Failed to start chat");
       }
-      
+
       const json = await res.json();
       router.push("/dashboard/employee/messages");
     } catch (err) {
@@ -181,11 +181,10 @@ export default function WholesalerGalleryClient({ products, categoryTabs, initia
             <button
               key={tab}
               onClick={() => handleCategoryChange(key)}
-              className={`rounded-full px-4 py-2 text-[12px] font-semibold transition-colors ${
-                isActive
+              className={`rounded-full px-4 py-2 text-[12px] font-semibold transition-colors ${isActive
                   ? "bg-black text-white"
                   : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-              }`}
+                }`}
             >
               {tab}
             </button>
@@ -206,17 +205,17 @@ export default function WholesalerGalleryClient({ products, categoryTabs, initia
       ) : (
         <div className="grid grid-cols-3 gap-x-6 gap-y-12">
           {filteredProducts.map((product) => (
-            <ProductCard 
-              key={product.id} 
-              product={product} 
-              onClick={(p) => setSelectedProduct(p)} 
+            <ProductCard
+              key={product.id}
+              product={product}
+              onClick={(p) => setSelectedProduct(p)}
             />
           ))}
         </div>
       )}
 
       {/* Product Info Modal */}
-      <ProductInfoModal 
+      <ProductInfoModal
         isOpen={!!selectedProduct}
         onClose={() => setSelectedProduct(null)}
         product={selectedProduct}
