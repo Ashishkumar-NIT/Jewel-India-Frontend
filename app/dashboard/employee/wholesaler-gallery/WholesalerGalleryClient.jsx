@@ -3,6 +3,7 @@
 import { useMemo, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { ProductInfoModal } from "@/components/employee/ProductInfoModal";
+import EmployeeBottomNav from "@/components/employee/EmployeeTopNav";
 
 function formatDate(dateStr) {
   if (!dateStr) return "";
@@ -112,17 +113,19 @@ export default function WholesalerGalleryClient({ products, categoryTabs, initia
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
-  // Scroll visibility state
-  const [showFilters, setShowFilters] = useState(true);
+  // Scroll visibility state: 'top', 'down', 'up'
+  const [scrollState, setScrollState] = useState('top');
   const [lastScrollY, setLastScrollY] = useState(0);
 
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
-      if (currentScrollY > lastScrollY && currentScrollY > 150) {
-        setShowFilters(false);
+      if (currentScrollY < 50) {
+        setScrollState('top');
+      } else if (currentScrollY > lastScrollY) {
+        setScrollState('down');
       } else {
-        setShowFilters(true);
+        setScrollState('up');
       }
       setLastScrollY(currentScrollY);
     };
@@ -314,14 +317,16 @@ export default function WholesalerGalleryClient({ products, categoryTabs, initia
       
       {/* Smart Sticky Header */}
       <div 
-        className={`sticky z-40 bg-white/95 backdrop-blur-md transition-transform duration-300 w-full pt-8 pb-6 border-b border-gray-100 ${
-          showFilters ? "translate-y-0 top-0" : "-translate-y-full top-0"
+        className={`sticky z-40 bg-white/95 backdrop-blur-md transition-all duration-700 cubic-bezier(0.4, 0, 0.2, 1) w-full border-b border-gray-100 overflow-hidden ${
+          scrollState === 'top' ? 'translate-y-0 top-0 pt-8 pb-6 shadow-none' : 
+          scrollState === 'down' ? 'translate-y-0 top-0 pt-3 pb-3 shadow-sm' : 
+          '-translate-y-full top-0'
         }`}
       >
-        <div className="w-full max-w-7xl mx-auto px-4 md:px-8 flex flex-col gap-10">
+        <div className="w-full max-w-7xl mx-auto px-4 md:px-8 flex flex-col transition-all duration-700 ease-in-out">
           
-          {/* Top Title & Back */}
-          <div className="relative w-full flex items-center justify-center">
+          {/* Top Title & Back - Hidden when scrolling down */}
+          <div className={`relative w-full flex items-center justify-center transition-all duration-700 ease-in-out overflow-hidden ${scrollState === 'down' ? 'max-h-0 opacity-0 pointer-events-none mb-0' : 'max-h-[100px] opacity-100 mb-10'}`}>
             <button 
               onClick={() => window.history.back()}
               className="absolute left-0 w-10 h-10 flex items-center justify-center rounded-full border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors shadow-sm"
@@ -340,8 +345,8 @@ export default function WholesalerGalleryClient({ products, categoryTabs, initia
           </div>
 
           <div className="flex flex-col gap-6">
-            {/* Curated Collection Header */}
-            <div>
+            {/* Curated Collection Header - Hidden when scrolling down */}
+            <div className={`transition-all duration-700 ease-in-out overflow-hidden ${scrollState === 'down' ? 'max-h-0 opacity-0 pointer-events-none mb-0' : 'max-h-[100px] opacity-100 mb-0'}`}>
               <h2 className="text-[20px] md:text-[24px] font-serif text-[#111827] leading-tight mb-1">
                 Curated Collection
               </h2>
@@ -351,10 +356,10 @@ export default function WholesalerGalleryClient({ products, categoryTabs, initia
             </div>
 
             {/* Categories & Filters */}
-            <div className="flex flex-col gap-8">
+            <div className={`flex flex-col transition-all duration-700 ease-in-out ${scrollState === 'down' ? 'gap-0' : 'gap-8'}`}>
               
-              {/* Category Thumbnail Row */}
-              <div className="flex items-end justify-between">
+              {/* Category Thumbnail Row - Hidden when scrolling down */}
+              <div className={`flex items-end justify-between transition-all duration-700 ease-in-out overflow-hidden ${scrollState === 'down' ? 'max-h-0 opacity-0 pointer-events-none mb-0' : 'max-h-[150px] opacity-100 mb-0'}`}>
                 <div className="flex items-start gap-4 md:gap-6 overflow-x-auto pb-2 scrollbar-hide w-full max-w-[85%]">
                   {displayTabs.filter(t => t.toLowerCase() !== "all").map((tab) => {
                     const key = tab.toLowerCase();
@@ -384,7 +389,7 @@ export default function WholesalerGalleryClient({ products, categoryTabs, initia
                 </button>
               </div>
 
-              {/* Dropdown Filters */}
+              {/* Dropdown Filters - Always visible when sticky is shown */}
               <div className="flex flex-wrap items-center gap-3">
                 <FilterDropdown
                   label="Size"
@@ -500,6 +505,9 @@ export default function WholesalerGalleryClient({ products, categoryTabs, initia
         product={selectedProduct} 
         onStartChat={handleStartChat}
       />
+
+      {/* Persistent Navigation */}
+      <EmployeeBottomNav />
       </div>
     </div>
   );
