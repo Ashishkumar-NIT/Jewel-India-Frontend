@@ -34,7 +34,6 @@ export default async function WholesalerGalleryPage({ searchParams }) {
 
   // Read filter params
   const categoryParam = searchParams?.category || "all";
-  const searchParam = searchParams?.q || "";
 
   let products = [];
   let categoryTabs = ["All"];
@@ -90,14 +89,6 @@ export default async function WholesalerGalleryPage({ searchParams }) {
         );
       }
 
-      // Apply search filter server-side
-      if (searchParam.trim()) {
-        const q = searchParam.trim();
-        query = query.or(
-          `title.ilike.%${q}%,jewellery_type.ilike.%${q}%,style.ilike.%${q}%`
-        );
-      }
-
       const { data } = await query;
       products = data || [];
 
@@ -116,7 +107,6 @@ export default async function WholesalerGalleryPage({ searchParams }) {
       products={products}
       categoryTabs={categoryTabs}
       initialCategory={categoryParam}
-      initialSearch={searchParam}
     />
   );
 }
