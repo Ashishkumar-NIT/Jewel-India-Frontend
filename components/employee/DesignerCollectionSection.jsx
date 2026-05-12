@@ -5,32 +5,21 @@ import { useRouter } from "next/navigation";
 import { ProductInfoModal } from "./ProductInfoModal";
 
 const VERTICAL_IMAGES = [
-  "https://images.unsplash.com/photo-1611591437281-460bfbe1220a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-  "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-  "https://images.unsplash.com/photo-1601121141461-9d6647bca1ed?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-  "https://images.unsplash.com/photo-1599643478514-4a1101859efc?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+  "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1778318369/emp_static1_ywv9ro.svg",
+  "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1778318368/emp_static2_vijtdd.svg",
+  "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1778318368/emp_static3_xdapmt.svg",
+  "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1778318368/emp_static4_q0ysjt.svg"
 ];
 
 export default function DesignerCollectionSection({ employee, businessName, designs }) {
   const router = useRouter();
   const [selectedProduct, setSelectedProduct] = useState(null);
 
-  const templateIndex = useMemo(() => {
-    if (!employee?.id) return 0;
-    const sum = employee.id.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
-    return sum % 4;
-  }, [employee?.id]);
+  // Use the randomly assigned image from the server, or fallback to the first one
+  const verticalImage = employee?.assigned_bg_image || VERTICAL_IMAGES[0];
 
-  const verticalImage = VERTICAL_IMAGES[templateIndex];
-
-  const shuffledDesigns = useMemo(() => {
-    const arr = [...(designs || [])];
-    for (let i = arr.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-    return arr.slice(0, 6);
-  }, [designs]);
+  // The designs are now pre-shuffled and sliced on the server to avoid hydration errors
+  const shuffledDesigns = designs || [];
 
   if (!shuffledDesigns || shuffledDesigns.length === 0) return null;
 

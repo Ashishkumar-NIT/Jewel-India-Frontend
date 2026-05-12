@@ -20,14 +20,15 @@ export default async function EmployeeOrdersPage() {
 
   const { data: employee } = await supabase
     .from("employees")
-    .select("id")
+    .select("id, retailer_id")
     .eq("auth_user_id", user.id)
     .single();
 
   if (!employee) redirect("/entry_page/signin");
 
-  // Fetch orders from API or server-side (server-side here saves a hop)
-  const { data: orders, error } = await supabase
+  // Fetch orders from API or server-side using Admin client to bypass RLS
+  const { supabaseAdmin } = await import("../../../../lib/supabase/admin");
+  const { data: orders, error } = await supabaseAdmin
     .from("orders")
     .select(`
       *,
@@ -41,7 +42,7 @@ export default async function EmployeeOrdersPage() {
         id, business_name, city, state, created_at
       )
     `)
-    .eq("employee_id", employee.id)
+    .eq("retailer_id", employee.retailer_id)
     .order("created_at", { ascending: false });
 
   if (error) {

@@ -24,6 +24,25 @@ export default async function EmployeeDashboardPage() {
 
   if (!employee) redirect("/entry_page/signin");
 
+  let currentEmployee = { ...employee };
+
+  // Deterministically assign a background image based on the employee's ID.
+  // This ensures it is "randomly" assigned per employee, but stays the SAME forever for them,
+  // without needing to add new columns to the database.
+  const images = [
+    "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1778318369/emp_static1_ywv9ro.svg",
+    "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1778318368/emp_static2_vijtdd.svg",
+    "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1778318368/emp_static3_xdapmt.svg",
+    "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1778318368/emp_static4_q0ysjt.svg"
+  ];
+  
+  // Create a seed by taking the last character of the employee's UUID (0-9, a-f)
+  // This ensures a perfectly even and random distribution across the 4 images.
+  const lastChar = currentEmployee.id ? currentEmployee.id.slice(-1) : '0';
+  const seed = parseInt(lastChar, 16) || 0;
+  
+  currentEmployee.assigned_bg_image = images[seed % images.length];
+
   // Fetch parent retailer
   const { data: retailer } = await supabase
     .from("retailers")
@@ -40,15 +59,19 @@ export default async function EmployeeDashboardPage() {
     .eq("retailer_id", employee.retailer_id)
     .eq("is_archived", false);
 
-  // We will pass the designs to the client component to be randomized per-employee
-  // The template index will also be determined on the client to avoid SSR hydration mismatches,
-  // or we can pass the employee.id to the client to seed the random logic.
+  // Shuffle designs server-side to avoid hydration mismatch
+  let shuffledDesigns = [...(designs || [])];
+  for (let i = shuffledDesigns.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffledDesigns[i], shuffledDesigns[j]] = [shuffledDesigns[j], shuffledDesigns[i]];
+  }
+  shuffledDesigns = shuffledDesigns.slice(0, 6);
 
   return (
-    <EmployeeHomeClient 
-      employee={employee}
+    <EmployeeHomeClient
+      employee={currentEmployee}
       businessName={businessName}
-      designs={designs || []}
+      designs={shuffledDesigns}
     />
   );
 }
