@@ -146,7 +146,29 @@ export default function EmployeeDesignsClient({ designs, categoryTabs, businessN
     purity: ["18k", "22k", "24k"],
   };
 
-  // Extract one image per category for thumbnails
+  // Predefined icons from user
+  const PREDEFINED_ICONS = {
+    necklace: "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777351898/necklace_jqvgjm.svg",
+    necklaces: "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777351898/necklace_jqvgjm.svg",
+    pendants: "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777351894/pendants_d9uvap.svg",
+    pendant: "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777351894/pendants_d9uvap.svg",
+    mangalsutras: "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777351896/mangalsutra_dmoj14.svg",
+    mangalsutra: "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777351896/mangalsutra_dmoj14.svg",
+    chain: "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777351896/chains_tqfmhp.svg",
+    chains: "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777351896/chains_tqfmhp.svg",
+    bangles: "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777351896/bracelets_t1etxd.svg",
+    bangle: "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777351896/bracelets_t1etxd.svg",
+    bracelets: "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777351896/bracelets_t1etxd.svg",
+    bracelet: "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777351896/bracelets_t1etxd.svg",
+    ring: "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777351897/rings_mbtqqr.svg",
+    rings: "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777351897/rings_mbtqqr.svg",
+    earring: "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777351897/earrings_m7kzmd.svg",
+    earrings: "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777351897/earrings_m7kzmd.svg",
+    nosepin: "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777351899/acessiories_vgm6lr.svg",
+    nosepins: "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777351899/acessiories_vgm6lr.svg",
+  };
+
+  // Extract one image per category for thumbnails (fallback)
   const categoryImages = useMemo(() => {
     const map = {};
     designs.forEach(d => {
@@ -157,6 +179,9 @@ export default function EmployeeDesignsClient({ designs, categoryTabs, businessN
     });
     return map;
   }, [designs]);
+
+  // Remove "gold" category tab
+  const displayTabs = categoryTabs.filter(t => t.toLowerCase() !== "gold");
 
   const filteredDesigns = useMemo(() => {
     let result = designs;
@@ -292,10 +317,10 @@ export default function EmployeeDesignsClient({ designs, categoryTabs, businessN
               {/* Category Thumbnail Row */}
               <div className="flex items-end justify-between">
                 <div className="flex items-start gap-4 md:gap-6 overflow-x-auto pb-2 scrollbar-hide w-full max-w-[85%]">
-                  {categoryTabs.filter(t => t.toLowerCase() !== "all").map((tab) => {
+                  {displayTabs.filter(t => t.toLowerCase() !== "all").map((tab) => {
                     const key = tab.toLowerCase();
                     const isActive = activeCategory === key;
-                    const img = categoryImages[key] || "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1778318368/emp_static4_q0ysjt.svg";
+                    const img = PREDEFINED_ICONS[key] || categoryImages[key] || "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1778318368/emp_static4_q0ysjt.svg";
                     return (
                       <div 
                         key={tab} 
