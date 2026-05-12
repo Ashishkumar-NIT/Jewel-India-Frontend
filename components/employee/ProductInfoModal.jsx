@@ -6,7 +6,7 @@ function formatWeight(val) {
   if (!val && val !== 0) return null;
   return `${Number(val).toFixed(2)}g`;
 }
-export function ProductInfoModal({ isOpen, onClose, product }) {
+export function ProductInfoModal({ isOpen, onClose, product, onStartChat }) {
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [imgError, setImgError] = useState(false);
 
@@ -44,16 +44,28 @@ export function ProductInfoModal({ isOpen, onClose, product }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
       <div className="w-full max-w-[900px] bg-white rounded-[24px] shadow-2xl overflow-hidden flex flex-col md:flex-row relative max-h-[95vh]">
-        {/* Close Button */}
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 z-10 w-9 h-9 flex items-center justify-center rounded-full bg-white/80 hover:bg-white text-gray-700 shadow-sm transition-colors md:bg-gray-100 md:hover:bg-gray-200"
-          aria-label="Close"
-        >
-          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-5 h-5">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
+        {/* Top Control Bar (Mobile friendly) */}
+        <div className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between p-4 pointer-events-none">
+          {/* Back Arrow */}
+          <button
+            onClick={onClose}
+            className="pointer-events-auto w-10 h-10 flex items-center justify-center rounded-full bg-white/90 backdrop-blur-md text-gray-900 shadow-md transition-all hover:scale-105 active:scale-95"
+            aria-label="Go back"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+          </button>
+
+          {/* Close Button (Optional if Back Arrow exists, but keeping for desktop feel) */}
+          <button
+            onClick={onClose}
+            className="pointer-events-auto w-10 h-10 flex items-center justify-center rounded-full bg-white/90 backdrop-blur-md text-gray-900 shadow-md transition-all hover:scale-105 active:scale-95 hidden md:flex"
+            aria-label="Close"
+          >
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-5 h-5">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
 
         {/* Image Section */}
         <div className="w-full md:w-1/2 bg-gray-50 flex flex-col p-6 border-r border-gray-100">
@@ -72,24 +84,21 @@ export function ProductInfoModal({ isOpen, onClose, product }) {
           
           {/* Thumbnails */}
           {images.length > 1 && (
-            <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-              {images.map((imgUrl, idx) => (
+            <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+              {images.slice(0, 4).map((imgUrl, idx) => (
                 <button
                   key={idx}
                   onClick={() => {
                     setActiveImageIndex(idx);
                     setImgError(false);
                   }}
-                  className={`relative w-16 h-16 shrink-0 rounded-lg overflow-hidden transition-all ${
-                    activeImageIndex === idx ? "ring-1 ring-black/10 shadow-inner" : "opacity-100 hover:scale-105"
+                  className={`relative w-[60px] h-[60px] md:w-[72px] md:h-[72px] shrink-0 rounded-xl overflow-hidden transition-all duration-300 ${
+                    activeImageIndex === idx 
+                    ? "ring-2 ring-black ring-offset-2 scale-100" 
+                    : "opacity-60 hover:opacity-100 hover:scale-105"
                   }`}
                 >
-                  <img src={imgUrl} alt="Thumbnail" className="w-full h-full object-cover" />
-                  {activeImageIndex === idx && (
-                    <div className="absolute inset-0 bg-white/50 backdrop-blur-[1px] flex items-center justify-center">
-                      {/* Optional: subtle indicator that it's selected, though user asked for "fade layer" */}
-                    </div>
-                  )}
+                  <img src={imgUrl} alt={`Thumbnail ${idx}`} className="w-full h-full object-cover" />
                 </button>
               ))}
             </div>
@@ -105,7 +114,7 @@ export function ProductInfoModal({ isOpen, onClose, product }) {
             </span>
 
             {/* Title */}
-            <h2 className="text-[24px] md:text-[28px] font-extrabold text-[#111827] leading-tight mb-2">
+            <h2 className="text-[32px] md:text-[44px] font-serif text-[#111827] leading-[1.1] mb-6 tracking-tight">
               {title}
             </h2>
 
@@ -135,11 +144,35 @@ export function ProductInfoModal({ isOpen, onClose, product }) {
             )}
 
             {/* Wholesaler product specs */}
-            <div className="grid grid-cols-2 gap-y-6 gap-x-4 mb-8">
+            <div className="flex flex-col gap-8 mb-10">
+              
+              {product.metal_purity && (
+                <div className="w-full">
+                  <div className="flex items-baseline gap-4 mb-1">
+                    <p className="text-[12px] uppercase tracking-[0.2em] text-gray-400 font-bold whitespace-nowrap">Material</p>
+                    <div className="flex-1 border-b border-dotted border-gray-300 translate-y-[-4px]"></div>
+                  </div>
+                  <p className="text-[16px] font-medium text-gray-900">{product.metal_purity}</p>
+                </div>
+              )}
+
+              {formatWeight(product.net_weight) && (
+                <div className="w-full">
+                  <div className="flex items-baseline gap-4 mb-1">
+                    <p className="text-[12px] uppercase tracking-[0.2em] text-gray-400 font-bold whitespace-nowrap">Weight</p>
+                    <div className="flex-1 border-b border-dotted border-gray-300 translate-y-[-4px]"></div>
+                  </div>
+                  <p className="text-[16px] font-medium text-gray-900">{formatWeight(product.net_weight)}</p>
+                </div>
+              )}
+
               {product.stock_available !== null && product.stock_available !== undefined && (
-                <div>
-                  <p className="text-[11px] uppercase tracking-wider text-gray-400 font-semibold mb-1">Availability</p>
-                  <p className={`text-[14px] font-bold ${typeof product.stock_available === 'number' && product.stock_available > 0 ? "text-emerald-600" : (product.stock_available === true || product.stock_available === 'true') ? "text-emerald-600" : "text-amber-600"}`}>
+                <div className="w-full">
+                  <div className="flex items-baseline gap-4 mb-1">
+                    <p className="text-[12px] uppercase tracking-[0.2em] text-gray-400 font-bold whitespace-nowrap">Availability</p>
+                    <div className="flex-1 border-b border-dotted border-gray-300 translate-y-[-4px]"></div>
+                  </div>
+                  <p className={`text-[16px] font-medium ${typeof product.stock_available === 'number' && product.stock_available > 0 ? "text-emerald-600" : "text-amber-600"}`}>
                     {typeof product.stock_available === 'number' && product.stock_available > 0 
                       ? `${product.stock_available} in stock` 
                       : (product.stock_available === true || product.stock_available === 'true')
@@ -150,37 +183,12 @@ export function ProductInfoModal({ isOpen, onClose, product }) {
               )}
               
               {product.make_to_order_days && (
-                <div>
-                  <p className="text-[11px] uppercase tracking-wider text-gray-400 font-semibold mb-1">Lead Time</p>
-                  <p className="text-[14px] font-bold text-gray-800">{product.make_to_order_days} days</p>
-                </div>
-              )}
-
-              {product.metal_purity && (
-                <div>
-                  <p className="text-[11px] uppercase tracking-wider text-gray-400 font-semibold mb-1">Metal Purity</p>
-                  <p className="text-[14px] font-bold text-gray-800">{product.metal_purity}</p>
-                </div>
-              )}
-
-              {formatWeight(product.net_weight) && (
-                <div>
-                  <p className="text-[11px] uppercase tracking-wider text-gray-400 font-semibold mb-1">Net Weight</p>
-                  <p className="text-[14px] font-bold text-gray-800">{formatWeight(product.net_weight)}</p>
-                </div>
-              )}
-
-              {formatWeight(product.gross_weight) && (
-                <div>
-                  <p className="text-[11px] uppercase tracking-wider text-gray-400 font-semibold mb-1">Gross Weight</p>
-                  <p className="text-[14px] font-bold text-gray-800">{formatWeight(product.gross_weight)}</p>
-                </div>
-              )}
-
-              {formatWeight(product.stone_weight) && (
-                <div>
-                  <p className="text-[11px] uppercase tracking-wider text-gray-400 font-semibold mb-1">Stone Weight</p>
-                  <p className="text-[14px] font-bold text-gray-800">{formatWeight(product.stone_weight)}</p>
+                <div className="w-full">
+                  <div className="flex items-baseline gap-4 mb-1">
+                    <p className="text-[12px] uppercase tracking-[0.2em] text-gray-400 font-bold whitespace-nowrap">Lead Time</p>
+                    <div className="flex-1 border-b border-dotted border-gray-300 translate-y-[-4px]"></div>
+                  </div>
+                  <p className="text-[16px] font-medium text-gray-900">{product.make_to_order_days} days</p>
                 </div>
               )}
             </div>
@@ -201,9 +209,19 @@ export function ProductInfoModal({ isOpen, onClose, product }) {
             )}
           </div>
 
-
+            {/* Action Button - Only show if onStartChat handler is provided (e.g. Wholesaler Gallery) */}
+            {onStartChat && (
+              <div className="mt-auto pt-8">
+                <button
+                  onClick={() => onStartChat(product)}
+                  className="w-full bg-black text-white py-5 rounded-[12px] text-[16px] font-bold tracking-wide transition-all hover:bg-gray-900 active:scale-[0.98] shadow-lg shadow-black/10"
+                >
+                  Send Request
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
-    </div>
-  );
+    );
 }

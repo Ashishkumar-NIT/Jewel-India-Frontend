@@ -354,9 +354,9 @@ export default function WholesalerGalleryClient({ products, categoryTabs, initia
             {/* Categories & Filters */}
             <div className={`flex flex-col transition-all duration-700 ease-in-out ${scrollState === 'down' ? 'gap-0' : 'gap-12'}`}>
               
-              {/* Category Row - Wrapped, no horizontal scroll */}
+              {/* Category Row - Optimized for Tablet/Mobile fit */}
               <div className={`flex items-center justify-center transition-all duration-700 ease-in-out overflow-hidden ${scrollState === 'down' ? 'max-h-0 opacity-0 pointer-events-none mb-0' : 'max-h-[400px] opacity-100 mb-0'}`}>
-                <div className="flex flex-wrap items-center justify-center gap-x-6 md:gap-x-10 gap-y-10 w-full py-4">
+                <div className="flex flex-wrap items-start justify-start gap-x-4 md:gap-x-8 gap-y-6 w-full py-4">
                   {displayTabs.filter(t => t.toLowerCase() !== "all").map((tab) => {
                     const key = tab.toLowerCase();
                     const isActive = activeCategory === key;
@@ -364,14 +364,14 @@ export default function WholesalerGalleryClient({ products, categoryTabs, initia
                     return (
                       <div 
                         key={tab} 
-                        className="flex flex-col items-center gap-4 cursor-pointer group shrink-0 transition-transform duration-500"
+                        className="flex flex-col items-center gap-2 cursor-pointer group shrink-0 transition-transform duration-500"
                         onClick={() => handleCategoryChange(key)}
-                        style={{ transform: isActive ? 'scale(1.15)' : 'scale(1)' }}
+                        style={{ transform: isActive ? 'scale(1.1)' : 'scale(1)' }}
                       >
-                        <div className={`w-[64px] h-[64px] md:w-[88px] md:h-[88px] rounded-[24px] overflow-hidden bg-[#111] transition-all duration-500 shadow-sm ${isActive ? 'ring-4 ring-gray-100 scale-100' : 'group-hover:scale-105 opacity-80 group-hover:opacity-100'}`}>
-                          <img src={img} alt={tab} className="w-full h-full object-cover mix-blend-screen opacity-90" />
+                        <div className={`w-[48px] h-[48px] md:w-[72px] md:h-[72px] rounded-[16px] md:rounded-[20px] overflow-hidden bg-gray-50 transition-all duration-500 shadow-sm ${isActive ? 'ring-4 ring-gray-100 scale-100' : 'group-hover:scale-105'}`}>
+                          <img src={img} alt={tab} className="w-full h-full object-cover" />
                         </div>
-                        <span className={`text-[13px] tracking-wide transition-all duration-500 ${isActive ? 'font-bold text-[#111827] scale-100' : 'font-medium text-gray-400 group-hover:text-gray-600 opacity-80'}`}>
+                        <span className={`text-[11px] md:text-[12px] tracking-wide transition-all duration-500 ${isActive ? 'font-bold text-[#111827] scale-100' : 'font-medium text-gray-400 group-hover:text-gray-600 opacity-80'}`}>
                           {tab}
                         </span>
                       </div>
