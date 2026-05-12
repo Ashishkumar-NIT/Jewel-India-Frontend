@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 function formatWeight(val) {
   if (val === null || val === undefined || val === "") return null;
@@ -9,12 +10,12 @@ function formatWeight(val) {
   return `${num % 1 === 0 ? num : num.toFixed(2)}g`;
 }
 
-function SectionRow({ label, value, valueClass = "" }) {
+function SectionRow({ label, value }) {
   if (!value) return null;
   return (
     <div className="flex items-center justify-between gap-4">
       <span className="text-[15px] md:text-[16px] text-gray-500 font-light whitespace-nowrap">{label}</span>
-      <span className={`text-[15px] md:text-[16px] font-medium text-gray-900 ${valueClass}`}>{value}</span>
+      <span className="text-[15px] md:text-[16px] font-medium text-gray-900">{value}</span>
     </div>
   );
 }
@@ -22,7 +23,6 @@ function SectionRow({ label, value, valueClass = "" }) {
 function SectionBlock({ title, children }) {
   return (
     <div className="w-full">
-      {/* Section label + dotted rule */}
       <div className="flex items-center gap-3 mb-3">
         <span className="text-[11px] uppercase tracking-[0.2em] text-gray-400 font-bold whitespace-nowrap">{title}</span>
         <div className="flex-1" style={{ borderTop: "1.5px dashed #d1d5db" }} />
@@ -36,11 +36,21 @@ export function ProductInfoModal({ isOpen, onClose, product, onStartChat }) {
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [mainImgError, setMainImgError] = useState(false);
 
+  // Request sidebar state
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [requestSuccess, setRequestSuccess] = useState(false);
+  const [formData, setFormData] = useState({ quantity: 1, customization_notes: "" });
+
   // Reset on open/close
   useEffect(() => {
     if (!isOpen) {
       setActiveImageIndex(0);
       setMainImgError(false);
+      setIsSidebarOpen(false);
+      setRequestSuccess(false);
+      setIsSubmitting(false);
+      setFormData({ quantity: 1, customization_notes: "" });
     }
   }, [isOpen]);
 
@@ -81,17 +91,40 @@ export function ProductInfoModal({ isOpen, onClose, product, onStartChat }) {
   const category = product.category || product.jewellery_type || "Uncategorized";
   const styleAesthetic = product.style_aesthetic || product.style || null;
 
-  // Availability text
+  // Availability
   const inStock =
     (typeof product.stock_available === "number" && product.stock_available > 0) ||
     product.stock_available === true ||
     product.stock_available === "true";
-  const availabilityLabel = inStock
-    ? `${typeof product.stock_available === "number" ? product.stock_available + " in stock" : "In stock"}`
-    : "Made to order";
   const leadTime = product.make_to_order_days
     ? `${product.make_to_order_days} to ${Number(product.make_to_order_days) + 2} days`
     : null;
+
+  // Send request handler — same as handleIndividualSubmit in SelectionReviewClient
+  const handleSendRequest = async () => {
+    if (!product) return;
+    setIsSubmitting(true);
+    const items = [{
+      product_id: product.id,
+      wholesaler_id: product.wholesaler_id,
+      quantity: formData.quantity,
+      customization_notes: formData.customization_notes,
+    }];
+
+    try {
+      const res = await fetch("/api/orders/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ items }),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || "Failed to submit request");
+      setRequestSuccess(true);
+    } catch (err) {
+      alert(err.message);
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     /* Backdrop */
@@ -105,7 +138,7 @@ export function ProductInfoModal({ isOpen, onClose, product, onStartChat }) {
         {/* ── LEFT PANEL: Image + Thumbnails ── */}
         <div className="w-full md:w-[48%] shrink-0 flex flex-col bg-[#f5f5f5] p-4 md:p-5">
 
-          {/* Back arrow — top left, outside the image */}
+          {/* Back arrow */}
           <button
             onClick={onClose}
             aria-label="Go back"
@@ -142,7 +175,7 @@ export function ProductInfoModal({ isOpen, onClose, product, onStartChat }) {
                   onClick={() => { setActiveImageIndex(idx); setMainImgError(false); }}
                   className={`shrink-0 rounded-[10px] overflow-hidden transition-all duration-200 border-[2.5px] ${
                     activeImageIndex === idx
-                      ? "border-black opacity-100 scale-100"
+                      ? "border-black opacity-100"
                       : "border-transparent opacity-55 hover:opacity-90 hover:scale-[1.03]"
                   }`}
                   style={{ width: 88, height: 88 }}
@@ -208,31 +241,148 @@ export function ProductInfoModal({ isOpen, onClose, product, onStartChat }) {
               <SectionBlock title="Availability">
                 <SectionRow
                   label={inStock ? "In stock" : "Made to order"}
-                  value={inStock ? "" : leadTime || ""}
+                  value={inStock ? "" : (leadTime || "")}
                 />
               </SectionBlock>
             )}
           </div>
 
-          {/* CTA — only shown on Wholesaler Gallery (when onStartChat is provided) */}
+          {/* CTA — only shown on Wholesaler Gallery */}
           {onStartChat && (
             <div className="mt-8 flex flex-col items-center gap-3">
               <button
-                onClick={() => onStartChat(product)}
+                onClick={() => setIsSidebarOpen(true)}
                 className="w-full bg-[#111] text-white py-[15px] rounded-[10px] text-[15px] font-semibold tracking-wide transition-all hover:bg-black active:scale-[0.98]"
               >
                 Send Request
               </button>
-              <button
-                onClick={() => onStartChat(product)}
+              <Link
+                href={`/dashboard/employee/messages?productId=${product.id}`}
                 className="text-[14px] font-medium text-gray-600 hover:text-gray-900 underline underline-offset-4 decoration-gray-300 hover:decoration-gray-600 transition-all"
               >
                 Chat with us
-              </button>
+              </Link>
             </div>
           )}
         </div>
       </div>
+
+      {/* ── REQUEST SIDEBAR OVERLAY ── */}
+      {isSidebarOpen && (
+        <div className="fixed inset-0 z-[70] flex justify-end">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-black/40 backdrop-blur-[2px]"
+            onClick={() => !isSubmitting && setIsSidebarOpen(false)}
+          />
+
+          {/* Sidebar panel */}
+          <div className="relative w-full max-w-[420px] bg-white h-full shadow-2xl flex flex-col overflow-hidden animate-slide-in-right">
+
+            {/* Success state */}
+            {requestSuccess ? (
+              <div className="flex flex-col items-center justify-center flex-1 px-8 text-center">
+                <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mb-6 shadow-inner">
+                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#10B981" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                </div>
+                <h3 className="text-[24px] font-serif text-[#111827] mb-2 tracking-tight">Request Sent!</h3>
+                <p className="text-gray-500 text-[14px] mb-8 leading-relaxed">
+                  Your request has been forwarded to the wholesaler. You can track it in your Orders tab.
+                </p>
+                <button
+                  onClick={() => { setIsSidebarOpen(false); setRequestSuccess(false); onClose(); }}
+                  className="bg-black text-white px-8 py-3 rounded-[10px] font-semibold text-[14px] hover:bg-gray-800 transition-colors"
+                >
+                  Done
+                </button>
+              </div>
+            ) : (
+              <>
+                {/* Header */}
+                <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100">
+                  <h3 className="text-[15px] font-semibold text-gray-800">Request this Design</h3>
+                  <button
+                    onClick={() => setIsSidebarOpen(false)}
+                    className="w-8 h-8 flex items-center justify-center rounded-full text-gray-400 hover:text-black hover:bg-gray-100 transition-all"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                  </button>
+                </div>
+
+                {/* Body */}
+                <div className="flex-1 overflow-y-auto px-8 py-8 flex flex-col gap-10">
+
+                  {/* Product snippet */}
+                  <div className="flex gap-4">
+                    <div className="flex-1">
+                      <div className="text-[10px] uppercase tracking-widest text-gray-400 font-bold mb-2">Product</div>
+                      <div className="flex gap-2 mb-2">
+                        <span className="text-[10px] uppercase border border-gray-200 px-2 py-0.5 text-gray-600 rounded-sm">{category}</span>
+                        {styleAesthetic && (
+                          <span className="text-[10px] uppercase text-gray-400 py-0.5">{styleAesthetic}</span>
+                        )}
+                      </div>
+                      <h4 className="font-serif text-[18px] text-gray-900 leading-[1.2]">{title}</h4>
+                    </div>
+                    {activeImageUrl && (
+                      <div className="w-20 h-20 rounded-[8px] overflow-hidden shrink-0 bg-gray-100">
+                        <img src={activeImageUrl} alt={title} className="w-full h-full object-cover" />
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Quantity */}
+                  <div>
+                    <div className="text-[10px] uppercase tracking-widest text-gray-400 font-bold mb-4">Quantity</div>
+                    <div className="flex items-center gap-5">
+                      <button
+                        onClick={() => setFormData(p => ({ ...p, quantity: Math.max(1, p.quantity - 1) }))}
+                        className="w-10 h-10 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center hover:bg-gray-100 text-xl transition-colors"
+                      >
+                        −
+                      </button>
+                      <span className="font-serif text-[22px] text-gray-800 w-6 text-center">{formData.quantity}</span>
+                      <button
+                        onClick={() => setFormData(p => ({ ...p, quantity: p.quantity + 1 }))}
+                        className="w-10 h-10 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center hover:bg-gray-100 text-xl transition-colors"
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Customization */}
+                  <div>
+                    <div className="text-[10px] uppercase tracking-widest text-gray-400 font-bold mb-4">Customization Notes</div>
+                    <textarea
+                      value={formData.customization_notes}
+                      onChange={e => setFormData(p => ({ ...p, customization_notes: e.target.value }))}
+                      rows={4}
+                      placeholder="Describe any customization requirements..."
+                      className="w-full bg-gray-50 border border-gray-100 rounded-[8px] px-5 py-4 text-[14px] text-gray-700 outline-none focus:ring-2 focus:ring-black/10 resize-none transition-shadow"
+                    />
+                  </div>
+                </div>
+
+                {/* Footer CTA */}
+                <div className="px-8 py-6 border-t border-gray-100">
+                  <button
+                    onClick={handleSendRequest}
+                    disabled={isSubmitting}
+                    className="w-full bg-[#111] text-white py-4 rounded-[10px] text-[14px] font-bold uppercase tracking-[0.15em] hover:bg-black transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+                  >
+                    {isSubmitting ? "Sending..." : "Send Request"}
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
