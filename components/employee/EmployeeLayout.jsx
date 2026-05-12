@@ -4,6 +4,7 @@
  * Client wrapper for the employee dashboard main content area.
  * The bottom nav is rendered only on the home page (EmployeeHomeClient).
  */
+import EmployeeBottomNav from "./EmployeeTopNav";
 export default function EmployeeLayout({ children }) {
   return (
     <div style={{ minHeight: "100vh", background: "#FAFAFA", display: "flex", flexDirection: "column" }}>
@@ -17,6 +18,7 @@ export default function EmployeeLayout({ children }) {
       >
         {children}
       </main>
+      <EmployeeBottomNav />
     </div>
   );
 }

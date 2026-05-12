@@ -4,8 +4,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const navItems = [
-  { 
-    name: "Home", 
+  {
+    name: "Home",
     href: "/dashboard/employee",
     icon: (
       <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -14,8 +14,8 @@ const navItems = [
       </svg>
     )
   },
-  { 
-    name: "Catalogue", 
+  {
+    name: "Catalogue",
     href: "/dashboard/employee/wholesaler-gallery",
     icon: (
       <div style={{
@@ -33,8 +33,8 @@ const navItems = [
       }} />
     )
   },
-  { 
-    name: "Queries", 
+  {
+    name: "Queries",
     href: "/dashboard/employee/messages",
     icon: (
       <div style={{
@@ -52,8 +52,8 @@ const navItems = [
       }} />
     )
   },
-  { 
-    name: "Orders", 
+  {
+    name: "Orders",
     href: "/dashboard/employee/orders",
     icon: (
       <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

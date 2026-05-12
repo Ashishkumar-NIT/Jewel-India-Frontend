@@ -15,9 +15,9 @@ export default function EmployeeHomeClient({ employee, businessName, designs }) 
         style={{ minHeight: "100dvh" }}
       >
         {/* Background Image (Archway) */}
-        <div 
+        <div
           className="absolute inset-0 z-0"
-          style={{ 
+          style={{
             backgroundImage: "url('https://res.cloudinary.com/dcs0vuzwg/image/upload/v1778318369/home_bg_ryyopk.svg')",
             backgroundSize: "cover",
             backgroundRepeat: "no-repeat",
@@ -79,8 +79,7 @@ export default function EmployeeHomeClient({ employee, businessName, designs }) 
           </div>
         </div>
 
-        {/* Glassmorphism Bottom Nav — only on home page */}
-        <EmployeeBottomNav />
+
       </section>
 
       {/* ── Designer Collection Section ── */}

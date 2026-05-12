@@ -111,7 +111,7 @@ export default function WholesalerGalleryClient({ products, categoryTabs, initia
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
+  const itemsPerPage = 9;
 
   // Scroll visibility state: 'top', 'down', 'up'
   const [scrollState, setScrollState] = useState('top');
@@ -200,17 +200,17 @@ export default function WholesalerGalleryClient({ products, categoryTabs, initia
 
     if (activeCategory !== "all") {
       const baseActive = activeCategory.toLowerCase().replace(/s$/, ''); // necklace, pendant, mangalsutra, etc.
-      
+
       result = result.filter((p) => {
         const cat = (p.category || "").toLowerCase();
         const type = (p.jewellery_type || "").toLowerCase();
         const tags = Array.isArray(p.tags) ? p.tags.map(t => t.toLowerCase()) : [];
-        
+
         // Match if any field contains the base category name
-        const isMatch = cat.includes(baseActive) || 
-                        type.includes(baseActive) || 
-                        tags.some(t => t.includes(baseActive));
-        
+        const isMatch = cat.includes(baseActive) ||
+          type.includes(baseActive) ||
+          tags.some(t => t.includes(baseActive));
+
         return isMatch;
       });
     }
@@ -237,7 +237,7 @@ export default function WholesalerGalleryClient({ products, categoryTabs, initia
       result = result.filter((p) => {
         const w = Number(p.net_weight);
         if (isNaN(w) || w <= 0) return false;
-        
+
         return filters.weight.some((range) => {
           if (range === "0-2g") return w <= 2;
           if (range === "3-5g") return w > 2 && w <= 5;
@@ -254,9 +254,9 @@ export default function WholesalerGalleryClient({ products, categoryTabs, initia
       result = result.filter((p) => {
         return filters.availability.some((avail) => {
           if (avail === "in stock") return p.stock_available > 0;
-          
+
           if (p.stock_available > 0) return false;
-          
+
           const days = Number(p.make_to_order_days);
           if (isNaN(days)) return false;
 
@@ -314,53 +314,49 @@ export default function WholesalerGalleryClient({ products, categoryTabs, initia
 
   return (
     <div className="flex flex-col w-full min-h-screen bg-white pb-24">
-      
+
       {/* Smart Sticky Header */}
-      <div 
-        className={`sticky z-40 bg-white/95 backdrop-blur-md transition-all duration-700 cubic-bezier(0.4, 0, 0.2, 1) w-full border-b border-gray-100 overflow-hidden ${
-          scrollState === 'top' ? 'translate-y-0 top-0 pt-8 pb-6 shadow-none' : 
-          scrollState === 'down' ? 'translate-y-0 top-0 pt-3 pb-3 shadow-sm' : 
-          '-translate-y-full top-0'
-        }`}
+      <div
+        className={`sticky z-40 bg-white/95 backdrop-blur-md transition-all duration-700 cubic-bezier(0.4, 0, 0.2, 1) w-full border-b border-gray-100 overflow-hidden ${scrollState === 'top' ? 'translate-y-0 top-0 pt-8 pb-6 shadow-none' :
+            scrollState === 'down' ? 'translate-y-0 top-0 pt-3 pb-3 shadow-sm' :
+              '-translate-y-full top-0'
+          }`}
       >
         <div className="w-full max-w-7xl mx-auto px-4 md:px-8 flex flex-col transition-all duration-700 ease-in-out">
-          
+
           {/* Top Title & Back - Hidden when scrolling down */}
-          <div className={`relative w-full flex items-center justify-center transition-all duration-700 ease-in-out overflow-hidden ${scrollState === 'down' ? 'max-h-0 opacity-0 pointer-events-none mb-0' : 'max-h-[100px] opacity-100 mb-10'}`}>
+          <div className={`relative w-full flex items-center justify-center transition-all duration-700 ease-in-out overflow-hidden ${scrollState === 'down' ? 'max-h-0 opacity-0 pointer-events-none mb-0' : 'max-h-[120px] opacity-100 mb-16'}`}>
             <button 
               onClick={() => window.history.back()}
-              className="absolute left-0 w-10 h-10 flex items-center justify-center rounded-full border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors shadow-sm"
+              className="absolute left-0 w-12 h-12 flex items-center justify-center rounded-full border border-gray-100 text-gray-400 hover:text-gray-900 hover:bg-gray-50 transition-all shadow-sm"
               aria-label="Go back"
             >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
             </button>
             <div className="text-center">
-              <p className="text-[11px] uppercase tracking-[0.2em] text-gray-400 font-semibold mb-1">
-                All Wholesalers
-              </p>
-              <h1 className="font-serif text-[32px] md:text-[40px] text-[#111827] tracking-tight">
+              <h1 className="font-serif text-[40px] md:text-[52px] text-[#111827] tracking-tight leading-tight">
                 Wholesaler Gallery
               </h1>
             </div>
           </div>
 
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-10">
             {/* Curated Collection Header - Hidden when scrolling down */}
             <div className={`transition-all duration-700 ease-in-out overflow-hidden ${scrollState === 'down' ? 'max-h-0 opacity-0 pointer-events-none mb-0' : 'max-h-[100px] opacity-100 mb-0'}`}>
-              <h2 className="text-[20px] md:text-[24px] font-serif text-[#111827] leading-tight mb-1">
+              <h2 className="text-[24px] md:text-[28px] font-serif text-[#111827] leading-tight mb-2">
                 Curated Collection
               </h2>
-              <p className="text-[13px] md:text-[14px] text-gray-400">
+              <p className="text-[14px] md:text-[16px] text-gray-400 font-medium">
                 From everyday elegance to statement pieces
               </p>
             </div>
 
             {/* Categories & Filters */}
-            <div className={`flex flex-col transition-all duration-700 ease-in-out ${scrollState === 'down' ? 'gap-0' : 'gap-8'}`}>
+            <div className={`flex flex-col transition-all duration-700 ease-in-out ${scrollState === 'down' ? 'gap-0' : 'gap-12'}`}>
               
-              {/* Category Thumbnail Row - Hidden when scrolling down */}
-              <div className={`flex items-end justify-between transition-all duration-700 ease-in-out overflow-hidden ${scrollState === 'down' ? 'max-h-0 opacity-0 pointer-events-none mb-0' : 'max-h-[150px] opacity-100 mb-0'}`}>
-                <div className="flex items-start gap-4 md:gap-6 overflow-x-auto pb-2 scrollbar-hide w-full max-w-[85%]">
+              {/* Category Row - Wrapped, no horizontal scroll */}
+              <div className={`flex items-center justify-center transition-all duration-700 ease-in-out overflow-hidden ${scrollState === 'down' ? 'max-h-0 opacity-0 pointer-events-none mb-0' : 'max-h-[400px] opacity-100 mb-0'}`}>
+                <div className="flex flex-wrap items-center justify-center gap-x-6 md:gap-x-10 gap-y-10 w-full py-4">
                   {displayTabs.filter(t => t.toLowerCase() !== "all").map((tab) => {
                     const key = tab.toLowerCase();
                     const isActive = activeCategory === key;
@@ -368,13 +364,14 @@ export default function WholesalerGalleryClient({ products, categoryTabs, initia
                     return (
                       <div 
                         key={tab} 
-                        className="flex flex-col items-center gap-2 cursor-pointer group shrink-0"
+                        className="flex flex-col items-center gap-4 cursor-pointer group shrink-0 transition-transform duration-500"
                         onClick={() => handleCategoryChange(key)}
+                        style={{ transform: isActive ? 'scale(1.15)' : 'scale(1)' }}
                       >
-                        <div className={`w-[56px] h-[56px] md:w-[64px] md:h-[64px] rounded-[14px] overflow-hidden bg-black transition-all ${isActive ? 'ring-2 ring-black ring-offset-2 scale-105' : 'group-hover:ring-1 group-hover:ring-gray-300 group-hover:ring-offset-2'}`}>
+                        <div className={`w-[64px] h-[64px] md:w-[88px] md:h-[88px] rounded-[24px] overflow-hidden bg-[#111] transition-all duration-500 shadow-sm ${isActive ? 'ring-4 ring-gray-100 scale-100' : 'group-hover:scale-105 opacity-80 group-hover:opacity-100'}`}>
                           <img src={img} alt={tab} className="w-full h-full object-cover mix-blend-screen opacity-90" />
                         </div>
-                        <span className={`text-[12px] transition-colors ${isActive ? 'font-bold text-[#111827]' : 'font-medium text-gray-400 group-hover:text-gray-700'}`}>
+                        <span className={`text-[13px] tracking-wide transition-all duration-500 ${isActive ? 'font-bold text-[#111827] scale-100' : 'font-medium text-gray-400 group-hover:text-gray-600 opacity-80'}`}>
                           {tab}
                         </span>
                       </div>
@@ -383,7 +380,7 @@ export default function WholesalerGalleryClient({ products, categoryTabs, initia
                 </div>
                 <button
                   onClick={() => handleCategoryChange("all")}
-                  className="text-[12px] font-semibold text-gray-800 mb-6 shrink-0 underline decoration-gray-300 underline-offset-4 hover:decoration-black transition-colors"
+                  className="text-[13px] font-bold text-gray-900 mb-10 shrink-0 underline decoration-gray-200 underline-offset-8 hover:decoration-black transition-all"
                 >
                   View all
                 </button>
@@ -424,90 +421,88 @@ export default function WholesalerGalleryClient({ products, categoryTabs, initia
       {/* Main Content Grid */}
       <div className="flex-1 w-full max-w-7xl mx-auto px-4 md:px-8 py-8">
 
-      {/* Grid */}
-      {filteredProducts.length === 0 ? (
-        <div className="rounded-[16px] border border-dashed border-gray-200 bg-gray-50 px-6 py-16 text-center">
-          <p className="text-[14px] font-semibold text-gray-500">No products found.</p>
-          <p className="text-[12px] text-gray-400 mt-2">
-            Try adjusting your category or feature filters.
-          </p>
-        </div>
-      ) : (
-        <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-8 gap-y-16">
-            {currentProducts.map((product) => (
-              <ProductCard 
-                key={product.id} 
-                product={product} 
-                onClick={() => setSelectedProduct(product)}
-              />
-            ))}
+        {/* Grid */}
+        {filteredProducts.length === 0 ? (
+          <div className="rounded-[16px] border border-dashed border-gray-200 bg-gray-50 px-6 py-16 text-center">
+            <p className="text-[14px] font-semibold text-gray-500">No products found.</p>
+            <p className="text-[12px] text-gray-400 mt-2">
+              Try adjusting your category or feature filters.
+            </p>
           </div>
-
-          {/* Pagination Controls */}
-          {totalPages > 1 && (
-            <div className="mt-20 relative flex items-center justify-center w-full pb-8">
-              {/* Centered Next Button */}
-              <button
-                onClick={() => {
-                  setCurrentPage(p => Math.min(totalPages, p + 1));
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }}
-                disabled={currentPage === totalPages}
-                className="px-10 py-3 bg-black text-white rounded-[12px] text-[14px] font-medium hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors shadow-[0_4px_14px_rgba(0,0,0,0.15)]"
-              >
-                Next
-              </button>
-              
-              {/* Right Aligned Page Numbers */}
-              <div className="absolute right-0 hidden md:flex items-center gap-2 text-[14px] font-medium text-gray-400">
-                {[...Array(totalPages)].map((_, i) => {
-                  const pageNumber = i + 1;
-                  
-                  if (
-                    pageNumber <= 4 ||
-                    pageNumber === totalPages ||
-                    (pageNumber >= currentPage - 1 && pageNumber <= currentPage + 1)
-                  ) {
-                    return (
-                      <button
-                        key={pageNumber}
-                        onClick={() => {
-                          setCurrentPage(pageNumber);
-                          window.scrollTo({ top: 0, behavior: 'smooth' });
-                        }}
-                        className={`transition-colors hover:text-gray-700 px-1 ${
-                          currentPage === pageNumber
-                            ? "text-[#111827] font-extrabold"
-                            : ""
-                        }`}
-                      >
-                        {pageNumber}
-                      </button>
-                    );
-                  } else if (
-                    pageNumber === 5 && totalPages > 6
-                  ) {
-                    return <span key={pageNumber} className="tracking-[0.2em] text-gray-300">.....</span>;
-                  }
-                  return null;
-                })}
-              </div>
+        ) : (
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-12 gap-y-24">
+              {currentProducts.map((product) => (
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  onClick={() => setSelectedProduct(product)}
+                />
+              ))}
             </div>
-          )}
-        </>
-      )}
 
-      {/* Product Detail Modal */}
-      <ProductInfoModal 
-        isOpen={!!selectedProduct} 
-        onClose={() => setSelectedProduct(null)} 
-        product={selectedProduct} 
-        onStartChat={handleStartChat}
-      />
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <div className="mt-20 relative flex items-center justify-center w-full pb-8">
+                {/* Centered Next Button */}
+                <button
+                  onClick={() => {
+                    setCurrentPage(p => Math.min(totalPages, p + 1));
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  disabled={currentPage === totalPages}
+                  className="px-10 py-3 bg-black text-white rounded-[12px] text-[14px] font-medium hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors shadow-[0_4px_14px_rgba(0,0,0,0.15)]"
+                >
+                  Next
+                </button>
 
-      {/* Persistent Navigation */}
-      <EmployeeBottomNav />
+                {/* Right Aligned Page Numbers */}
+                <div className="absolute right-0 hidden md:flex items-center gap-2 text-[14px] font-medium text-gray-400">
+                  {[...Array(totalPages)].map((_, i) => {
+                    const pageNumber = i + 1;
+
+                    if (
+                      pageNumber <= 4 ||
+                      pageNumber === totalPages ||
+                      (pageNumber >= currentPage - 1 && pageNumber <= currentPage + 1)
+                    ) {
+                      return (
+                        <button
+                          key={pageNumber}
+                          onClick={() => {
+                            setCurrentPage(pageNumber);
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                          }}
+                          className={`transition-colors hover:text-gray-700 px-1 ${currentPage === pageNumber
+                              ? "text-[#111827] font-extrabold"
+                              : ""
+                            }`}
+                        >
+                          {pageNumber}
+                        </button>
+                      );
+                    } else if (
+                      pageNumber === 5 && totalPages > 6
+                    ) {
+                      return <span key={pageNumber} className="tracking-[0.2em] text-gray-300">.....</span>;
+                    }
+                    return null;
+                  })}
+                </div>
+              </div>
+            )}
+          </>
+        )}
+
+        {/* Product Detail Modal */}
+        <ProductInfoModal
+          isOpen={!!selectedProduct}
+          onClose={() => setSelectedProduct(null)}
+          product={selectedProduct}
+          onStartChat={handleStartChat}
+        />
+
+
       </div>
     </div>
   );

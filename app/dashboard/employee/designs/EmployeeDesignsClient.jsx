@@ -226,7 +226,7 @@ export default function EmployeeDesignsClient({ designs, categoryTabs, businessN
       result = result.filter((d) => {
         const w = Number(d.net_weight);
         if (isNaN(w) || w <= 0) return false;
-        
+
         return filters.weight.some((range) => {
           if (range === "0-2g") return w <= 2;
           if (range === "3-5g") return w > 2 && w <= 5;
@@ -244,9 +244,9 @@ export default function EmployeeDesignsClient({ designs, categoryTabs, businessN
       result = result.filter((d) => {
         return filters.availability.some((avail) => {
           if (avail === "in stock") return d.is_in_stock === true;
-          
+
           if (d.is_in_stock) return false; // If in stock, it doesn't match the "within X days" rules
-          
+
           const days = Number(d.production_time_days);
           if (isNaN(days)) return false;
 
@@ -280,20 +280,19 @@ export default function EmployeeDesignsClient({ designs, categoryTabs, businessN
 
   return (
     <div className="flex flex-col w-full min-h-screen bg-white pb-24">
-      
+
       {/* Smart Sticky Header */}
-      <div 
-        className={`sticky z-40 bg-white/95 backdrop-blur-md transition-all duration-700 cubic-bezier(0.4, 0, 0.2, 1) w-full border-b border-gray-100 overflow-hidden ${
-          scrollState === 'top' ? 'translate-y-0 top-0 pt-8 pb-6 shadow-none' : 
-          scrollState === 'down' ? 'translate-y-0 top-0 pt-3 pb-3 shadow-sm' : 
-          '-translate-y-full top-0'
-        }`}
+      <div
+        className={`sticky z-40 bg-white/95 backdrop-blur-md transition-all duration-700 cubic-bezier(0.4, 0, 0.2, 1) w-full border-b border-gray-100 overflow-hidden ${scrollState === 'top' ? 'translate-y-0 top-0 pt-8 pb-6 shadow-none' :
+            scrollState === 'down' ? 'translate-y-0 top-0 pt-3 pb-3 shadow-sm' :
+              '-translate-y-full top-0'
+          }`}
       >
         <div className="w-full max-w-7xl mx-auto px-4 md:px-8 flex flex-col transition-all duration-700 ease-in-out">
-          
+
           {/* Top Title & Back - Hidden when scrolling down */}
           <div className={`relative w-full flex items-center justify-center transition-all duration-700 ease-in-out overflow-hidden ${scrollState === 'down' ? 'max-h-0 opacity-0 pointer-events-none mb-0' : 'max-h-[100px] opacity-100 mb-10'}`}>
-            <button 
+            <button
               onClick={() => window.history.back()}
               className="absolute left-0 w-10 h-10 flex items-center justify-center rounded-full border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors shadow-sm"
               aria-label="Go back"
@@ -318,7 +317,7 @@ export default function EmployeeDesignsClient({ designs, categoryTabs, businessN
 
             {/* Categories & Filters */}
             <div className={`flex flex-col transition-all duration-700 ease-in-out ${scrollState === 'down' ? 'gap-0' : 'gap-8'}`}>
-              
+
               {/* Category Thumbnail Row - Hidden when scrolling down */}
               <div className={`flex items-end justify-between transition-all duration-700 ease-in-out overflow-hidden ${scrollState === 'down' ? 'max-h-0 opacity-0 pointer-events-none mb-0' : 'max-h-[150px] opacity-100 mb-0'}`}>
                 <div className="flex items-start gap-4 md:gap-6 overflow-x-auto pb-2 scrollbar-hide w-full max-w-[85%]">
@@ -327,8 +326,8 @@ export default function EmployeeDesignsClient({ designs, categoryTabs, businessN
                     const isActive = activeCategory === key;
                     const img = PREDEFINED_ICONS[key] || categoryImages[key] || "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1778318368/emp_static4_q0ysjt.svg";
                     return (
-                      <div 
-                        key={tab} 
+                      <div
+                        key={tab}
                         className="flex flex-col items-center gap-2 cursor-pointer group shrink-0"
                         onClick={() => setActiveCategory(key)}
                       >
@@ -385,89 +384,85 @@ export default function EmployeeDesignsClient({ designs, categoryTabs, businessN
       {/* Main Content Grid */}
       <div className="flex-1 w-full max-w-7xl mx-auto px-4 md:px-8 py-8">
 
-      {/* Grid */}
-      {filteredDesigns.length === 0 ? (
-        <div className="rounded-[16px] border border-dashed border-gray-200 bg-gray-50 px-6 py-16 text-center">
-          <p className="text-[14px] font-semibold text-gray-500">No designs found.</p>
-          <p className="text-[12px] text-gray-400 mt-2">
-            Try adjusting your category or feature filters.
-          </p>
-        </div>
-      ) : (
-        <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-8 gap-y-16">
-            {currentDesigns.map((design) => (
-              <DesignCard 
-                key={design.id} 
-                design={design} 
-                onClick={() => setSelectedProduct(design)}
-              />
-            ))}
+        {/* Grid */}
+        {filteredDesigns.length === 0 ? (
+          <div className="rounded-[16px] border border-dashed border-gray-200 bg-gray-50 px-6 py-16 text-center">
+            <p className="text-[14px] font-semibold text-gray-500">No designs found.</p>
+            <p className="text-[12px] text-gray-400 mt-2">
+              Try adjusting your category or feature filters.
+            </p>
           </div>
-
-          {/* Pagination Controls */}
-          {totalPages > 1 && (
-            <div className="mt-20 relative flex items-center justify-center w-full pb-8">
-              {/* Centered Next Button */}
-              <button
-                onClick={() => {
-                  setCurrentPage(p => Math.min(totalPages, p + 1));
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }}
-                disabled={currentPage === totalPages}
-                className="px-10 py-3 bg-black text-white rounded-[12px] text-[14px] font-medium hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors shadow-[0_4px_14px_rgba(0,0,0,0.15)]"
-              >
-                Next
-              </button>
-              
-              {/* Right Aligned Page Numbers */}
-              <div className="absolute right-0 hidden md:flex items-center gap-2 text-[14px] font-medium text-gray-400">
-                {[...Array(totalPages)].map((_, i) => {
-                  const pageNumber = i + 1;
-                  
-                  if (
-                    pageNumber <= 4 ||
-                    pageNumber === totalPages ||
-                    (pageNumber >= currentPage - 1 && pageNumber <= currentPage + 1)
-                  ) {
-                    return (
-                      <button
-                        key={pageNumber}
-                        onClick={() => {
-                          setCurrentPage(pageNumber);
-                          window.scrollTo({ top: 0, behavior: 'smooth' });
-                        }}
-                        className={`transition-colors hover:text-gray-700 px-1 ${
-                          currentPage === pageNumber
-                            ? "text-[#111827] font-extrabold"
-                            : ""
-                        }`}
-                      >
-                        {pageNumber}
-                      </button>
-                    );
-                  } else if (
-                    pageNumber === 5 && totalPages > 6
-                  ) {
-                    return <span key={pageNumber} className="tracking-[0.2em] text-gray-300">.....</span>;
-                  }
-                  return null;
-                })}
-              </div>
+        ) : (
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-8 gap-y-16">
+              {currentDesigns.map((design) => (
+                <DesignCard
+                  key={design.id}
+                  design={design}
+                  onClick={() => setSelectedProduct(design)}
+                />
+              ))}
             </div>
-          )}
-        </>
-      )}
 
-      {/* Product Detail Modal */}
-      <ProductInfoModal 
-        isOpen={!!selectedProduct} 
-        onClose={() => setSelectedProduct(null)} 
-        product={selectedProduct} 
-      />
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <div className="mt-20 relative flex items-center justify-center w-full pb-8">
+                {/* Centered Next Button */}
+                <button
+                  onClick={() => {
+                    setCurrentPage(p => Math.min(totalPages, p + 1));
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  disabled={currentPage === totalPages}
+                  className="px-10 py-3 bg-black text-white rounded-[12px] text-[14px] font-medium hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors shadow-[0_4px_14px_rgba(0,0,0,0.15)]"
+                >
+                  Next
+                </button>
 
-      {/* Persistent Navigation */}
-      <EmployeeBottomNav />
+                {/* Right Aligned Page Numbers */}
+                <div className="absolute right-0 hidden md:flex items-center gap-2 text-[14px] font-medium text-gray-400">
+                  {[...Array(totalPages)].map((_, i) => {
+                    const pageNumber = i + 1;
+
+                    if (
+                      pageNumber <= 4 ||
+                      pageNumber === totalPages ||
+                      (pageNumber >= currentPage - 1 && pageNumber <= currentPage + 1)
+                    ) {
+                      return (
+                        <button
+                          key={pageNumber}
+                          onClick={() => {
+                            setCurrentPage(pageNumber);
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                          }}
+                          className={`transition-colors hover:text-gray-700 px-1 ${currentPage === pageNumber
+                              ? "text-[#111827] font-extrabold"
+                              : ""
+                            }`}
+                        >
+                          {pageNumber}
+                        </button>
+                      );
+                    } else if (
+                      pageNumber === 5 && totalPages > 6
+                    ) {
+                      return <span key={pageNumber} className="tracking-[0.2em] text-gray-300">.....</span>;
+                    }
+                    return null;
+                  })}
+                </div>
+              </div>
+            )}
+          </>
+        )}
+
+        {/* Product Detail Modal */}
+        <ProductInfoModal
+          isOpen={!!selectedProduct}
+          onClose={() => setSelectedProduct(null)}
+          product={selectedProduct}
+        />
       </div>
     </div>
   );
