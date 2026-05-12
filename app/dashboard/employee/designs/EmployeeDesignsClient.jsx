@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { ProductInfoModal } from "@/components/employee/ProductInfoModal";
 
 function formatDate(dateStr) {
@@ -113,6 +113,25 @@ export default function EmployeeDesignsClient({ designs, categoryTabs, businessN
   const [activeCategory, setActiveCategory] = useState("all");
   const [selectedProduct, setSelectedProduct] = useState(null);
 
+  // Scroll visibility state
+  const [showFilters, setShowFilters] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      if (currentScrollY > lastScrollY && currentScrollY > 150) {
+        setShowFilters(false); // Hide on scroll down
+      } else {
+        setShowFilters(true);  // Show on scroll up
+      }
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [lastScrollY]);
+
   const [filters, setFilters] = useState({
     size: [],
     weight: [],
@@ -208,71 +227,84 @@ export default function EmployeeDesignsClient({ designs, categoryTabs, businessN
   };
 
   return (
-    <div className="flex-1 w-full max-w-7xl mx-auto px-4 md:px-8 py-8 flex flex-col gap-6">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-        <div>
-          <p className="text-[11px] uppercase tracking-[0.2em] text-gray-400 font-semibold">
-            {businessName}
-          </p>
-          <h1 className="text-[22px] font-extrabold text-[#111827] tracking-tight">
-            Designer Collection ({designs.length})
-          </h1>
+    <div className="flex flex-col w-full min-h-screen bg-white">
+      
+      {/* Smart Sticky Header containing Title, Categories, and Filters */}
+      <div 
+        className={`sticky z-40 bg-white/95 backdrop-blur-sm transition-transform duration-300 w-full pt-8 pb-4 border-b border-gray-100 ${
+          showFilters ? "translate-y-0 top-0" : "-translate-y-full top-0"
+        }`}
+      >
+        <div className="w-full max-w-7xl mx-auto px-4 md:px-8 flex flex-col gap-6">
+          {/* Header */}
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div>
+              <p className="text-[11px] uppercase tracking-[0.2em] text-gray-400 font-semibold">
+                {businessName}
+              </p>
+              <h1 className="text-[22px] font-extrabold text-[#111827] tracking-tight">
+                Designer Collection ({designs.length})
+              </h1>
+            </div>
+          </div>
+
+          {/* Categories & Filters Container */}
+          <div className="flex flex-col gap-4">
+            
+            {/* Category tabs (Top row) */}
+            <div className="flex flex-wrap items-center gap-2">
+              {categoryTabs.map((tab) => {
+                const key = tab.toLowerCase();
+                const isActive = activeCategory === key;
+                return (
+                  <button
+                    key={tab}
+                    onClick={() => setActiveCategory(key)}
+                    className={`rounded-full px-4 py-2 text-[12px] font-semibold transition-colors ${
+                      isActive
+                        ? "bg-black text-white"
+                        : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                    }`}
+                  >
+                    {tab}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Dropdown Filters */}
+            <div className="flex flex-wrap items-center gap-2">
+              <FilterDropdown
+                label="Size"
+                options={FILTER_OPTIONS.size}
+                selected={filters.size}
+                onChange={(selected) => updateFilter("size", selected)}
+              />
+              <FilterDropdown
+                label="Weight"
+                options={FILTER_OPTIONS.weight}
+                selected={filters.weight}
+                onChange={(selected) => updateFilter("weight", selected)}
+              />
+              <FilterDropdown
+                label="Availability"
+                options={FILTER_OPTIONS.availability}
+                selected={filters.availability}
+                onChange={(selected) => updateFilter("availability", selected)}
+              />
+              <FilterDropdown
+                label="Purity"
+                options={FILTER_OPTIONS.purity}
+                selected={filters.purity}
+                onChange={(selected) => updateFilter("purity", selected)}
+              />
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Categories & Filters Container */}
-      <div className="flex flex-col gap-4 border-b border-gray-100 pb-4">
-        
-        {/* Category tabs (Top row) */}
-        <div className="flex flex-wrap items-center gap-2">
-          {categoryTabs.map((tab) => {
-            const key = tab.toLowerCase();
-            const isActive = activeCategory === key;
-            return (
-              <button
-                key={tab}
-                onClick={() => setActiveCategory(key)}
-                className={`rounded-full px-4 py-2 text-[12px] font-semibold transition-colors ${
-                  isActive
-                    ? "bg-black text-white"
-                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                }`}
-              >
-                {tab}
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Dropdown Filters */}
-        <div className="flex flex-wrap items-center gap-2">
-          <FilterDropdown
-            label="Size"
-            options={FILTER_OPTIONS.size}
-            selected={filters.size}
-            onChange={(selected) => updateFilter("size", selected)}
-          />
-          <FilterDropdown
-            label="Weight"
-            options={FILTER_OPTIONS.weight}
-            selected={filters.weight}
-            onChange={(selected) => updateFilter("weight", selected)}
-          />
-          <FilterDropdown
-            label="Availability"
-            options={FILTER_OPTIONS.availability}
-            selected={filters.availability}
-            onChange={(selected) => updateFilter("availability", selected)}
-          />
-          <FilterDropdown
-            label="Purity"
-            options={FILTER_OPTIONS.purity}
-            selected={filters.purity}
-            onChange={(selected) => updateFilter("purity", selected)}
-          />
-        </div>
-      </div>
+      {/* Main Content Grid */}
+      <div className="flex-1 w-full max-w-7xl mx-auto px-4 md:px-8 py-8">
 
       {/* Grid */}
       {filteredDesigns.length === 0 ? (
@@ -300,6 +332,7 @@ export default function EmployeeDesignsClient({ designs, categoryTabs, businessN
         onClose={() => setSelectedProduct(null)} 
         product={selectedProduct} 
       />
+      </div>
     </div>
   );
 }
