@@ -78,15 +78,20 @@ export async function POST(request) {
     const insertData = {
       retailer_id: retailer.id,
       title: payload.title,
+      type: payload.type || null,
       category: payload.category || payload.type, // Handle UI mismatch
+      style_aesthetic: payload.style_aesthetic || null,
+      size: payload.size || null,
+      purity: payload.purity || null,
+      gross_weight: payload.gross_weight ? Number(payload.gross_weight) : null,
+      stone_weight: payload.stone_weight ? Number(payload.stone_weight) : null,
+      net_weight: payload.net_weight ? Number(payload.net_weight) : null,
+      is_in_stock: payload.is_in_stock || false,
+      production_time_days: payload.production_time_days ? Number(payload.production_time_days) : null,
       image_url: imageUrl,
       tags: payload.tags || [],
       is_archived: false,
     };
-
-    // Note: We are only inserting fields known to exist on retailer_designs.
-    // If other fields exist (like gross_weight), they will be ignored by Supabase if not in schema,
-    // or we could add them if we knew the schema. We'll stick to the safe known fields.
 
     const { data: design, error: insertError } = await supabaseAdmin
       .from("retailer_designs")

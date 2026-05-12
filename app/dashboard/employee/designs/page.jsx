@@ -37,7 +37,7 @@ export default async function EmployeeDesignsPage() {
   // Fetch non-archived designs from the parent retailer
   const { data: designs } = await supabaseAdmin
     .from("retailer_designs")
-    .select("id, image_url, title, category, tags, created_at, size, purity, net_weight, is_in_stock, production_time_days")
+    .select("id, image_url, title, category, tags, created_at, size, purity, net_weight, gross_weight, stone_weight, type, style_aesthetic, is_in_stock, production_time_days")
     .eq("retailer_id", employee.retailer_id)
     .eq("is_archived", false)
     .order("created_at", { ascending: false });

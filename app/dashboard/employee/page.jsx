@@ -55,7 +55,7 @@ export default async function EmployeeDashboardPage() {
   // Fetch non-archived designs for the Designer Collection using Admin to bypass RLS
   const { data: designs } = await supabaseAdmin
     .from("retailer_designs")
-    .select("id, image_url, title, category, tags, is_archived, created_at")
+    .select("id, image_url, title, category, tags, is_archived, created_at, size, purity, net_weight, gross_weight, stone_weight, type, style_aesthetic, is_in_stock, production_time_days")
     .eq("retailer_id", employee.retailer_id)
     .eq("is_archived", false);
 
