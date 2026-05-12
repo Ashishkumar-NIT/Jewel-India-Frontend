@@ -113,6 +113,10 @@ export default function EmployeeDesignsClient({ designs, categoryTabs, businessN
   const [activeCategory, setActiveCategory] = useState("all");
   const [selectedProduct, setSelectedProduct] = useState(null);
 
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
   // Scroll visibility state
   const [showFilters, setShowFilters] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
@@ -226,6 +230,18 @@ export default function EmployeeDesignsClient({ designs, categoryTabs, businessN
     setFilters((prev) => ({ ...prev, [filterKey]: selectedList }));
   };
 
+  // Reset to first page when filters or category change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [activeCategory, filters]);
+
+  // Calculate pagination
+  const totalPages = Math.ceil(filteredDesigns.length / itemsPerPage);
+  const currentDesigns = filteredDesigns.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
   return (
     <div className="flex flex-col w-full min-h-screen bg-white">
       
@@ -315,15 +331,79 @@ export default function EmployeeDesignsClient({ designs, categoryTabs, businessN
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-3 gap-x-6 gap-y-12">
-          {filteredDesigns.map((design) => (
-            <DesignCard 
-              key={design.id} 
-              design={design} 
-              onClick={() => setSelectedProduct(design)}
-            />
-          ))}
-        </div>
+        <>
+          <div className="grid grid-cols-3 gap-x-6 gap-y-12">
+            {currentDesigns.map((design) => (
+              <DesignCard 
+                key={design.id} 
+                design={design} 
+                onClick={() => setSelectedProduct(design)}
+              />
+            ))}
+          </div>
+
+          {/* Pagination Controls */}
+          {totalPages > 1 && (
+            <div className="mt-16 mb-8 flex justify-center items-center gap-2">
+              <button
+                onClick={() => {
+                  setCurrentPage(p => Math.max(1, p - 1));
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                disabled={currentPage === 1}
+                className="px-5 py-2.5 border border-gray-200 rounded-full text-[13px] font-semibold text-gray-700 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              >
+                Previous
+              </button>
+              
+              <div className="flex items-center gap-1 mx-4">
+                {[...Array(totalPages)].map((_, i) => {
+                  const pageNumber = i + 1;
+                  // Show max 5 page buttons to keep it clean
+                  if (
+                    pageNumber === 1 ||
+                    pageNumber === totalPages ||
+                    (pageNumber >= currentPage - 1 && pageNumber <= currentPage + 1)
+                  ) {
+                    return (
+                      <button
+                        key={pageNumber}
+                        onClick={() => {
+                          setCurrentPage(pageNumber);
+                          window.scrollTo({ top: 0, behavior: 'smooth' });
+                        }}
+                        className={`w-9 h-9 flex items-center justify-center rounded-full text-[13px] font-bold transition-all ${
+                          currentPage === pageNumber
+                            ? "bg-black text-white shadow-md"
+                            : "text-gray-500 hover:bg-gray-100"
+                        }`}
+                      >
+                        {pageNumber}
+                      </button>
+                    );
+                  } else if (
+                    pageNumber === currentPage - 2 ||
+                    pageNumber === currentPage + 2
+                  ) {
+                    return <span key={pageNumber} className="text-gray-300 px-1">...</span>;
+                  }
+                  return null;
+                })}
+              </div>
+
+              <button
+                onClick={() => {
+                  setCurrentPage(p => Math.min(totalPages, p + 1));
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                disabled={currentPage === totalPages}
+                className="px-5 py-2.5 border border-gray-200 rounded-full text-[13px] font-semibold text-gray-700 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              >
+                Next
+              </button>
+            </div>
+          )}
+        </>
       )}
 
       {/* Product Detail Modal */}

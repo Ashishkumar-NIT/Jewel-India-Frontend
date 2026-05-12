@@ -37,36 +37,36 @@ export default function DesignerCollectionSection({ employee, businessName, desi
       </div>
 
       {/* Main Layout: left grid + right dynamic tall image */}
-      <div className="flex gap-8 items-stretch">
+      <div className="flex flex-col md:flex-row gap-8 items-stretch">
 
         {/* LEFT: 2-column grid — only actual designs */}
-        <div className="flex-1 grid grid-cols-2 gap-x-8 gap-y-20">
+        <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-12 md:gap-y-16">
           {shuffledDesigns.map((design) => (
             <div 
               key={design.id} 
               className="flex flex-col cursor-pointer group/card"
               onClick={() => setSelectedProduct(design)}
             >
-              {/* Image Container with whitespace padding */}
-              <div className="w-full bg-[#f8f8f8] p-8 flex items-center justify-center overflow-hidden" style={{ aspectRatio: "5/4" }}>
+              {/* Image Container */}
+              <div className="w-full bg-[#f8f8f8] p-0 flex items-center justify-center overflow-hidden" style={{ aspectRatio: "5/4" }}>
                 <img
                   src={design.image_url}
-                  alt={design.title || businessName}
-                  className="w-full h-full object-cover shadow-sm transition-transform group-hover/card:scale-105 duration-700"
+                  alt={design.title || "Untitled design"}
+                  className="w-full h-full object-contain mix-blend-multiply shadow-sm transition-transform group-hover/card:scale-105 duration-700"
                 />
               </div>
               {/* Label */}
-              <span className="text-[12px] font-serif text-gray-500 text-center mt-4 italic tracking-wide">
-                {businessName}
+              <span className="text-[13px] font-serif text-gray-700 text-center mt-4 tracking-wide line-clamp-1 px-2">
+                {design.title || "Untitled design"}
               </span>
             </div>
           ))}
         </div>
 
-        {/* RIGHT: Super tall vertical image — doubled height, reduced width */}
+        {/* RIGHT: Super tall vertical image — hidden on mobile */}
         <div
-          className="shrink-0 overflow-hidden relative shadow-2xl"
-          style={{ width: "22%" }}
+          className="hidden md:block shrink-0 overflow-hidden relative shadow-2xl"
+          style={{ width: "28%" }}
         >
           <img
             src={verticalImage}
