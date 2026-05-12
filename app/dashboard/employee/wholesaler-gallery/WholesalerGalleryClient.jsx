@@ -154,8 +154,8 @@ export default function WholesalerGalleryClient({ products, categoryTabs, initia
     mangalsutra: "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777351896/mangalsutra_dmoj14.svg",
     chain: "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777351896/chains_tqfmhp.svg",
     chains: "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777351896/chains_tqfmhp.svg",
-    bangles: "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777351896/bracelets_t1etxd.svg",
-    bangle: "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777351896/bracelets_t1etxd.svg",
+    bangles: "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777351896/bangles_ln2p2a.svg",
+    bangle: "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777351896/bangles_ln2p2a.svg",
     bracelets: "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777351896/bracelets_t1etxd.svg",
     bracelet: "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777351896/bracelets_t1etxd.svg",
     ring: "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777351897/rings_mbtqqr.svg",
@@ -178,17 +178,37 @@ export default function WholesalerGalleryClient({ products, categoryTabs, initia
     return map;
   }, [products]);
 
-  const displayTabs = categoryTabs.filter(t => t.toLowerCase() !== "gold");
+  const STATIC_CATEGORIES = [
+    "Necklace",
+    "Pendants",
+    "Mangalsutras",
+    "Chains",
+    "Bangles",
+    "Bracelets",
+    "Rings",
+    "Earrings",
+    "Nosepin"
+  ];
+
+  const displayTabs = STATIC_CATEGORIES;
 
   const filteredProducts = useMemo(() => {
     let result = products;
 
     if (activeCategory !== "all") {
+      const baseActive = activeCategory.toLowerCase().replace(/s$/, ''); // necklace, pendant, mangalsutra, etc.
+      
       result = result.filter((p) => {
-        const catMatch = (p.category || p.jewellery_type || "uncategorized").toLowerCase() === activeCategory;
+        const cat = (p.category || "").toLowerCase();
+        const type = (p.jewellery_type || "").toLowerCase();
         const tags = Array.isArray(p.tags) ? p.tags.map(t => t.toLowerCase()) : [];
-        const tagMatch = tags.includes(activeCategory);
-        return catMatch || tagMatch;
+        
+        // Match if any field contains the base category name
+        const isMatch = cat.includes(baseActive) || 
+                        type.includes(baseActive) || 
+                        tags.some(t => t.includes(baseActive));
+        
+        return isMatch;
       });
     }
 

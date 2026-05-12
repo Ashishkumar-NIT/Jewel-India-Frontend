@@ -20,19 +20,21 @@ export function ProductInfoModal({ isOpen, onClose, product }) {
   if (!isOpen || !product) return null;
 
   const images = [];
-  // Handle all possible image field names across different data sources
+  // Prioritize processed and generated images
   if (product.processed_image_url) images.push(product.processed_image_url);
-  if (product.image_url && !images.includes(product.image_url)) images.push(product.image_url);
-  if (product.image_urls && Array.isArray(product.image_urls)) {
-    product.image_urls.forEach(url => { if (!images.includes(url)) images.push(url); });
-  }
+  
   if (product.generated_image_urls && Array.isArray(product.generated_image_urls)) {
     product.generated_image_urls.forEach(url => {
       if (!images.includes(url)) images.push(url);
     });
   }
-  if (product.raw_image_url && !images.includes(product.raw_image_url)) {
-    images.push(product.raw_image_url);
+
+  // Only show original/raw images if no processed images exist
+  if (images.length === 0) {
+    if (product.image_url) images.push(product.image_url);
+    if (product.raw_image_url && !images.includes(product.raw_image_url)) {
+      images.push(product.raw_image_url);
+    }
   }
 
   const activeImageUrl = images[activeImageIndex] || null;
@@ -78,11 +80,16 @@ export function ProductInfoModal({ isOpen, onClose, product }) {
                     setActiveImageIndex(idx);
                     setImgError(false);
                   }}
-                  className={`relative w-16 h-16 shrink-0 rounded-lg overflow-hidden border-2 transition-all ${
-                    activeImageIndex === idx ? "border-blue-500 opacity-100" : "border-transparent opacity-60 hover:opacity-100"
+                  className={`relative w-16 h-16 shrink-0 rounded-lg overflow-hidden transition-all ${
+                    activeImageIndex === idx ? "ring-1 ring-black/10 shadow-inner" : "opacity-100 hover:scale-105"
                   }`}
                 >
                   <img src={imgUrl} alt="Thumbnail" className="w-full h-full object-cover" />
+                  {activeImageIndex === idx && (
+                    <div className="absolute inset-0 bg-white/50 backdrop-blur-[1px] flex items-center justify-center">
+                      {/* Optional: subtle indicator that it's selected, though user asked for "fade layer" */}
+                    </div>
+                  )}
                 </button>
               ))}
             </div>
