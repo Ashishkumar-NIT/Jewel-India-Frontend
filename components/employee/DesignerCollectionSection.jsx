@@ -27,11 +27,11 @@ export default function DesignerCollectionSection({ employee, businessName, desi
     <section className="w-full bg-white pt-16 pb-40">
       <div className="w-full max-w-7xl mx-auto px-4 md:px-8">
         {/* Section Header */}
-        <div className="mb-12">
-          <h2 className="font-serif text-[28px] text-[#111827] leading-tight mb-2">
+        <div className="mb-12 pl-4 md:pl-8 lg:pl-12">
+          <h2 className="font-serif text-[32px] md:text-[40px] lg:text-[46px] text-[#111827] leading-tight mb-2 md:mb-3">
             Designer collection
           </h2>
-          <p className="text-[12px] text-gray-400 font-light">
+          <p className="text-[14px] md:text-[16px] lg:text-[18px] text-gray-400 font-light">
             Crafted in house with the taste of the our own
           </p>
         </div>
