@@ -15,22 +15,21 @@ function formatDate(dateStr) {
 function DesignCard({ design, onClick }) {
   const [imgError, setImgError] = useState(false);
   const title = design.title || "Untitled design";
-  const tags = Array.isArray(design.tags) ? design.tags : [];
   return (
     <div
-      className="flex flex-col cursor-pointer group/card"
+      className="flex flex-col cursor-pointer group/card bg-white"
       onClick={onClick}
     >
-      {/* Image container — editorial style matching home page */}
+      {/* Image container — Full bleed */}
       <div
-        className="w-full bg-[#f8f8f8] p-4 flex items-center justify-center overflow-hidden"
-        style={{ aspectRatio: "5/4" }}
+        className="w-full bg-[#f4f4f4] flex items-center justify-center overflow-hidden relative"
+        style={{ aspectRatio: "1/1" }}
       >
         {!imgError && design.image_url ? (
           <img
             src={design.image_url}
             alt={title}
-            className="w-full h-full object-contain transition-transform group-hover/card:scale-105 duration-700"
+            className="w-full h-full object-cover transition-transform group-hover/card:scale-105 duration-700 mix-blend-multiply"
             onError={() => setImgError(true)}
           />
         ) : (
@@ -38,15 +37,10 @@ function DesignCard({ design, onClick }) {
         )}
       </div>
       {/* Label */}
-      <div className="mt-4 text-center px-1">
-        <span className="font-serif text-[12px] text-gray-500 italic tracking-wide line-clamp-1">
+      <div className="mt-4 text-center px-2">
+        <span className="font-serif text-[15px] text-gray-800 tracking-wide line-clamp-1">
           {title}
         </span>
-        {tags.length > 0 && (
-          <p className="text-[10px] text-gray-300 mt-1 tracking-wide">
-            {tags.slice(0, 2).join(" · ")}
-          </p>
-        )}
       </div>
     </div>
   );
@@ -67,15 +61,17 @@ function FilterDropdown({ label, options, selected, onChange }) {
     <div className="relative inline-block text-left">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="inline-flex items-center gap-2 justify-center rounded-full border border-gray-200 px-4 py-2 bg-white text-[12px] font-semibold text-gray-700 hover:bg-gray-50 focus:outline-none transition-colors"
+        className="inline-flex items-center justify-between rounded-[24px] border border-gray-200 px-5 py-2.5 bg-white text-[13px] font-medium text-gray-600 hover:border-gray-300 focus:outline-none transition-colors w-[130px] shadow-sm"
       >
-        {label}
-        {selected.length > 0 && (
-          <span className="bg-black text-white text-[10px] px-1.5 py-0.5 rounded-full min-w-[20px] text-center">
-            {selected.length}
-          </span>
-        )}
-        <svg className="-mr-1 ml-1 h-4 w-4 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+        <span className="flex items-center gap-2">
+          {label}
+          {selected.length > 0 && (
+            <span className="bg-black text-white text-[10px] px-1.5 py-0.5 rounded-full min-w-[18px] text-center font-bold">
+              {selected.length}
+            </span>
+          )}
+        </span>
+        <svg className="h-4 w-4 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
           <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
         </svg>
       </button>
@@ -149,6 +145,18 @@ export default function EmployeeDesignsClient({ designs, categoryTabs, businessN
     availability: ["in stock", "within 5 days", "within 15 days", "within 30 days", "more than 30 days"],
     purity: ["18k", "22k", "24k"],
   };
+
+  // Extract one image per category for thumbnails
+  const categoryImages = useMemo(() => {
+    const map = {};
+    designs.forEach(d => {
+      const cat = (d.category || "uncategorized").toLowerCase();
+      if (!map[cat] && d.image_url) {
+        map[cat] = d.image_url;
+      }
+    });
+    return map;
+  }, [designs]);
 
   const filteredDesigns = useMemo(() => {
     let result = designs;
@@ -243,77 +251,102 @@ export default function EmployeeDesignsClient({ designs, categoryTabs, businessN
   );
 
   return (
-    <div className="flex flex-col w-full min-h-screen bg-white">
+    <div className="flex flex-col w-full min-h-screen bg-white pb-24">
       
-      {/* Smart Sticky Header containing Title, Categories, and Filters */}
+      {/* Smart Sticky Header */}
       <div 
-        className={`sticky z-40 bg-white/95 backdrop-blur-sm transition-transform duration-300 w-full pt-8 pb-4 border-b border-gray-100 ${
+        className={`sticky z-40 bg-white/95 backdrop-blur-md transition-transform duration-300 w-full pt-8 pb-6 border-b border-gray-100 ${
           showFilters ? "translate-y-0 top-0" : "-translate-y-full top-0"
         }`}
       >
-        <div className="w-full max-w-7xl mx-auto px-4 md:px-8 flex flex-col gap-6">
-          {/* Header */}
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-            <div>
-              <p className="text-[11px] uppercase tracking-[0.2em] text-gray-400 font-semibold">
-                {businessName}
-              </p>
-              <h1 className="text-[22px] font-extrabold text-[#111827] tracking-tight">
-                Designer Collection ({designs.length})
-              </h1>
-            </div>
+        <div className="w-full max-w-7xl mx-auto px-4 md:px-8 flex flex-col gap-10">
+          
+          {/* Top Title & Back */}
+          <div className="relative w-full flex items-center justify-center">
+            <button 
+              onClick={() => window.history.back()}
+              className="absolute left-0 w-10 h-10 flex items-center justify-center rounded-full border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors shadow-sm"
+              aria-label="Go back"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            </button>
+            <h1 className="font-serif text-[32px] md:text-[40px] text-[#111827] tracking-tight">
+              Catalogue
+            </h1>
           </div>
 
-          {/* Categories & Filters Container */}
-          <div className="flex flex-col gap-4">
-            
-            {/* Category tabs (Top row) */}
-            <div className="flex flex-wrap items-center gap-2">
-              {categoryTabs.map((tab) => {
-                const key = tab.toLowerCase();
-                const isActive = activeCategory === key;
-                return (
-                  <button
-                    key={tab}
-                    onClick={() => setActiveCategory(key)}
-                    className={`rounded-full px-4 py-2 text-[12px] font-semibold transition-colors ${
-                      isActive
-                        ? "bg-black text-white"
-                        : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                    }`}
-                  >
-                    {tab}
-                  </button>
-                );
-              })}
+          <div className="flex flex-col gap-6">
+            {/* Curated Collection Header */}
+            <div>
+              <h2 className="text-[20px] md:text-[24px] font-serif text-[#111827] leading-tight mb-1">
+                Curated Collection
+              </h2>
+              <p className="text-[13px] md:text-[14px] text-gray-400">
+                From everyday elegance to statement pieces
+              </p>
             </div>
 
-            {/* Dropdown Filters */}
-            <div className="flex flex-wrap items-center gap-2">
-              <FilterDropdown
-                label="Size"
-                options={FILTER_OPTIONS.size}
-                selected={filters.size}
-                onChange={(selected) => updateFilter("size", selected)}
-              />
-              <FilterDropdown
-                label="Weight"
-                options={FILTER_OPTIONS.weight}
-                selected={filters.weight}
-                onChange={(selected) => updateFilter("weight", selected)}
-              />
-              <FilterDropdown
-                label="Availability"
-                options={FILTER_OPTIONS.availability}
-                selected={filters.availability}
-                onChange={(selected) => updateFilter("availability", selected)}
-              />
-              <FilterDropdown
-                label="Purity"
-                options={FILTER_OPTIONS.purity}
-                selected={filters.purity}
-                onChange={(selected) => updateFilter("purity", selected)}
-              />
+            {/* Categories & Filters */}
+            <div className="flex flex-col gap-8">
+              
+              {/* Category Thumbnail Row */}
+              <div className="flex items-end justify-between">
+                <div className="flex items-start gap-4 md:gap-6 overflow-x-auto pb-2 scrollbar-hide w-full max-w-[85%]">
+                  {categoryTabs.filter(t => t.toLowerCase() !== "all").map((tab) => {
+                    const key = tab.toLowerCase();
+                    const isActive = activeCategory === key;
+                    const img = categoryImages[key] || "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1778318368/emp_static4_q0ysjt.svg";
+                    return (
+                      <div 
+                        key={tab} 
+                        className="flex flex-col items-center gap-2 cursor-pointer group shrink-0"
+                        onClick={() => setActiveCategory(key)}
+                      >
+                        <div className={`w-[56px] h-[56px] md:w-[64px] md:h-[64px] rounded-[14px] overflow-hidden bg-black transition-all ${isActive ? 'ring-2 ring-black ring-offset-2 scale-105' : 'group-hover:ring-1 group-hover:ring-gray-300 group-hover:ring-offset-2'}`}>
+                          <img src={img} alt={tab} className="w-full h-full object-cover mix-blend-screen opacity-90" />
+                        </div>
+                        <span className={`text-[12px] transition-colors ${isActive ? 'font-bold text-[#111827]' : 'font-medium text-gray-400 group-hover:text-gray-700'}`}>
+                          {tab}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+                <button
+                  onClick={() => setActiveCategory("all")}
+                  className="text-[12px] font-semibold text-gray-800 mb-6 shrink-0 underline decoration-gray-300 underline-offset-4 hover:decoration-black transition-colors"
+                >
+                  View all
+                </button>
+              </div>
+
+              {/* Dropdown Filters */}
+              <div className="flex flex-wrap items-center gap-3">
+                <FilterDropdown
+                  label="Size"
+                  options={FILTER_OPTIONS.size}
+                  selected={filters.size}
+                  onChange={(selected) => updateFilter("size", selected)}
+                />
+                <FilterDropdown
+                  label="Weight"
+                  options={FILTER_OPTIONS.weight}
+                  selected={filters.weight}
+                  onChange={(selected) => updateFilter("weight", selected)}
+                />
+                <FilterDropdown
+                  label="Availability"
+                  options={FILTER_OPTIONS.availability}
+                  selected={filters.availability}
+                  onChange={(selected) => updateFilter("availability", selected)}
+                />
+                <FilterDropdown
+                  label="Purity"
+                  options={FILTER_OPTIONS.purity}
+                  selected={filters.purity}
+                  onChange={(selected) => updateFilter("purity", selected)}
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -332,7 +365,7 @@ export default function EmployeeDesignsClient({ designs, categoryTabs, businessN
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-3 gap-x-6 gap-y-12">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-8 gap-y-16">
             {currentDesigns.map((design) => (
               <DesignCard 
                 key={design.id} 
@@ -344,24 +377,26 @@ export default function EmployeeDesignsClient({ designs, categoryTabs, businessN
 
           {/* Pagination Controls */}
           {totalPages > 1 && (
-            <div className="mt-16 mb-8 flex justify-center items-center gap-2">
+            <div className="mt-20 relative flex items-center justify-center w-full pb-8">
+              {/* Centered Next Button */}
               <button
                 onClick={() => {
-                  setCurrentPage(p => Math.max(1, p - 1));
+                  setCurrentPage(p => Math.min(totalPages, p + 1));
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
-                disabled={currentPage === 1}
-                className="px-5 py-2.5 border border-gray-200 rounded-full text-[13px] font-semibold text-gray-700 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                disabled={currentPage === totalPages}
+                className="px-10 py-3 bg-black text-white rounded-[12px] text-[14px] font-medium hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors shadow-[0_4px_14px_rgba(0,0,0,0.15)]"
               >
-                Previous
+                Next
               </button>
               
-              <div className="flex items-center gap-1 mx-4">
+              {/* Right Aligned Page Numbers */}
+              <div className="absolute right-0 hidden md:flex items-center gap-2 text-[14px] font-medium text-gray-400">
                 {[...Array(totalPages)].map((_, i) => {
                   const pageNumber = i + 1;
-                  // Show max 5 page buttons to keep it clean
+                  
                   if (
-                    pageNumber === 1 ||
+                    pageNumber <= 4 ||
                     pageNumber === totalPages ||
                     (pageNumber >= currentPage - 1 && pageNumber <= currentPage + 1)
                   ) {
@@ -372,35 +407,23 @@ export default function EmployeeDesignsClient({ designs, categoryTabs, businessN
                           setCurrentPage(pageNumber);
                           window.scrollTo({ top: 0, behavior: 'smooth' });
                         }}
-                        className={`w-9 h-9 flex items-center justify-center rounded-full text-[13px] font-bold transition-all ${
+                        className={`transition-colors hover:text-gray-700 px-1 ${
                           currentPage === pageNumber
-                            ? "bg-black text-white shadow-md"
-                            : "text-gray-500 hover:bg-gray-100"
+                            ? "text-[#111827] font-extrabold"
+                            : ""
                         }`}
                       >
                         {pageNumber}
                       </button>
                     );
                   } else if (
-                    pageNumber === currentPage - 2 ||
-                    pageNumber === currentPage + 2
+                    pageNumber === 5 && totalPages > 6
                   ) {
-                    return <span key={pageNumber} className="text-gray-300 px-1">...</span>;
+                    return <span key={pageNumber} className="tracking-[0.2em] text-gray-300">.....</span>;
                   }
                   return null;
                 })}
               </div>
-
-              <button
-                onClick={() => {
-                  setCurrentPage(p => Math.min(totalPages, p + 1));
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }}
-                disabled={currentPage === totalPages}
-                className="px-5 py-2.5 border border-gray-200 rounded-full text-[13px] font-semibold text-gray-700 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-              >
-                Next
-              </button>
             </div>
           )}
         </>
