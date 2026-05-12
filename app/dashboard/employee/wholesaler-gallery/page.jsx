@@ -33,7 +33,8 @@ export default async function WholesalerGalleryPage({ searchParams }) {
   const retailerId = employee.retailer_id;
 
   // Read filter params
-  const categoryParam = searchParams?.category || "all";
+  const resolvedParams = await searchParams;
+  const categoryParam = resolvedParams?.category || "all";
 
   let products = [];
   let categoryTabs = ["All"];
@@ -75,6 +76,7 @@ export default async function WholesalerGalleryPage({ searchParams }) {
            raw_image_url,
            processed_image_url,
            generated_image_urls,
+           wholesaler_id,
            wholesaler_email,
            created_at`
         )
