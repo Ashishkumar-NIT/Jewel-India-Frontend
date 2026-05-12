@@ -24,17 +24,17 @@ export default function DesignerCollectionSection({ employee, businessName, desi
   if (!shuffledDesigns || shuffledDesigns.length === 0) return null;
 
   return (
-    <section className="w-full px-4 pt-16 pb-40 bg-white">
-
-      {/* Section Header */}
-      <div className="mb-12">
-        <h2 className="font-serif text-[28px] text-[#111827] leading-tight mb-2">
-          Designer collection
-        </h2>
-        <p className="text-[12px] text-gray-400 font-light">
-          Crafted in house with the taste of the our own
-        </p>
-      </div>
+    <section className="w-full bg-white pt-16 pb-40">
+      <div className="w-full max-w-7xl mx-auto px-4 md:px-8">
+        {/* Section Header */}
+        <div className="mb-12">
+          <h2 className="font-serif text-[28px] text-[#111827] leading-tight mb-2">
+            Designer collection
+          </h2>
+          <p className="text-[12px] text-gray-400 font-light">
+            Crafted in house with the taste of the our own
+          </p>
+        </div>
 
       {/* Main Layout: left grid + right dynamic tall image */}
       <div className="flex flex-col md:flex-row gap-8 items-stretch">
@@ -95,7 +95,7 @@ export default function DesignerCollectionSection({ employee, businessName, desi
         onClose={() => setSelectedProduct(null)} 
         product={selectedProduct} 
       />
-
+      </div>
     </section>
   );
 }
