@@ -49,6 +49,8 @@ export async function POST(request) {
       };
     });
 
+    console.log("[orders/create] Attempting to insert orders:", JSON.stringify(ordersToInsert, null, 2));
+
     // Insert orders (using admin to ensure no RLS hiccups on insert if policies are strict)
     const { data: insertedOrders, error: insertError } = await supabaseAdmin
       .from("orders")
@@ -57,7 +59,12 @@ export async function POST(request) {
 
     if (insertError) {
       console.error("[orders/create] Insert error:", insertError);
-      return NextResponse.json({ error: "Failed to create orders" }, { status: 500 });
+      return NextResponse.json({ 
+        error: "Failed to create orders", 
+        details: insertError.message,
+        hint: insertError.hint,
+        debugData: ordersToInsert
+      }, { status: 500 });
     }
 
     return NextResponse.json({ success: true, data: insertedOrders });
