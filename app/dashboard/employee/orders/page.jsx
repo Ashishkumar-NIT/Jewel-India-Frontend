@@ -28,7 +28,7 @@ export default async function EmployeeOrdersPage() {
 
   // Fetch orders from API or server-side using Admin client to bypass RLS
   const { supabaseAdmin } = await import("../../../../lib/supabase/admin");
-  const { data: orders, error } = await supabaseAdmin
+  const { data: rawOrders, error } = await supabaseAdmin
     .from("orders")
     .select(`
       *,
@@ -37,13 +37,29 @@ export default async function EmployeeOrdersPage() {
       ),
       retailers (
         id, business_name, city, state, created_at
-      ),
-      wholesalers (
-        id, business_name, city, state, created_at
       )
     `)
     .eq("retailer_id", employee.retailer_id)
     .order("created_at", { ascending: false });
+
+  let orders = rawOrders || [];
+
+  if (orders.length > 0) {
+    const wholesalerUserIds = [...new Set(orders.map(o => o.wholesaler_id))];
+    const { data: wholesalers } = await supabaseAdmin
+      .from("wholesalers")
+      .select("id, user_id, business_name, city, state, created_at")
+      .in("user_id", wholesalerUserIds);
+      
+    if (wholesalers) {
+      const wMap = {};
+      wholesalers.forEach(w => wMap[w.user_id] = w);
+      orders = orders.map(o => ({
+        ...o,
+        wholesalers: wMap[o.wholesaler_id] || null
+      }));
+    }
+  }
 
   if (error) {
     console.error("[employee/orders] fetch error:", error.message);

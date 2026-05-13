@@ -47,7 +47,7 @@ export default async function WholesalerOrdersPage() {
         id, business_name, city, state, created_at
       )
     `)
-    .eq("wholesaler_id", wholesaler.id)
+    .eq("wholesaler_id", user.id)
     .order("created_at", { ascending: false });
 
   if (error) {

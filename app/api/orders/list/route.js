@@ -36,7 +36,7 @@ export async function GET(request) {
     } else if (role === "wholesaler") {
       const { data: wh } = await supabase.from("wholesalers").select("id").eq("user_id", user.id).single();
       if (!wh) return NextResponse.json({ error: "Wholesaler not found" }, { status: 403 });
-      query = query.eq("wholesaler_id", wh.id);
+      query = query.eq("wholesaler_id", user.id);
     } else {
       return NextResponse.json({ error: "Invalid role specified" }, { status: 400 });
     }
