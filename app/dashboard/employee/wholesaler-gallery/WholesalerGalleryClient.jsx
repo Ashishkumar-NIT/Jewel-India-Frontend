@@ -317,7 +317,7 @@ export default function WholesalerGalleryClient({ products, categoryTabs, initia
 
       {/* Smart Sticky Header */}
       <div
-        className={`sticky z-40 bg-white/95 backdrop-blur-md transition-all duration-700 cubic-bezier(0.4, 0, 0.2, 1) w-full border-b border-gray-100 overflow-hidden ${scrollState === 'top' ? 'translate-y-0 top-0 pt-8 pb-6 shadow-none' :
+        className={`sticky z-40 bg-white/95 backdrop-blur-md transition-all duration-700 cubic-bezier(0.4, 0, 0.2, 1) w-full border-b border-gray-100 ${scrollState === 'top' ? 'translate-y-0 top-0 pt-8 pb-6 shadow-none' :
             scrollState === 'down' ? 'translate-y-0 top-0 pt-3 pb-3 shadow-sm' :
               '-translate-y-full top-0'
           }`}
