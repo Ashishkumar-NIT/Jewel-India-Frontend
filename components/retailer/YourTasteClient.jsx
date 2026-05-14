@@ -202,7 +202,7 @@ export default function YourTasteClient({ products, selectedProductIds, category
                 className="flex flex-col items-center gap-3 group shrink-0 outline-none"
               >
                 <div 
-                  className={`w-[65px] h-[65px] md:w-[75px] md:h-[75px] rounded-[16px] overflow-hidden transition-all duration-300 bg-black relative shadow-sm ${isActive ? 'scale-110 ring-2 ring-black ring-offset-4 opacity-100 z-10' : 'opacity-80 hover:opacity-100 hover:scale-105'}`}
+                  className={`w-[65px] h-[65px] md:w-[75px] md:h-[75px] rounded-[16px] overflow-hidden transition-all duration-300 bg-[#F9F9F9] relative shadow-sm ${isActive ? 'scale-110 ring-2 ring-black ring-offset-4 z-10' : 'hover:scale-105'}`}
                   style={isActive ? { transform: 'scale(1.1)' } : {}}
                 >
                   {tab.image ? (
@@ -211,10 +211,10 @@ export default function YourTasteClient({ products, selectedProductIds, category
                       alt={tab.name} 
                       width={75} 
                       height={75} 
-                      className="w-full h-full object-cover mix-blend-screen opacity-90" 
+                      className="w-full h-full object-cover" 
                     />
                   ) : (
-                    <div className="w-full h-full bg-black/90 flex items-center justify-center text-white text-xs font-bold">
+                    <div className="w-full h-full bg-[#F9F9F9] flex items-center justify-center text-[#111827] text-xs font-bold">
                       {tab.name.charAt(0)}
                     </div>
                   )}
