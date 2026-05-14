@@ -126,8 +126,8 @@ export function ConversationList({
                     {productTitle}
                   </span>
                   {hasUnread && (
-                    <span className="shrink-0 text-[10px] font-bold text-white bg-blue-600 px-1.5 py-0.5 rounded-sm tracking-wide">
-                      new
+                    <span className="shrink-0 text-[9px] font-bold text-white bg-blue-600 px-1.5 py-0.5 rounded-[4px] tracking-widest uppercase">
+                      Unread
                     </span>
                   )}
                 </div>

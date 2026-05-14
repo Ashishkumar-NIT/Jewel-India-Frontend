@@ -33,14 +33,33 @@ export default async function QueriesPage() {
       product:product_id(title, processed_image_url, raw_image_url),
       employee:employee_id(full_name, retailer_id),
       retailer:retailer_id(business_name),
-      wholesaler_profile:wholesaler_id(email)
+      wholesaler_profile:wholesaler_id(email),
+      messages(id, content, is_read, sender_type, created_at)
     `)
     .eq("wholesaler_id", user.id)
     .order("updated_at", { ascending: false });
 
+  // Compute unread status and last message preview for the UI
+  const enrichedConversations = (initialConversations || []).map((conv) => {
+    const msgs = conv.messages || [];
+    msgs.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    
+    const lastMsg = msgs[0];
+    const hasUnread = msgs.some(m => !m.is_read && m.sender_type === "employee");
+
+    // Remove the heavy messages array so it isn't sent to the client
+    const { messages, ...rest } = conv;
+
+    return {
+      ...rest,
+      has_unread: hasUnread,
+      last_message: lastMsg ? lastMsg.content : "",
+    };
+  });
+
   return (
     <MessagesClient 
-      initialConversations={initialConversations} 
+      initialConversations={enrichedConversations} 
       currentUserType="wholesaler"
     />
   );

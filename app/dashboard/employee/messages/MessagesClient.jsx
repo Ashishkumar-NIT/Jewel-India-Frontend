@@ -11,7 +11,9 @@ const messagesCache = {
 
 export default function MessagesClient({ initialConversations, currentUserType, openProductId }) {
   const [conversations, setConversations] = useState(() => {
-    return messagesCache.conversations.length > 0 ? messagesCache.conversations : (initialConversations || []);
+    return (initialConversations && initialConversations.length > 0) 
+      ? initialConversations 
+      : (messagesCache.conversations || []);
   });
   const [activeConversation, setActiveConversation] = useState(() => {
     return messagesCache.activeConversationId ? { id: messagesCache.activeConversationId } : null;
@@ -25,6 +27,13 @@ export default function MessagesClient({ initialConversations, currentUserType, 
 
   useEffect(() => {
     messagesCache.activeConversationId = activeConversation?.id || null;
+    
+    // Optimistically mark the opened conversation as read in the sidebar
+    if (activeConversation?.id) {
+      setConversations(prev => prev.map(c => 
+        c.id === activeConversation.id ? { ...c, has_unread: false } : c
+      ));
+    }
   }, [activeConversation]);
 
   // Auto-create or open conversation when coming from "Chat with us"
