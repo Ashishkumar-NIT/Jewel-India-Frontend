@@ -47,28 +47,29 @@ export default async function WholesalerDashboardPage() {
   const { count: liveProductsCount } = await supabase
     .from("products")
     .select("*", { count: "exact", head: true })
-    .eq("wholesaler_id", wholesaler?.id);
+    .eq("wholesaler_id", user?.id);
 
   // 2. Fetch pending orders count
   const { count: pendingOrdersCount } = await supabase
     .from("orders")
     .select("*", { count: "exact", head: true })
-    .eq("wholesaler_id", wholesaler?.id)
+    .eq("wholesaler_id", user?.id)
     .eq("status", "pending");
 
-  // 3. Check for new orders since last visit
-  const { data: latestPendingOrder } = await supabase
-    .from("orders")
-    .select("created_at")
-    .eq("wholesaler_id", wholesaler?.id)
-    .eq("status", "pending")
-    .order("created_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
+  // 3. Set badge visibility (red dot will show as long as there are pending orders to act on)
+  const hasNewOrders = pendingOrdersCount > 0;
 
-  const hasNewOrders = latestPendingOrder && wholesaler?.last_checked_orders_at
-    ? new Date(latestPendingOrder.created_at) > new Date(wholesaler.last_checked_orders_at)
-    : !!latestPendingOrder;
+  // 4. Fetch unread chats count (conversations with unread messages from employees)
+  const { data: unreadConversations } = await supabase
+    .from("conversations")
+    .select(`id, messages!inner(id)`)
+    .eq("wholesaler_id", user?.id)
+    .eq("messages.sender_type", "employee")
+    .eq("messages.is_read", false);
+
+  // We only count unique conversations, regardless of how many messages are in each
+  const chatsCount = unreadConversations ? unreadConversations.length : 0;
+  const hasNewChats = chatsCount > 0;
 
   return (
     <main className="min-h-screen bg-white pb-20">
@@ -82,6 +83,8 @@ export default async function WholesalerDashboardPage() {
         productCount={liveProductsCount || 0} 
         pendingCount={pendingOrdersCount || 0}
         hasNewOrders={hasNewOrders}
+        chatsCount={chatsCount || 0}
+        hasNewChats={hasNewChats}
       />
       <CatalogueSection />
     </main>
