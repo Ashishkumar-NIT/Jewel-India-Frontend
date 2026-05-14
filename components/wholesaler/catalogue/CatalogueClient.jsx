@@ -250,7 +250,7 @@ export default function CatalogueClient({
                   className="flex flex-col items-center gap-2 group outline-none shrink-0"
                 >
                   <div 
-                    className={`w-[90px] h-[90px] rounded-[12px] overflow-hidden transition-all duration-300 ease-out relative ${isActive ? "scale-110 ring-2 ring-[#111] ring-offset-1 shadow-lg z-10" : "hover:shadow-sm opacity-70 hover:opacity-100"}`}
+                    className={`w-[90px] h-[90px] rounded-[12px] overflow-hidden transition-all duration-300 ease-out relative ${isActive ? "scale-110 ring-2 ring-[#111] ring-offset-1 shadow-lg z-10" : "hover:shadow-md"}`}
                     style={isActive ? { transform: 'scale(1.1)' } : {}}
                   >
                     {cat.image ? (
