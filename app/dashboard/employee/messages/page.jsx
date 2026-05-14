@@ -37,6 +37,7 @@ export default async function EmployeeMessagesPage({ searchParams }) {
       messages(id, content, is_read, sender_type, created_at)
     `)
     .eq("employee_id", employee.id)
+    .eq("is_visible_to_employee", true)
     .order("updated_at", { ascending: false });
 
   // Compute unread status and last message preview for the UI

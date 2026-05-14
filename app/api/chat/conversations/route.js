@@ -28,11 +28,11 @@ export async function GET(request) {
       // Find employee ID
       const { data: emp } = await supabase.from("employees").select("id").eq("auth_user_id", user.id).single();
       if (!emp) return NextResponse.json({ error: "Employee not found" }, { status: 404 });
-      query = query.eq("employee_id", emp.id);
+      query = query.eq("employee_id", emp.id).eq("is_visible_to_employee", true);
     } else if (role === "wholesaler") {
       const { data: ws } = await supabase.from("wholesalers").select("id").eq("user_id", user.id).single();
       if (!ws) return NextResponse.json({ error: "Wholesaler not found" }, { status: 404 });
-      query = query.eq("wholesaler_id", user.id); // Check against auth user ID
+      query = query.eq("wholesaler_id", user.id).eq("is_visible_to_wholesaler", true); // Check against auth user ID
     } else if (role === "retailer") {
        // Retailers can see all their employees' conversations
       const { data: ret } = await supabase.from("retailers").select("id").eq("user_id", user.id).single();

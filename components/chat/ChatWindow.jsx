@@ -138,20 +138,22 @@ export function ChatWindow({ conversation, currentUserType }) {
             </div>
           )}
 
-          {currentUserType === "wholesaler" && (
+          {(currentUserType === "wholesaler" || currentUserType === "employee") && (
             <button
               onClick={async () => {
-                if (confirm("Are you sure you want to delete this conversation?")) {
+                if (confirm("Are you sure you want to delete this conversation from your list? It will still be visible to the other party.")) {
                   try {
-                    await fetch(`/api/chat/conversation/${conversation.id}`, { method: "DELETE" });
+                    const res = await fetch(`/api/chat/conversations/${conversation.id}`, { method: "DELETE" });
+                    if (!res.ok) throw new Error("Failed to hide conversation");
                     window.location.reload();
                   } catch (e) {
                     console.error(e);
+                    alert("Error hiding conversation: " + e.message);
                   }
                 }
               }}
               className="text-red-500 hover:bg-red-50 p-2 rounded-md text-[13px] font-medium transition-colors border border-transparent hover:border-red-200"
-              title="Delete conversation"
+              title="Hide conversation from your list"
             >
               Delete Chat
             </button>
