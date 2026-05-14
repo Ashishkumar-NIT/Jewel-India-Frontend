@@ -97,22 +97,22 @@ export default function MessagesClient({ initialConversations, currentUserType, 
   }
 
   return (
-    <div className="flex-1 flex flex-col w-full bg-white">
+    <div className="flex flex-col w-full bg-white h-screen overflow-hidden">
       {/* Page Header */}
-      <div className="relative flex items-center justify-center px-6 py-6 border-b border-gray-100 shrink-0">
+      <div className="relative flex items-center justify-center px-6 py-4 border-b border-gray-100 shrink-0">
         <button
           onClick={() => window.history.back()}
-          className="absolute left-6 w-10 h-10 rounded-full bg-gradient-to-b from-gray-50 to-gray-200 border border-gray-300 flex items-center justify-center text-gray-500 hover:text-black transition-colors shadow-sm"
+          className="absolute left-6 w-9 h-9 rounded-full bg-gradient-to-b from-gray-50 to-gray-200 border border-gray-300 flex items-center justify-center text-gray-500 hover:text-black transition-colors shadow-sm"
         >
           <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
           </svg>
         </button>
-        <h1 className="text-[30px] font-serif text-[#111827] tracking-wide">Queries</h1>
+        <h1 className="text-[24px] md:text-[30px] font-serif text-[#111827] tracking-wide">Queries</h1>
       </div>
 
       {/* Chat Panel */}
-      <div className="flex-1 min-h-0 flex w-full max-w-6xl mx-auto px-4 md:px-8 py-6 h-[calc(100vh-160px)]">
+      <div className="flex-1 min-h-0 flex w-full max-w-6xl mx-auto px-2 md:px-8 py-4 md:py-6 overflow-hidden">
         <div className="flex w-full h-full bg-white rounded-[16px] shadow-sm border border-gray-200 overflow-hidden">
           {/* Left Sidebar */}
           <ConversationList
