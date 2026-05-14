@@ -17,7 +17,10 @@ function formatDate(dateStr) {
 function ProductCard({ product, onClick }) {
   const [imgError, setImgError] = useState(false);
   const title = product.title || product.jewellery_type || "Untitled";
-  const imageUrl = product.processed_image_url || product.raw_image_url || product.image_url;
+  const imageUrl = product.processed_image_url || 
+                   (product.generated_image_urls && product.generated_image_urls.length > 0 ? product.generated_image_urls[0] : null) || 
+                   product.raw_image_url || 
+                   product.image_url;
 
   return (
     <div
@@ -173,7 +176,10 @@ export default function WholesalerGalleryClient({ products, categoryTabs, initia
     const map = {};
     products.forEach(p => {
       const cat = (p.category || "uncategorized").toLowerCase();
-      const imageUrl = p.processed_image_url || p.raw_image_url || p.image_url;
+      const imageUrl = p.processed_image_url || 
+                       (p.generated_image_urls && p.generated_image_urls.length > 0 ? p.generated_image_urls[0] : null) || 
+                       p.raw_image_url || 
+                       p.image_url;
       if (!map[cat] && imageUrl) {
         map[cat] = imageUrl;
       }

@@ -81,9 +81,24 @@ export async function DELETE(request, context) {
       return NextResponse.json({ error: "Order ID missing" }, { status: 400 });
     }
 
+    // Get user role to determine which visibility flag to flip
+    const { data: profile } = await supabaseAdmin
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .single();
+
+    let updatePayload = {};
+    if (profile?.role === "wholesaler") {
+      updatePayload = { is_visible_to_wholesaler: false };
+    } else {
+      // Default to employee/retailer side
+      updatePayload = { is_visible_to_employee: false };
+    }
+
     const { error } = await supabaseAdmin
       .from("orders")
-      .delete()
+      .update(updatePayload)
       .eq("id", orderId);
 
     if (error) throw error;

@@ -40,6 +40,7 @@ export default async function EmployeeOrdersPage() {
       )
     `)
     .eq("retailer_id", employee.retailer_id)
+    .eq("is_visible_to_employee", true)
     .order("created_at", { ascending: false });
 
   let orders = rawOrders || [];

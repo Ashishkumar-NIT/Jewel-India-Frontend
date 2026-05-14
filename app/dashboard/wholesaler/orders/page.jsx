@@ -48,6 +48,7 @@ export default async function WholesalerOrdersPage() {
       )
     `)
     .eq("wholesaler_id", user.id)
+    .eq("is_visible_to_wholesaler", true)
     .order("created_at", { ascending: false });
 
   if (error) {
