@@ -39,10 +39,35 @@ export default async function EmployeeDashboardLayout({ children }) {
 
   const businessName = retailer?.business_name || "Your Store";
 
+  // Check for unread queries
+  const { data: unreadConversations } = await supabase
+    .from("conversations")
+    .select(`id, messages!inner(id)`)
+    .eq("employee_id", employee.id)
+    .eq("messages.sender_type", "wholesaler")
+    .eq("messages.is_read", false);
+
+  const hasUnreadQueries = unreadConversations && unreadConversations.length > 0;
+  
+  // Check for order updates (orders that are no longer pending)
+  // We get the most recent update timestamp to compare with local storage on the client
+  const { data: latestOrder } = await supabase
+    .from("orders")
+    .select("updated_at")
+    .eq("employee_id", employee.id)
+    .neq("status", "pending")
+    .order("updated_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  const latestOrderUpdate = latestOrder?.updated_at || null;
+
   return (
     <EmployeeLayout
       employeeName={employee.full_name}
       businessName={businessName}
+      hasUnreadQueries={hasUnreadQueries}
+      latestOrderUpdate={latestOrderUpdate}
     >
       {children}
     </EmployeeLayout>

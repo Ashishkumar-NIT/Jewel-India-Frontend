@@ -5,7 +5,7 @@
  * The bottom nav is rendered only on the home page (EmployeeHomeClient).
  */
 import EmployeeBottomNav from "./EmployeeTopNav";
-export default function EmployeeLayout({ children }) {
+export default function EmployeeLayout({ children, hasUnreadQueries = false, latestOrderUpdate = null }) {
   return (
     <div style={{ minHeight: "100vh", background: "#FAFAFA", display: "flex", flexDirection: "column" }}>
       <main
@@ -18,7 +18,7 @@ export default function EmployeeLayout({ children }) {
       >
         {children}
       </main>
-      <EmployeeBottomNav />
+      <EmployeeBottomNav hasUnreadQueries={hasUnreadQueries} latestOrderUpdate={latestOrderUpdate} />
     </div>
   );
 }

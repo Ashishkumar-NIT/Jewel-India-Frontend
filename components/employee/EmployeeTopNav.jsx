@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -65,8 +66,31 @@ const navItems = [
   },
 ];
 
-export default function EmployeeBottomNav() {
+export default function EmployeeBottomNav({ hasUnreadQueries = false, latestOrderUpdate = null }) {
   const pathname = usePathname();
+  const [hasUnreadOrders, setHasUnreadOrders] = useState(false);
+
+  // Check if we need to show the unread orders dot
+  useEffect(() => {
+    if (!latestOrderUpdate) {
+      setHasUnreadOrders(false);
+      return;
+    }
+
+    if (pathname === "/dashboard/employee/orders") {
+      // If we're on the orders page, clear the dot and save the timestamp
+      localStorage.setItem("employee_orders_last_checked", new Date().toISOString());
+      setHasUnreadOrders(false);
+    } else {
+      // Check local storage against latest order update
+      const lastChecked = localStorage.getItem("employee_orders_last_checked");
+      if (!lastChecked || new Date(latestOrderUpdate) > new Date(lastChecked)) {
+        setHasUnreadOrders(true);
+      } else {
+        setHasUnreadOrders(false);
+      }
+    }
+  }, [pathname, latestOrderUpdate]);
 
   return (
     <nav
@@ -89,11 +113,17 @@ export default function EmployeeBottomNav() {
           item.href === "/dashboard/employee"
             ? pathname === item.href
             : pathname.startsWith(item.href);
+            
+        // Check if this specific tab should show a notification dot
+        const showDot = 
+          (item.name === "Queries" && hasUnreadQueries) || 
+          (item.name === "Orders" && hasUnreadOrders);
 
         return (
           <Link
             key={item.name}
             href={item.href}
+            className="relative"
             style={{
               display: "flex",
               alignItems: "center",
@@ -111,7 +141,16 @@ export default function EmployeeBottomNav() {
               whiteSpace: "nowrap",
             }}
           >
-            <span style={{ opacity: isActive ? 1 : 0.7, display: "flex" }}>{item.icon}</span>
+            <span style={{ opacity: isActive ? 1 : 0.7, display: "flex", position: "relative" }}>
+              {item.icon}
+              {/* Notification Dot */}
+              {showDot && (
+                <span className="absolute -top-1 -right-1 flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500 border border-white"></span>
+                </span>
+              )}
+            </span>
             {item.name}
           </Link>
         );

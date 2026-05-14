@@ -33,17 +33,37 @@ export default async function EmployeeMessagesPage({ searchParams }) {
       product:product_id(title, processed_image_url, raw_image_url),
       employee:employee_id(full_name, retailer_id),
       retailer:retailer_id(business_name),
-      wholesaler_profile:wholesaler_id(email)
+      wholesaler_profile:wholesaler_id(email),
+      messages(id, content, is_read, sender_type, created_at)
     `)
     .eq("employee_id", employee.id)
     .order("updated_at", { ascending: false });
+
+  // Compute unread status and last message preview for the UI
+  const enrichedConversations = (initialConversations || []).map((conv) => {
+    const msgs = conv.messages || [];
+    msgs.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    
+    const lastMsg = msgs[0];
+    // For the employee, an unread message is one sent by the wholesaler
+    const hasUnread = msgs.some(m => !m.is_read && m.sender_type === "wholesaler");
+
+    // Remove the heavy messages array so it isn't sent to the client
+    const { messages, ...rest } = conv;
+
+    return {
+      ...rest,
+      has_unread: hasUnread,
+      last_message: lastMsg ? lastMsg.content : "",
+    };
+  });
 
   const resolvedParams = await searchParams;
   const productId = resolvedParams?.productId || null;
 
   return (
     <MessagesClient 
-      initialConversations={initialConversations} 
+      initialConversations={enrichedConversations} 
       currentUserType="employee"
       openProductId={productId}
     />
