@@ -158,11 +158,13 @@ body {
 }
 
 /* ── Hide scrollbar utility ─────────────────────────────────── */
-.custom-scrollbar {
+.custom-scrollbar,
+.scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
-.custom-scrollbar::-webkit-scrollbar {
+.custom-scrollbar::-webkit-scrollbar,
+.scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
 

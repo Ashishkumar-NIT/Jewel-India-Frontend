@@ -173,12 +173,12 @@ export function ProductInfoModal({ isOpen, onClose, product, onStartChat }) {
                 <button
                   key={idx}
                   onClick={() => { setActiveImageIndex(idx); setMainImgError(false); }}
-                  className={`shrink-0 rounded-[10px] overflow-hidden transition-all duration-200 border-[2.5px] ${
+                  className={`shrink-0 rounded-[8px] overflow-hidden transition-all duration-200 border-[2px] ${
                     activeImageIndex === idx
                       ? "border-black opacity-100"
                       : "border-transparent opacity-55 hover:opacity-90 hover:scale-[1.03]"
                   }`}
-                  style={{ width: 88, height: 88 }}
+                  style={{ width: 64, height: 64 }}
                   aria-label={`Image ${idx + 1}`}
                 >
                   <img src={imgUrl} alt={`thumb-${idx}`} className="w-full h-full object-cover" />
