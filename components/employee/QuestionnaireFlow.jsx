@@ -137,7 +137,7 @@ export default function QuestionnaireFlow({ businessName }) {
         </div>
 
         {/* Content */}
-        <div className="relative z-10 flex flex-col items-center text-center px-4 pt-48">
+        <div className="relative z-10 flex flex-col items-center text-center px-4 pt-48 pb-28">
           <h1 className="font-serif text-[42px] md:text-[54px] text-[#2c1f18] mb-3 leading-tight">
             {businessName}
           </h1>
