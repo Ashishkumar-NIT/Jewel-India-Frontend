@@ -11,6 +11,7 @@ export default function InfinityCanvas({ products, onBack, onNext, retailerName 
   const wrapperRef = useRef(null);
   const [selectedItems, setSelectedItems] = useState(new Set());
   const [viewingProductForModal, setViewingProductForModal] = useState(null);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const searchParams = useSearchParams();
 
   // Use refs for GSAP animation to avoid state re-renders
@@ -208,20 +209,37 @@ export default function InfinityCanvas({ products, onBack, onNext, retailerName 
 
       {/* --- UI OVERLAYS --- */}
 
-      {/* Top Header */}
-      <div className="absolute top-0 left-0 right-0 p-8 flex justify-between items-start pointer-events-none z-10">
-        <button 
-          onClick={onBack}
-          className="w-12 h-12 bg-white/60 backdrop-blur-md rounded-full shadow-lg flex items-center justify-center text-gray-600 hover:text-black pointer-events-auto border border-white/40 transition-transform hover:scale-105"
-        >
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-        </button>
-        
-        <h1 className="text-[42px] font-serif tracking-wide text-black text-shadow-sm opacity-90 drop-shadow-md">
-          {retailerName || "Lolo jewellers"}
-        </h1>
+      {/* Top Fade Gradient — softens cards crashing into the header zone */}
+      <div
+        className="absolute top-0 left-0 right-0 pointer-events-none z-[9]"
+        style={{
+          height: "120px",
+          background: "linear-gradient(to bottom, rgba(252,252,252,0.92) 0%, rgba(252,252,252,0.5) 55%, transparent 100%)",
+        }}
+      />
 
-        <div className="w-12"></div> {/* Spacer for center alignment */}
+      {/* Top Header */}
+      <div className="absolute top-0 left-0 right-0 px-8 pt-7 flex justify-between items-center pointer-events-none z-10">
+        {/* Back Button */}
+        <button
+          onClick={onBack}
+          className="w-11 h-11 bg-white/60 backdrop-blur-md rounded-full shadow-lg flex items-center justify-center text-gray-600 hover:text-black pointer-events-auto border border-white/40 transition-transform hover:scale-105 shrink-0"
+        >
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        </button>
+
+        {/* Store Name Pill — frosted glass, matches bottom filter bar */}
+        <div className="bg-gradient-to-r from-white/30 via-white/55 to-white/30 backdrop-blur-md shadow-[0_8px_32px_rgba(0,0,0,0.08)] border border-white/50 rounded-full px-7 py-2.5 pointer-events-auto flex items-center gap-2">
+          {/* Small jewel dot accent */}
+          <span className="w-1.5 h-1.5 rounded-full bg-gray-400/60 shrink-0" />
+          <h1 className="font-serif text-[17px] tracking-widest text-gray-800/90 whitespace-nowrap">
+            {retailerName || "Jewel India"}
+          </h1>
+          <span className="w-1.5 h-1.5 rounded-full bg-gray-400/60 shrink-0" />
+        </div>
+
+        {/* Spacer to keep pill centered */}
+        <div className="w-11 shrink-0" />
       </div>
 
       {/* Bottom Filter Tags (Glassmorphism) */}
@@ -273,50 +291,81 @@ export default function InfinityCanvas({ products, onBack, onNext, retailerName 
       </div>
 
       {/* Right Sidebar - Selected Items */}
-      <div className="absolute top-1/2 -translate-y-1/2 right-8 w-[280px] bg-white/40 backdrop-blur-2xl border border-white/60 rounded-2xl shadow-[0_30px_60px_rgba(0,0,0,0.12)] p-5 flex flex-col pointer-events-auto z-10 max-h-[80vh] overflow-x-hidden overflow-y-auto no-scrollbar">
-        
-        <div className="flex items-center gap-3 mb-6 shrink-0">
-          <div className="w-8 h-8 rounded-full bg-white/70 shadow-sm border border-white flex items-center justify-center text-gray-600">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 18l6-6-6-6"/></svg>
-          </div>
-          <h2 className="font-serif text-[18px] text-gray-800">Selected Items</h2>
-        </div>
-
-        <div className="flex-1 overflow-y-auto overflow-x-hidden no-scrollbar flex flex-col gap-3 pb-4">
-          {selectedArray.length === 0 ? (
-            <div className="h-32 flex items-center justify-center text-[13px] text-gray-500 italic text-center px-4">
-              Tap items on the canvas to select them.
-            </div>
-          ) : (
-            <div className="grid grid-cols-2 gap-3">
-              {selectedArray.map(item => (
-                <div key={item.id} className="relative group">
-                  <div className="bg-white/60 rounded-xl aspect-square p-2 border border-white/50 shadow-sm flex items-center justify-center">
-                    <img src={item.processed_image_url || item.raw_image_url} className="w-full h-full object-contain mix-blend-multiply" />
-                  </div>
-                  <p className="text-[10px] text-center mt-1.5 font-medium text-gray-700 truncate px-1">
-                    {item.title || item.jewellery_type}
-                  </p>
-                  <button 
-                    onClick={(e) => removeSelection(item.id, e)}
-                    className="absolute -top-1 -right-1 w-5 h-5 bg-gray-200/80 hover:bg-red-500 hover:text-white rounded-full flex items-center justify-center text-gray-600 text-[10px] opacity-0 group-hover:opacity-100 transition-all shadow-sm backdrop-blur-sm"
-                  >
-                    ✕
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        <button 
-          onClick={handleNext}
-          disabled={selectedItems.size === 0}
-          className="w-full py-4 mt-2 bg-gradient-to-b from-[#2a2a2a] to-[#111] text-white rounded-xl font-medium text-[14px] shadow-lg disabled:opacity-50 disabled:cursor-not-allowed hover:from-black hover:to-black transition-colors"
+      {/* Floating toggle button — visible only when sidebar is hidden */}
+      {!sidebarOpen && (
+        <button
+          onClick={() => setSidebarOpen(true)}
+          className="absolute top-1/2 -translate-y-1/2 right-0 z-20 pointer-events-auto w-8 h-14 bg-white/70 backdrop-blur-md border border-white/60 rounded-l-xl shadow-lg flex items-center justify-center text-gray-600 hover:text-black hover:bg-white/90 transition-all"
+          title="Show selected items"
         >
-          Next
+          {/* Left arrow — clicking brings panel back */}
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="15 18 9 12 15 6" />
+          </svg>
         </button>
+      )}
 
+      <div
+        className="absolute top-1/2 z-10 pointer-events-auto"
+        style={{
+          right: sidebarOpen ? "32px" : "-320px",
+          transform: "translateY(-50%)",
+          transition: "right 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+          width: "280px",
+        }}
+      >
+        <div className="w-full bg-white/40 backdrop-blur-2xl border border-white/60 rounded-2xl shadow-[0_30px_60px_rgba(0,0,0,0.12)] p-5 flex flex-col max-h-[80vh] overflow-x-hidden overflow-y-auto no-scrollbar">
+
+          <div className="flex items-center gap-3 mb-6 shrink-0">
+            {/* Toggle button — inside panel, collapses it to the right */}
+            <button
+              onClick={() => setSidebarOpen(false)}
+              className="w-8 h-8 rounded-full bg-white/70 shadow-sm border border-white flex items-center justify-center text-gray-600 hover:text-black hover:bg-white transition-all"
+              title="Hide selected items"
+            >
+              {/* Right arrow — clicking hides panel */}
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="9 18 15 12 9 6" />
+              </svg>
+            </button>
+            <h2 className="font-serif text-[18px] text-gray-800">Selected Items</h2>
+          </div>
+
+          <div className="flex-1 overflow-y-auto overflow-x-hidden no-scrollbar flex flex-col gap-3 pb-4">
+            {selectedArray.length === 0 ? (
+              <div className="h-32 flex items-center justify-center text-[13px] text-gray-500 italic text-center px-4">
+                Tap items on the canvas to select them.
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 gap-3">
+                {selectedArray.map(item => (
+                  <div key={item.id} className="relative group">
+                    <div className="bg-white/60 rounded-xl aspect-square p-2 border border-white/50 shadow-sm flex items-center justify-center">
+                      <img src={item.processed_image_url || item.raw_image_url} className="w-full h-full object-contain mix-blend-multiply" />
+                    </div>
+                    <p className="text-[10px] text-center mt-1.5 font-medium text-gray-700 truncate px-1">
+                      {item.title || item.jewellery_type}
+                    </p>
+                    <button
+                      onClick={(e) => removeSelection(item.id, e)}
+                      className="absolute -top-1 -right-1 w-5 h-5 bg-gray-200/80 hover:bg-red-500 hover:text-white rounded-full flex items-center justify-center text-gray-600 text-[10px] opacity-0 group-hover:opacity-100 transition-all shadow-sm backdrop-blur-sm"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <button
+            onClick={handleNext}
+            disabled={selectedItems.size === 0}
+            className="w-full py-4 mt-2 bg-gradient-to-b from-[#2a2a2a] to-[#111] text-white rounded-xl font-medium text-[14px] shadow-lg disabled:opacity-50 disabled:cursor-not-allowed hover:from-black hover:to-black transition-colors"
+          >
+            Next
+          </button>
+        </div>
       </div>
 
       {/* Product Info Modal */}
