@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { Button } from "../ui/Button";
 import { signIn } from "../../lib/actions/auth";
 
 export function SignInForm() {

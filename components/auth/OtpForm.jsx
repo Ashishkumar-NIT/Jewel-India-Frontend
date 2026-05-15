@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "../ui/Button";
 
@@ -34,7 +34,7 @@ export function OtpForm() {
   const [lockedUntil, setLockedUntil] = useState(null);
 
   const [identity, setIdentity] = useState(null);
-  const [isPhoneIdentity, setIsPhoneIdentity] = useState(false);
+
 
   const inputRefs = useRef([]);
   const otpTimerRef = useRef(null);
@@ -54,7 +54,7 @@ export function OtpForm() {
     }
 
     setIdentity(storedIdentity);
-    setIsPhoneIdentity(/^\+\d{10,15}$/.test(storedIdentity)); // detect phone vs email
+
 
     if (storedLockedUntil) {
       const lockDate = new Date(storedLockedUntil);

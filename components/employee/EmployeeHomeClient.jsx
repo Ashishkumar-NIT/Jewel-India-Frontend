@@ -2,7 +2,6 @@
 
 import { useRouter } from "next/navigation";
 import DesignerCollectionSection from "./DesignerCollectionSection";
-import EmployeeBottomNav from "./EmployeeTopNav";
 
 export default function EmployeeHomeClient({ employee, businessName, designs }) {
   const router = useRouter();
