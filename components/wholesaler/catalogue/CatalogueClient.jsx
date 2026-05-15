@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import Image from "next/image";
 import CatalogueGrid from "./CatalogueGrid";
-import { createClient } from "../../../lib/supabase/client";
+
 
 const LIMIT = 20;
 
@@ -40,7 +40,7 @@ export default function CatalogueClient({
   initialCategory,
   dynamicCategories
 }) {
-  const supabase = useMemo(() => createClient(), []);
+
 
   const [activeCategory, setActiveCategory] = useState(() => {
     // Restore from cache if available, otherwise use initial
@@ -304,9 +304,6 @@ export default function CatalogueClient({
             let pillLabel = fc.label;
             if (isActive) {
               if (activeOptions.length === 1) {
-                // Label: "1 ×" instead of "Size" if single selection for Size? 
-                // Wait, prompt says: "Label: 'Weight ×' for 1 selection. Active pill (2+): Label: 'Weight · 3 ×'".
-                // Oh I see, just "Feature ×" or "Feature · N ×".
                 pillLabel = `${fc.label}`;
               } else {
                 pillLabel = `${fc.label} · ${activeOptions.length}`;

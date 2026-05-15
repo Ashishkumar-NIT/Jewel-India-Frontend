@@ -67,7 +67,6 @@ function ProductDetailModal({ product, onClose }) {
         alert("Link copied!");
       }
     } catch (e) {
-      console.log(e);
     }
   };
 

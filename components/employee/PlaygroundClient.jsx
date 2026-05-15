@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, Suspense } from "react";
+import { Suspense } from "react";
 import { useRouter } from "next/navigation";
 import InfinityCanvas from "./InfinityCanvas";
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useSearchParams } from "next/navigation";
+
 import gsap from "gsap";
 import { Observer } from "gsap/Observer";
 import { ProductInfoModal } from "./ProductInfoModal";
@@ -12,7 +12,7 @@ export default function InfinityCanvas({ products, onBack, onNext, retailerName 
   const [selectedItems, setSelectedItems] = useState(new Set());
   const [viewingProductForModal, setViewingProductForModal] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const searchParams = useSearchParams();
+
 
   // Use refs for GSAP animation to avoid state re-renders
   const targetX = useRef(0);
