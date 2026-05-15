@@ -276,7 +276,7 @@ export default function SelectionReviewClient() {
                 <div className="mt-12 flex flex-col items-center">
                    <button 
                      onClick={() => setIsSidebarOpen(true)}
-                     className="w-full bg-gradient-to-b from-[#222] to-[#000] text-[#4ea3ff] font-sans font-semibold tracking-widest text-[13px] py-4 shadow-lg hover:shadow-xl transition-all border border-black uppercase"
+                     className="w-full bg-gradient-to-b from-[#222] to-[#000] text-white font-sans font-semibold tracking-widest text-[13px] py-4 shadow-lg hover:shadow-xl transition-all border border-black uppercase"
                      style={{ boxShadow: "inset 0 1px 1px rgba(255,255,255,0.15)" }}
                    >
                      Request Item
