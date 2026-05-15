@@ -2,10 +2,8 @@
 
 import { useMemo, useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
 
 import { ProductInfoModal } from "../employee/ProductInfoModal";
-import { useRouter } from "next/navigation";
 
 function formatWeight(val) {
   if (!val && val !== 0) return null;
@@ -80,7 +78,7 @@ export default function YourTasteClient({ products, selectedProductIds, category
   const [filterState, setFilterState] = useState("all"); // "all", "selected", "unselected"
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [isBulkUpdating, setIsBulkUpdating] = useState(false);
-  const router = useRouter();
+
   
   // Local optimistic state for selections
   const [selections, setSelections] = useState(() => new Set(selectedProductIds));

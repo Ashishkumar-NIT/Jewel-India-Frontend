@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 
 function formatWeight(val) {
   if (val === null || val === undefined || val === "") return null;

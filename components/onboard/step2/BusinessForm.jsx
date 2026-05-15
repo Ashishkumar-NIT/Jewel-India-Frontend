@@ -1,5 +1,4 @@
 "use client";
-// import { useEffect } from "react";
 
 const INDIAN_STATES = [
   "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", "Goa",
@@ -21,14 +20,7 @@ export function BusinessForm({
   const isStateError = submitAttempted && selectedState === "";
   const isCityError = submitAttempted && selectedCity === "";
 
-  /*
-  useEffect(() => {
-    if (selectedState) {
-      setCities(getCitiesByState(selectedState));
-      setSelectedCity("");
-    }
-  }, [selectedState, setCities, setSelectedCity]);
-  */
+
 
   return (
     <div className="flex flex-col gap-[clamp(16px,2vw,24px)] w-full">
