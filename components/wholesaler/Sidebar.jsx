@@ -3,9 +3,17 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
+import { signOut } from "../../lib/actions/auth";
 
 export default function Sidebar() {
   const pathname = usePathname();
+
+  const handleLogoClick = async () => {
+    const confirmLogout = window.confirm("Are you sure you want to logout?");
+    if (confirmLogout) {
+      await signOut();
+    }
+  };
 
   const navItems = [
     {
@@ -98,28 +106,9 @@ export default function Sidebar() {
         })}
       </div>
 
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "16px", marginBottom: "8px" }}>
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginBottom: "8px" }}>
         <button
-          style={{
-            background: "none",
-            border: "none",
-            cursor: "pointer",
-            opacity: 0.35,
-            transition: "all 0.15s ease",
-            padding: 0,
-            display: "flex",
-          }}
-          className="sidebar-profile"
-        >
-          <Image
-            src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777013959/profile_logo_jin2a8.svg"
-            alt="User Profile"
-            width={22}
-            height={22}
-          />
-        </button>
-
-        <div
+          onClick={handleLogoClick}
           style={{
             width: "44px",
             height: "44px",
@@ -128,7 +117,14 @@ export default function Sidebar() {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            border: "none",
+            cursor: "pointer",
+            padding: 0,
+            outline: "none",
+            transition: "transform 0.15s ease, opacity 0.15s ease",
           }}
+          className="logo-logout-btn"
+          title="Logout"
         >
           <Image
             src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777013959/jewel_logo_rhgin9.svg"
@@ -136,7 +132,7 @@ export default function Sidebar() {
             width={28}
             height={28}
           />
-        </div>
+        </button>
       </div>
 
       <style>{`
@@ -152,8 +148,9 @@ export default function Sidebar() {
           opacity: 0.7 !important;
           background-color: rgba(0, 0, 0, 0.06) !important;
         }
-        .sidebar-profile:hover {
-          opacity: 0.7 !important;
+        .logo-logout-btn:hover {
+          opacity: 0.9 !important;
+          transform: scale(1.05);
         }
       `}</style>
     </aside>
