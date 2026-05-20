@@ -83,21 +83,40 @@ export function ProductInfoModal({ isOpen, onClose, product, onStartChat }) {
   }
 
   const activeImageUrl = processedImages[activeImageIndex] || null;
+
+  // Normalize fields between wholesaler products and retailer designs
   const title =
     product.title ||
     (product.jewellery_type
       ? product.jewellery_type.charAt(0).toUpperCase() + product.jewellery_type.slice(1)
+      : product.type
+      ? product.type.charAt(0).toUpperCase() + product.type.slice(1)
       : "Untitled Product");
-  const category = product.category || product.jewellery_type || "Uncategorized";
+
+  const category = product.category || product.jewellery_type || product.type || "Uncategorized";
   const styleAesthetic = product.style_aesthetic || product.style || null;
+
+  const purity = product.purity || product.metal_purity || null;
+  const metalType = product.metal_type || "Gold";
+
+  const stockAvailable = 
+    product.stock_available !== undefined && product.stock_available !== null
+      ? product.stock_available
+      : product.is_in_stock;
+
+  const makeToOrderDays = 
+    product.make_to_order_days !== undefined && product.make_to_order_days !== null
+      ? product.make_to_order_days
+      : product.production_time_days;
 
   // Availability
   const inStock =
-    (typeof product.stock_available === "number" && product.stock_available > 0) ||
-    product.stock_available === true ||
-    product.stock_available === "true";
-  const leadTime = product.make_to_order_days
-    ? `${product.make_to_order_days} to ${Number(product.make_to_order_days) + 2} days`
+    (typeof stockAvailable === "number" && stockAvailable > 0) ||
+    stockAvailable === true ||
+    stockAvailable === "true";
+
+  const leadTime = makeToOrderDays
+    ? `${makeToOrderDays} to ${Number(makeToOrderDays) + 2} days`
     : null;
 
   // Send request handler — same as handleIndividualSubmit in SelectionReviewClient
@@ -156,7 +175,7 @@ export function ProductInfoModal({ isOpen, onClose, product, onStartChat }) {
               <img
                 src={activeImageUrl}
                 alt={title}
-                className="absolute inset-0 w-full h-full object-cover"
+                className="absolute inset-0 w-full h-full object-contain p-4 mix-blend-multiply"
                 onError={() => setMainImgError(true)}
               />
             ) : (
@@ -212,11 +231,11 @@ export function ProductInfoModal({ isOpen, onClose, product, onStartChat }) {
           <div className="flex flex-col gap-6 flex-1">
 
             {/* MATERIAL */}
-            {product.metal_purity && (
+            {purity && (
               <SectionBlock title="Material">
                 <SectionRow
-                  label={product.metal_type || "Gold"}
-                  value={product.metal_purity}
+                  label={metalType}
+                  value={purity}
                 />
               </SectionBlock>
             )}
@@ -237,7 +256,7 @@ export function ProductInfoModal({ isOpen, onClose, product, onStartChat }) {
             )}
 
             {/* AVAILABILITY */}
-            {product.stock_available !== null && product.stock_available !== undefined && (
+            {stockAvailable !== null && stockAvailable !== undefined && (
               <SectionBlock title="Availability">
                 <SectionRow
                   label={inStock ? "In stock" : "Made to order"}
