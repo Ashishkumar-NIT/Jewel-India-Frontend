@@ -244,7 +244,7 @@ const CatalogueProductCard = memo(function CatalogueProductCard({ product, onCli
         throw new Error("Failed to update stock");
       }
     } catch (err) {
-      console.error(err);
+
       setIsInStock(!newValue); // Revert on failure
     } finally {
       setIsUpdating(false);

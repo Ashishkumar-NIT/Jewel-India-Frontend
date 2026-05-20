@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef, useMemo } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
 import CatalogueGrid from "./CatalogueGrid";
 
@@ -158,7 +158,7 @@ export default function CatalogueClient({
       window.history.replaceState({}, "", `?${params.toString()}`);
 
     } catch (err) {
-      console.error(err);
+
       setIsError(true);
     } finally {
       if (!skipLoading) setIsLoading(false);
