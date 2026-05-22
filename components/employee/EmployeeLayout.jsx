@@ -7,7 +7,7 @@
 import EmployeeBottomNav from "./EmployeeTopNav";
 export default function EmployeeLayout({ children, hasUnreadQueries = false, latestOrderUpdate = null, isRetailer = false }) {
   return (
-    <div style={{ minHeight: "100vh", background: "#FAFAFA", display: "flex", flexDirection: "column" }}>
+    <div className="theme-employee" style={{ minHeight: "100vh", background: "#FAFAFA", display: "flex", flexDirection: "column" }}>
       {isRetailer && (
         <>
           <style>{`

@@ -3,8 +3,88 @@
 /* ── Local font faces ────────────────────────────────────── */
 @font-face {
   font-family: "Cirka";
+  src: url("/fonts/TTF/Cirka-Light.woff2") format("woff2");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Cirka";
   src: url("/fonts/TTF/Cirka-Regular.ttf") format("truetype");
   font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Cirka";
+  src: url("/fonts/TTF/Cirka-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Gilda Display";
+  src: url("/fonts/TTF/GildaDisplay-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Manrope";
+  src: url("/fonts/TTF/Manrope-ExtraLight.ttf") format("truetype");
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Manrope";
+  src: url("/fonts/TTF/Manrope-Light.ttf") format("truetype");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Manrope";
+  src: url("/fonts/TTF/Manrope-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Manrope";
+  src: url("/fonts/TTF/Manrope-Medium.ttf") format("truetype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Manrope";
+  src: url("/fonts/TTF/Manrope-SemiBold.ttf") format("truetype");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Manrope";
+  src: url("/fonts/TTF/Manrope-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Manrope";
+  src: url("/fonts/TTF/Manrope-ExtraBold.ttf") format("truetype");
+  font-weight: 800;
   font-style: normal;
   font-display: swap;
 }
@@ -58,11 +138,12 @@
 }
 
 @theme {
-  --font-serif: var(--font-bodoni), ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
-  --font-sans: var(--font-jost), ui-sans-serif, system-ui, sans-serif;
-  --font-cirka: "Cirka", ui-serif, Georgia, serif;
+  --font-serif: "Cirka", var(--font-bodoni), ui-serif, Georgia, Cambria, serif;
+  --font-sans: "Manrope", var(--font-jost), ui-sans-serif, system-ui, sans-serif;
+  --font-cirka: "Cirka", serif;
+  --font-gilda: "Gilda Display", serif;
+  --font-manrope: "Manrope", sans-serif;
   --font-switzer: "Switzer", ui-sans-serif, system-ui, sans-serif;
-  --font-manrope: var(--font-manrope-var), "Manrope", ui-sans-serif, system-ui, sans-serif;
   --font-gilroy: "Gilroy", ui-sans-serif, system-ui, sans-serif;
   --font-sfpro: "SF Pro", ui-sans-serif, system-ui, sans-serif;
   
@@ -183,4 +264,43 @@ body {
 /* Utility for grain texture if needed */
 .bg-grain {
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+}
+
+/* ── Typography Systems ──────────────────────────────────── */
+
+/* Retailer & Wholesaler Theme mapping */
+.theme-retailer,
+.theme-wholesaler,
+.theme-retailer button,
+.theme-wholesaler button,
+.theme-retailer input,
+.theme-wholesaler input,
+.theme-retailer select,
+.theme-wholesaler select,
+.theme-retailer textarea,
+.theme-wholesaler textarea {
+  font-family: "Manrope", var(--font-sans), sans-serif;
+}
+
+.theme-retailer h1, .theme-retailer h2, .theme-retailer h3, .theme-retailer h4, .theme-retailer h5, .theme-retailer h6,
+.theme-wholesaler h1, .theme-wholesaler h2, .theme-wholesaler h3, .theme-wholesaler h4, .theme-wholesaler h5, .theme-wholesaler h6,
+.theme-retailer [class*="font-cirka"], .theme-wholesaler [class*="font-cirka"],
+.theme-retailer .title-font, .theme-wholesaler .title-font,
+.theme-retailer .cirka-title, .theme-wholesaler .cirka-title {
+  font-family: "Cirka", serif !important;
+}
+
+/* Employee Theme mapping */
+.theme-employee,
+.theme-employee button,
+.theme-employee input,
+.theme-employee select,
+.theme-employee textarea {
+  font-family: "Manrope", var(--font-sans), sans-serif;
+}
+
+.theme-employee h1, .theme-employee h2, .theme-employee h3, .theme-employee h4, .theme-employee h5, .theme-employee h6,
+.theme-employee [class*="font-gilda"], .theme-employee [class*="font-gilda-display"],
+.theme-employee .title-font, .theme-employee .gilda-title {
+  font-family: "Gilda Display", serif !important;
 }

@@ -2,5 +2,9 @@
 import { OnboardProvider } from "../../context/OnboardContext";
 
 export default function OnboardLayout({ children }) {
-  return <OnboardProvider>{children}</OnboardProvider>;
+  return (
+    <div className="theme-wholesaler min-h-screen flex flex-col">
+      <OnboardProvider>{children}</OnboardProvider>
+    </div>
+  );
 }

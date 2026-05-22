@@ -9,7 +9,7 @@ export const metadata = {
 
 export default function EmployeeLoginPage() {
   return (
-    <div className="flex flex-col md:flex-row w-full min-h-screen bg-white overflow-hidden p-4">
+    <div className="theme-employee flex flex-col md:flex-row w-full min-h-screen bg-white overflow-hidden p-4">
       {/* Left Side — Full-height image */}
       <div className="relative w-full h-[40vh] md:w-[60%] lg:w-[65%] md:h-[calc(100vh-2rem)] flex-shrink-0 overflow-hidden">
         <Image

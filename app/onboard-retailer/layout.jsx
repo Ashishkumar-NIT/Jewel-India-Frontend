@@ -6,5 +6,9 @@ import { RetailerOnboardProvider } from "../../context/RetailerOnboardContext";
  * Must be a client component because RetailerOnboardProvider uses useState.
  */
 export default function RetailerOnboardLayout({ children }) {
-  return <RetailerOnboardProvider>{children}</RetailerOnboardProvider>;
+  return (
+    <div className="theme-retailer min-h-screen flex flex-col">
+      <RetailerOnboardProvider>{children}</RetailerOnboardProvider>
+    </div>
+  );
 }
