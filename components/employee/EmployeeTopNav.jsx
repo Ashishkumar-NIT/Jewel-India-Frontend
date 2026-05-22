@@ -78,7 +78,7 @@ const navItems = [
   },
 ];
 
-export default function EmployeeBottomNav({ hasUnreadQueries = false, latestOrderUpdate = null }) {
+export default function EmployeeBottomNav({ hasUnreadQueries = false, latestOrderUpdate = null, isRetailer = false }) {
   const pathname = usePathname();
   const [hasUnreadOrders, setHasUnreadOrders] = useState(false);
 
@@ -103,6 +103,23 @@ export default function EmployeeBottomNav({ hasUnreadQueries = false, latestOrde
       }
     }
   }, [pathname, latestOrderUpdate]);
+
+  const handleSwitchToAdmin = async () => {
+    try {
+      const res = await fetch("/api/auth/toggle-view", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ mode: "retailer" }),
+      });
+      if (res.ok) {
+        window.location.href = "/dashboard/retailer";
+      } else {
+        console.error("Failed to switch view context");
+      }
+    } catch (err) {
+      console.error("Error switching view context:", err);
+    }
+  };
 
   return (
     <nav
@@ -167,6 +184,45 @@ export default function EmployeeBottomNav({ hasUnreadQueries = false, latestOrde
           </Link>
         );
       })}
+      
+      {isRetailer && (
+        <button
+          onClick={handleSwitchToAdmin}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+            padding: "10px 20px",
+            borderRadius: "100px",
+            border: "none",
+            outline: "none",
+            background: "linear-gradient(135deg, #3B82F6, #1D4ED8)",
+            color: "#FFFFFF",
+            fontSize: "13px",
+            fontWeight: "600",
+            cursor: "pointer",
+            boxShadow: "0 4px 12px rgba(29, 78, 216, 0.2)",
+            transition: "transform 0.15s ease, opacity 0.15s ease",
+            letterSpacing: "0.01em",
+            whiteSpace: "nowrap",
+            marginLeft: "4px",
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.opacity = "0.9";
+            e.currentTarget.style.transform = "scale(1.02)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.opacity = "1";
+            e.currentTarget.style.transform = "scale(1)";
+          }}
+        >
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+            <circle cx="12" cy="7" r="4" />
+          </svg>
+          Admin View
+        </button>
+      )}
     </nav>
   );
 }

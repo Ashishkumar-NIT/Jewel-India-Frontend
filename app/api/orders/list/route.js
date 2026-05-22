@@ -30,9 +30,12 @@ export async function GET(request) {
       .order("created_at", { ascending: false });
 
     if (role === "employee") {
-      const { data: emp } = await supabase.from("employees").select("id").eq("auth_user_id", user.id).single();
-      if (!emp) return NextResponse.json({ error: "Employee not found" }, { status: 403 });
-      query = query.eq("employee_id", emp.id);
+      const { validateEmployeeAccess } = await import("../../../../lib/utils/auth-check");
+      const authCheck = await validateEmployeeAccess(supabase);
+      if (authCheck.error) {
+        return NextResponse.json({ error: authCheck.error }, { status: authCheck.status });
+      }
+      query = query.eq("employee_id", authCheck.employeeId);
     } else if (role === "wholesaler") {
       const { data: wh } = await supabase.from("wholesalers").select("id").eq("user_id", user.id).single();
       if (!wh) return NextResponse.json({ error: "Wholesaler not found" }, { status: 403 });

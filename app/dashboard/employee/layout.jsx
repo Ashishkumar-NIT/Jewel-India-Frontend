@@ -62,12 +62,15 @@ export default async function EmployeeDashboardLayout({ children }) {
 
   const latestOrderUpdate = latestOrder?.updated_at || null;
 
+  const isRetailer = user.user_metadata?.role === "retailer";
+
   return (
     <EmployeeLayout
       employeeName={employee.full_name}
       businessName={businessName}
       hasUnreadQueries={hasUnreadQueries}
       latestOrderUpdate={latestOrderUpdate}
+      isRetailer={isRetailer}
     >
       {children}
     </EmployeeLayout>

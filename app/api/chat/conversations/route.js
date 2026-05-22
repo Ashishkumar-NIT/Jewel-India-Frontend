@@ -25,10 +25,12 @@ export async function GET(request) {
       .order("updated_at", { ascending: false });
 
     if (role === "employee") {
-      // Find employee ID
-      const { data: emp } = await supabase.from("employees").select("id").eq("auth_user_id", user.id).single();
-      if (!emp) return NextResponse.json({ error: "Employee not found" }, { status: 404 });
-      query = query.eq("employee_id", emp.id).eq("is_visible_to_employee", true);
+      const { validateEmployeeAccess } = await import("../../../../lib/utils/auth-check");
+      const authCheck = await validateEmployeeAccess(supabase);
+      if (authCheck.error) {
+        return NextResponse.json({ error: authCheck.error }, { status: authCheck.status });
+      }
+      query = query.eq("employee_id", authCheck.employeeId).eq("is_visible_to_employee", true);
     } else if (role === "wholesaler") {
       const { data: ws } = await supabase.from("wholesalers").select("id").eq("user_id", user.id).single();
       if (!ws) return NextResponse.json({ error: "Wholesaler not found" }, { status: 404 });
@@ -62,22 +64,17 @@ export async function POST(request) {
     }
 
     const supabase = await createClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-
-    if (authError || !user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    // Only employees can start a new conversation
-    if (user.user_metadata?.role !== "employee") {
-      return NextResponse.json({ error: "Only employees can start conversations" }, { status: 403 });
+    const { validateEmployeeAccess } = await import("../../../../lib/utils/auth-check");
+    const authCheck = await validateEmployeeAccess(supabase);
+    if (authCheck.error) {
+      return NextResponse.json({ error: authCheck.error }, { status: authCheck.status });
     }
 
     // Get employee details using Admin client to bypass RLS issues
     const { data: employee, error: empError } = await supabaseAdmin
       .from("employees")
       .select("id, retailer_id")
-      .eq("auth_user_id", user.id)
+      .eq("id", authCheck.employeeId)
       .single();
 
     if (empError || !employee) {
