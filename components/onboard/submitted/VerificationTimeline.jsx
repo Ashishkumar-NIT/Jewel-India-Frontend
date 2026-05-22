@@ -1,135 +1,261 @@
-// ── Status config map ────────────────────────────────────────────────────────
-// Defines the icon, circle style, label, and text color for each verification_status.
-const STATUS_CONFIG = {
-  // ✅ Verified — green checkmark (matches steps 1 & 2)
-  verified: {
-    circleClass: "bg-[#22C55E] text-white",
-    label: "Verification (Your account have been verified)",
-    labelClass: "text-[#22C55E] font-[700]",
-    icon: (
-      <svg viewBox="0 0 20 20" fill="currentColor" className="w-[16px] h-[16px]">
-        <path fillRule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clipRule="evenodd" />
-      </svg>
-    ),
-  },
+"use client";
 
-  resubmission_required: {
-    circleClass: "bg-[#CCCC00] text-white",
-    label: "Verification (resubmit documents)",
-    labelClass: "text-[#AAAA00] font-[700]",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="currentColor" className="w-[15px] h-[15px]">
-        <path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46A7.93 7.93 0 0020 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74A7.93 7.93 0 004 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/>
-      </svg>
-    ),
-  },
+import { useEffect, useState } from "react";
 
-  // 🔄 Rejected — same as resubmission_required per spec
-  rejected: {
-    circleClass: "bg-[#CCCC00] text-white",
-    label: "Verification (resubmit documents)",
-    labelClass: "text-[#AAAA00] font-[700]",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="currentColor" className="w-[15px] h-[15px]">
-        <path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46A7.93 7.93 0 0020 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74A7.93 7.93 0 004 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/>
-      </svg>
-    ),
-  },
-
-  // ⏳ Pending — grey circle with clock icon
-  pending: {
-    circleClass: "bg-[#E5E7EB] text-[#6B7280]",
-    label: "Under verification",
-    labelClass: "text-[#111827] font-[700]",
-    icon: (
-      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-[16px] h-[16px]">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
-    ),
-  },
-
-  // ⏳ On hold — same as pending per spec
-  on_hold: {
-    circleClass: "bg-[#E5E7EB] text-[#6B7280]",
-    label: "Under verification",
-    labelClass: "text-[#111827] font-[700]",
-    icon: (
-      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-[16px] h-[16px]">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
-    ),
-  },
-
-  // 🚫 Banned — red circle with ✕
-  banned: {
-    circleClass: "bg-[#EF4444] text-white",
-    label: "verification (you have been banned)",
-    labelClass: "text-[#EF4444] font-[700]",
-    icon: (
-      <svg viewBox="0 0 20 20" fill="currentColor" className="w-[14px] h-[14px]">
-        <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-      </svg>
-    ),
-  },
-};
-
-// Checkmark SVG reused for steps 1 & 2
-const CheckIcon = () => (
-  <svg viewBox="0 0 20 20" fill="currentColor" className="w-[16px] h-[16px]">
-    <path fillRule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clipRule="evenodd" />
+// Checkmark SVG with path drawing fallback safety
+const AnimatedCheckIcon = ({ active }) => (
+  <svg viewBox="0 0 24 24" fill="none" className="w-[15px] h-[15px] text-white">
+    <path
+      d="M20 6L9 17L4 12"
+      stroke="currentColor"
+      strokeWidth="3.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={active ? "animate-check-draw" : ""}
+      style={{ strokeDasharray: 24, strokeDashoffset: active ? undefined : 0 }}
+    />
   </svg>
 );
 
-/**
- * VerificationTimeline
- * @param {{ status: string }} props - verification_status from the wholesalers table
- */
-export function VerificationTimeline({ status = "pending" }) {
-  // Fall back to "pending" config for any unknown status
-  const step3 = STATUS_CONFIG[status] ?? STATUS_CONFIG.pending;
+export function VerificationTimeline({ status = "pending", submittedAt = "", updatedAt = "" }) {
+  // 1. Session Storage Revisit Protection (Skip animation on subsequent loads)
+  const isVisited = () => {
+    if (typeof window !== "undefined") {
+      try {
+        return sessionStorage.getItem("onboard_submitted_visited") === "true";
+      } catch (e) {
+        return false;
+      }
+    }
+    return false;
+  };
+
+  const skipAnim = isVisited();
+
+  // 2. Timeline Step States
+  // States: 'pending' (grey), 'active' (black active border), 'done' (completed green/resolved)
+  const [step1State, setStep1State] = useState(skipAnim ? "done" : "pending");
+  const [step2State, setStep2State] = useState(skipAnim ? "done" : "pending");
+  const [step3State, setStep3State] = useState(skipAnim ? "done" : "pending");
+
+  useEffect(() => {
+    if (skipAnim) return;
+
+    // Trigger first visit session marker
+    if (typeof window !== "undefined") {
+      try {
+        sessionStorage.setItem("onboard_submitted_visited", "true");
+      } catch (e) {
+        // Safe catch-all
+      }
+    }
+
+    // 3. Staggered Timeline Sequence (Total duration ~ 900ms for high responsiveness)
+    // 0ms -> Step 1 Active
+    const t1 = setTimeout(() => setStep1State("active"), 50);
+
+    // 300ms -> Step 1 Done & Step 2 Active
+    const t2 = setTimeout(() => {
+      setStep1State("done");
+      setStep2State("active");
+    }, 300);
+
+    // 600ms -> Step 2 Done & Step 3 Active
+    const t3 = setTimeout(() => {
+      setStep2State("done");
+      setStep3State("active");
+    }, 600);
+
+    // 900ms -> Step 3 Done (Resolved visual state triggers)
+    const t4 = setTimeout(() => {
+      setStep3State("done");
+    }, 900);
+
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+      clearTimeout(t3);
+      clearTimeout(t4);
+    };
+  }, [skipAnim]);
+
+  // 4. Dynamic Verification Status styling based on status state
+  const getStep3Config = () => {
+    switch (status) {
+      case "verified":
+        return {
+          circleClass: `border-2 border-[#22C55E] bg-[#22C55E] text-white ${
+            step3State === "done" && !skipAnim ? "animate-ripple-green" : ""
+          }`,
+          label: "Verification Approved",
+          labelClass: "text-[#22C55E] font-bold",
+          icon: <AnimatedCheckIcon active={step3State === "done"} />,
+        };
+
+      case "rejected":
+      case "resubmission_required":
+        return {
+          circleClass: `border-2 border-[#EF4444] bg-[#FEF2F2] text-[#EF4444] ${
+            step3State === "done" && !skipAnim ? "animate-shake-red" : ""
+          }`,
+          label: status === "rejected" ? "Application Rejected" : "Revision Required",
+          labelClass: "text-[#EF4444] font-bold",
+          icon: (
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-[14px] h-[14px]">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+          ),
+        };
+
+      case "banned":
+        return {
+          circleClass: "border-2 border-red-700 bg-red-950 text-white animate-shake-red",
+          label: "Access Suspended",
+          labelClass: "text-red-700 font-bold",
+          icon: (
+            <svg viewBox="0 0 20 20" fill="currentColor" className="w-[14px] h-[14px]">
+              <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+            </svg>
+          ),
+        };
+
+      case "on_hold":
+      case "pending":
+      default:
+        return {
+          circleClass: `border-2 border-amber-500 bg-amber-50/50 text-amber-600 ${
+            step3State === "done" ? "animate-pulse-amber" : ""
+          }`,
+          label: status === "on_hold" ? "Application On Hold" : "Under Verification",
+          labelClass: "text-amber-700 font-bold",
+          icon: (
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-[15px] h-[15px]">
+              <circle cx="12" cy="12" r="10" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6l4 2" className={step3State === "done" ? "animate-spin-slow" : ""} />
+            </svg>
+          ),
+        };
+    }
+  };
+
+  const step3 = getStep3Config();
 
   return (
-    <div className="flex flex-col items-start w-full max-w-[340px] mx-auto mt-6 mb-2">
-
-      {/* Step 1 — Account created (always green) */}
-      <div className="flex items-start gap-5 w-full relative">
+    <div className="flex flex-col items-start w-full max-w-[340px] mx-auto mt-6 mb-2 select-none">
+      
+      {/* Step 1 — Account Created (Sequenced) */}
+      <div 
+        className={`flex items-start gap-5 w-full relative transition-all duration-300 ${
+          step1State !== "pending" ? "opacity-100 animate-step-fade" : "opacity-0"
+        }`}
+      >
         <div className="flex flex-col items-center">
-          <div className="w-[28px] h-[28px] shrink-0 rounded-full bg-[#22C55E] flex items-center justify-center text-white z-10">
-            <CheckIcon />
+          <div 
+            className={`w-[28px] h-[28px] shrink-0 rounded-full flex items-center justify-center transition-all duration-300 z-10 ${
+              step1State === "done" 
+                ? "bg-[#22C55E] border-2 border-[#22C55E] text-white" 
+                : step1State === "active" 
+                  ? "border-2 border-[#111827] bg-white text-[#111827]" 
+                  : "border-2 border-[#E5E7EB] bg-white text-transparent"
+            }`}
+          >
+            {step1State === "done" ? <AnimatedCheckIcon active={!skipAnim} /> : null}
           </div>
-          <div className="w-[2px] h-[34px] bg-[#D1D5DB]" />
+          <div 
+            className={`w-[2px] h-[34px] transition-all duration-500 origin-top ${
+              step1State === "done" ? "bg-[#22C55E] scale-y-100" : "bg-[#E5E7EB] scale-y-0"
+            }`} 
+          />
         </div>
-        <div className="pt-1">
-          <span className="text-[15px] font-medium text-[#6B7280]">Account created</span>
+        <div className="pt-1.5 flex flex-col">
+          <span 
+            className={`text-[14.5px] tracking-wide transition-colors duration-300 ${
+              step1State === "done" ? "text-emerald-700 font-bold" : "text-[#9CA3AF] font-medium"
+            }`}
+          >
+            Account Created
+          </span>
+          <span className="text-[11.5px] text-[#9CA3AF] mt-0.5">Success</span>
         </div>
       </div>
 
-      {/* Step 2 — Details submitted (always green) */}
-      <div className="flex items-start gap-5 w-full relative">
+      {/* Step 2 — Details Submitted (Sequenced) */}
+      <div 
+        className={`flex items-start gap-5 w-full relative transition-all duration-300 ${
+          step2State !== "pending" ? "opacity-100 animate-step-fade" : "opacity-0"
+        }`}
+      >
         <div className="flex flex-col items-center">
-          <div className="w-[28px] h-[28px] shrink-0 rounded-full bg-[#22C55E] flex items-center justify-center text-white z-10">
-            <CheckIcon />
+          <div 
+            className={`w-[28px] h-[28px] shrink-0 rounded-full flex items-center justify-center transition-all duration-300 z-10 ${
+              step2State === "done" 
+                ? "bg-[#22C55E] border-2 border-[#22C55E] text-white" 
+                : step2State === "active" 
+                  ? "border-2 border-[#111827] bg-white text-[#111827]" 
+                  : "border-2 border-[#E5E7EB] bg-white text-transparent"
+            }`}
+          >
+            {step2State === "done" ? <AnimatedCheckIcon active={!skipAnim && step2State === "done"} /> : null}
           </div>
-          <div className="w-[2px] h-[34px] bg-[#D1D5DB]" />
+          <div 
+            className={`w-[2px] h-[34px] transition-all duration-500 origin-top ${
+              step2State === "done" ? "bg-[#22C55E] scale-y-100" : "bg-[#E5E7EB] scale-y-0"
+            }`} 
+          />
         </div>
-        <div className="pt-1">
-          <span className="text-[15px] font-medium text-[#6B7280]">Details submitted</span>
+        <div className="pt-1.5 flex flex-col">
+          <span 
+            className={`text-[14.5px] tracking-wide transition-colors duration-300 ${
+              step2State === "done" ? "text-emerald-700 font-bold" : "text-[#9CA3AF] font-medium"
+            }`}
+          >
+            Details Submitted
+          </span>
+          {submittedAt ? (
+            <span className="text-[11.5px] text-[#9CA3AF] mt-0.5">{submittedAt}</span>
+          ) : (
+            <span className="text-[11.5px] text-[#9CA3AF] mt-0.5">Under Review</span>
+          )}
         </div>
       </div>
 
-      {/* Step 3 — Dynamic based on verification_status */}
-      <div className="flex items-start gap-5 w-full relative">
+      {/* Step 3 — Dynamic Verification Status */}
+      <div 
+        className={`flex items-start gap-5 w-full relative transition-all duration-300 ${
+          step3State !== "pending" ? "opacity-100 animate-step-fade" : "opacity-0"
+        }`}
+      >
         <div className="flex flex-col items-center">
-          <div className={`w-[28px] h-[28px] shrink-0 rounded-full flex items-center justify-center z-10 ${step3.circleClass}`}>
-            {step3.icon}
+          <div 
+            className={`w-[28px] h-[28px] shrink-0 rounded-full flex items-center justify-center transition-all duration-300 z-10 ${
+              step3State === "done" 
+                ? step3.circleClass 
+                : step3State === "active"
+                  ? "border-2 border-[#111827] bg-white text-[#111827]" 
+                  : "border-2 border-[#E5E7EB] bg-white text-transparent"
+            }`}
+          >
+            {step3State === "done" ? step3.icon : null}
           </div>
         </div>
-        <div className="pt-1">
-          <span className={`text-[15px] ${step3.labelClass}`}>{step3.label}</span>
+        <div className="pt-1.5 flex flex-col">
+          <span 
+            className={`text-[14.5px] tracking-wide transition-colors duration-300 ${
+              step3State === "done" ? step3.labelClass : "text-[#9CA3AF] font-medium"
+            }`}
+          >
+            {step3State === "done" ? step3.label : "Verification Status"}
+          </span>
+          {step3State === "done" ? (
+            <span className="text-[11.5px] text-[#9CA3AF] mt-0.5">
+              {status === "verified" ? (updatedAt || "Completed") : "Pending Review"}
+            </span>
+          ) : (
+            <span className="text-[11.5px] text-[#9CA3AF] mt-0.5">Awaiting Analysis</span>
+          )}
         </div>
       </div>
 
     </div>
   );
 }
-

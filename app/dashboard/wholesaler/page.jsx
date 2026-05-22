@@ -35,11 +35,10 @@ export default async function WholesalerDashboardPage() {
       (user.email ? user.email.split("@")[0] : "");
 
     if (wholesaler && !wholesaler.has_visited_dashboard) {
-      supabase
+      await supabase
         .from("wholesalers")
         .update({ has_visited_dashboard: true })
-        .eq("user_id", user.id)
-        .catch(() => {});
+        .eq("user_id", user.id);
     }
   }
 

@@ -304,3 +304,139 @@ body {
 .theme-employee .title-font, .theme-employee .gilda-title {
   font-family: "Gilda Display", serif !important;
 }
+
+/* ── Onboarding Transitions & Accessibility ──────────────── */
+@keyframes onboardFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.onboard-page-transition {
+  animation: onboardFadeIn 350ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .onboard-page-transition {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .progress-bar-transition {
+    transition: none !important;
+  }
+}
+
+/* ── Onboarding Timeline Animations ──────────────────────── */
+
+/* 1. SVG checkmark path draw (from hidden to drawn) */
+@keyframes checkDraw {
+  from {
+    stroke-dashoffset: 24;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+.animate-check-draw {
+  stroke-dasharray: 24;
+  stroke-dashoffset: 24;
+  animation: checkDraw 350ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* 2. Emerald checkmark completion celebratory ripple (one-time scale) */
+@keyframes rippleGreen {
+  0% {
+    transform: scale(0.9);
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4);
+  }
+  50% {
+    transform: scale(1.06);
+    box-shadow: 0 0 0 6px rgba(34, 197, 94, 0.15);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 10px rgba(34, 197, 94, 0);
+  }
+}
+.animate-ripple-green {
+  animation: rippleGreen 600ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* 3. Soft opacity-scale border pending pulse (battery friendly, no heavy box-shadow) */
+@keyframes pulseAmber {
+  0%, 100% {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+}
+.animate-pulse-amber {
+  animation: pulseAmber 2s infinite ease-in-out;
+}
+
+/* 4. Slow spin for clock hand/icon in pending state */
+@keyframes spinClockHand {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+.animate-spin-slow {
+  transform-origin: center;
+  animation: spinClockHand 8s linear infinite;
+}
+
+/* 5. Crimson soft warning pop (single gentle scale-shake) */
+@keyframes softShake {
+  0%, 100% {
+    transform: translateX(0) scale(1);
+  }
+  20%, 60% {
+    transform: translateX(-1.5px) scale(1.03);
+  }
+  40%, 80% {
+    transform: translateX(1.5px) scale(1.03);
+  }
+}
+.animate-shake-red {
+  animation: softShake 500ms cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+/* 6. Step transition appearance fade for steps */
+@keyframes stepFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-step-fade {
+  animation: stepFadeIn 400ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-check-draw,
+  .animate-ripple-green,
+  .animate-pulse-amber,
+  .animate-spin-slow,
+  .animate-shake-red,
+  .animate-step-fade {
+    animation: none !important;
+    transform: none !important;
+    stroke-dashoffset: 0 !important;
+  }
+}

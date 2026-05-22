@@ -8,7 +8,11 @@ import { RetailerOnboardProvider } from "../../context/RetailerOnboardContext";
 export default function RetailerOnboardLayout({ children }) {
   return (
     <div className="theme-retailer min-h-screen flex flex-col">
-      <RetailerOnboardProvider>{children}</RetailerOnboardProvider>
+      <RetailerOnboardProvider>
+        <div className="onboard-page-transition flex-1 flex flex-col w-full">
+          {children}
+        </div>
+      </RetailerOnboardProvider>
     </div>
   );
 }

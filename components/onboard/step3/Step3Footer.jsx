@@ -1,7 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useOnboard } from "../../../context/OnboardContext";
-import { createClient } from "../../../lib/supabase/client";
 
 export function Step3Footer({ isFormValid, onSubmitAttempt }) {
   const router = useRouter();
@@ -78,14 +77,6 @@ const compressImage = async (file) => {
     setSubmitError(null);
 
     try {
-      // Get access token from the browser Supabase client
-      const supabase = createClient();
-      const { data: { session } } = await supabase.auth.getSession();
-
-      if (!session?.access_token) {
-        throw new Error("Not signed in — please sign in first");
-      }
-
       const formData = new FormData();
 
       // Text fields
@@ -104,9 +95,6 @@ const compressImage = async (file) => {
 
       const res = await fetch("/api/onboard/submit", {
         method: "POST",
-        headers: {
-          "Authorization": "Bearer " + session.access_token,
-        },
         body: formData,
       });
 

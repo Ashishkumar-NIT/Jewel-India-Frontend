@@ -1,6 +1,7 @@
 import { OnboardLayout } from "../../../components/onboard/OnboardLayout";
 import { VerificationTimeline } from "../../../components/onboard/submitted/VerificationTimeline";
 import { SubmittedFooter } from "../../../components/onboard/submitted/SubmittedFooter";
+import { StepIndicator } from "../../../components/onboard/StepIndicator";
 import { createClient } from "../../../lib/supabase/server";
 import { redirect } from "next/navigation";
 import { SignOutButton as OnboardSignOutButton } from "../../../components/auth/SignOutButton";
@@ -35,7 +36,7 @@ export default async function RetailerSubmittedPage() {
   });
 
   return (
-    <div className="min-h-screen bg-[#FFFFFF] flex flex-col font-sans antialiased text-[#374151]">
+    <div className="theme-retailer min-h-screen bg-[#FFFFFF] flex flex-col font-sans antialiased text-[#374151]">
       <header className="w-full bg-[#FFFFFF] border-b border-[#E0E0E0] px-[clamp(16px,3vw,48px)] py-[clamp(6px,0.8vw,12px)] flex items-center justify-between shadow-sm z-10">
         <div className="flex items-center gap-2">
           <img src="/jewelLogo.svg" alt="Jewels India Logo" className="w-[wrap(24px,3vw,28px)] h-auto object-contain" />
@@ -44,8 +45,13 @@ export default async function RetailerSubmittedPage() {
         <OnboardSignOutButton />
       </header>
 
-      <main className="flex-1 w-full max-w-[800px] mx-auto px-[clamp(16px,3vw,48px)] pt-[clamp(32px,5vw,60px)] pb-12 flex flex-col items-center">
+      <main className="onboard-page-transition flex-1 w-full max-w-[800px] mx-auto px-[clamp(16px,3vw,48px)] pt-[clamp(32px,5vw,60px)] pb-12 flex flex-col items-center">
         
+        {/* Step progress indicator for retailer application completed */}
+        <div className="w-full max-w-[500px] mb-12">
+          <StepIndicator currentStep={4} totalSteps={3} />
+        </div>
+
         {retailer.verification_status === 'pending' && (
           <div className="w-full flex justify-center mb-8">
             <svg width="48" height="48" viewBox="0 0 24 24" fill="none" className="text-amber-500">

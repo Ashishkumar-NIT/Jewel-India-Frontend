@@ -1,6 +1,7 @@
 import { OnboardLayout } from "../../../components/onboard/OnboardLayout";
 import { VerificationTimeline } from "../../../components/onboard/submitted/VerificationTimeline";
 import { SubmittedFooter } from "../../../components/onboard/submitted/SubmittedFooter";
+import { StepIndicator } from "../../../components/onboard/StepIndicator";
 import { createClient } from "../../../lib/supabase/server";
 import { redirect } from "next/navigation";
 
@@ -66,13 +67,8 @@ export default async function OnboardSubmittedPage() {
       <div className="flex flex-col w-full max-w-[500px] mx-auto md:mx-0 md:ml-auto md:pr-4">
         
         {/* Top Header tracking */}
-        <div className="flex flex-col gap-4 w-full">
-          <div className="text-[16px] text-[#868A91] font-medium tracking-wide">
-            {trackerText}
-          </div>
-          <svg className="w-full h-[6px] rounded-full mt-1" preserveAspectRatio="none" viewBox="0 0 100 6" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect width="100" height="6" rx="3" fill="#000000" />
-          </svg>
+        <div className="w-full">
+          <StepIndicator currentStep={4} totalSteps={3} />
         </div>
         
         <div className="flex flex-col w-full mt-10">
