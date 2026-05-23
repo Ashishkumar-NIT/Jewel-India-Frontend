@@ -62,7 +62,7 @@ export default async function OnboardSubmittedPage() {
     <OnboardLayout 
       heading={headingText}
       description="we're reviewing your details"
-      backRoute={status === "resubmission_required" || status === "rejected" || status === "verified" ? null : "/onboard/step3"}
+      backRoute={status === "resubmission_required" || status === "rejected" || status === "verified" ? null : "/entry_page/signin"}
     >
       <div className="flex flex-col w-full max-w-[500px] mx-auto md:mx-0 md:ml-auto md:pr-4">
         
