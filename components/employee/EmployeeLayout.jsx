@@ -5,7 +5,7 @@ import EmployeeBottomNav from "./EmployeeTopNav";
 
 export default function EmployeeLayout({ children, hasUnreadQueries = false, latestOrderUpdate = null, isRetailer = false }) {
   const pathname = usePathname();
-  const isPlayground = pathname?.includes("/dashboard/employee/playground");
+  const hideNavbar = pathname?.includes("/dashboard/employee/playground") || pathname?.includes("/dashboard/employee/questionnaire");
   return (
     <div className="theme-employee" style={{ minHeight: "100vh", background: "#FAFAFA", display: "flex", flexDirection: "column" }}>
       {isRetailer && (
@@ -68,7 +68,7 @@ export default function EmployeeLayout({ children, hasUnreadQueries = false, lat
       >
         {children}
       </main>
-      {!isPlayground && (
+      {!hideNavbar && (
         <EmployeeBottomNav hasUnreadQueries={hasUnreadQueries} latestOrderUpdate={latestOrderUpdate} isRetailer={isRetailer} />
       )}
     </div>

@@ -42,36 +42,24 @@ export default async function PlaygroundPage({ searchParams }) {
   
   const retailerName = retailer?.business_name || "Jewellers";
 
-  // 1. Fetch retailer selections (Admin bypasses RLS)
-  const { data: selections, error: selErr } = await supabaseAdmin
-    .from("retailer_selections")
-    .select("product_id")
-    .eq("retailer_id", retailerId);
+  // 1. Fetch all published products from the platform (allowing full infinite canvas exploration)
+  const { data, error: prodErr } = await supabase
+    .from("products")
+    .select(`
+      id, title, jewellery_type, category, style, size, stock_available,
+      make_to_order_days, metal_purity, net_weight, gross_weight, stone_weight,
+      raw_image_url, processed_image_url, generated_image_urls, wholesaler_email, created_at
+    `)
+    .eq("is_published", true)
+    .order("created_at", { ascending: false });
 
-  if (selErr) {
-    console.error("[employee/playground] retailer_selections fetch error:", selErr.message);
+  if (prodErr) {
+    console.error("[employee/playground] products fetch error:", prodErr.message);
   }
 
-  const selectedIds = (selections || []).map((s) => s.product_id);
-  let products = [];
-
-  if (selectedIds.length > 0) {
-    // 2. Fetch all published products that are selected
-    const { data } = await supabase
-      .from("products")
-      .select(`
-        id, title, jewellery_type, category, style, size, stock_available,
-        make_to_order_days, metal_purity, net_weight, gross_weight, stone_weight,
-        raw_image_url, processed_image_url, generated_image_urls, wholesaler_email, created_at
-      `)
-      .eq("is_published", true)
-      .in("id", selectedIds)
-      .order("created_at", { ascending: false });
-
-    products = (data || []).filter(
-      (p) => p.processed_image_url && p.processed_image_url.trim() !== ""
-    );
-  }
+  let products = (data || []).filter(
+    (p) => p.processed_image_url && p.processed_image_url.trim() !== ""
+  );
 
   // 3. Apply Filters from Search Params
   const resolvedParams = await searchParams;
