@@ -13,8 +13,19 @@ export default function SelectionReviewClient() {
 
   const [formData, setFormData] = useState({});
   const [viewingProduct, setViewingProduct] = useState(null);
+  const [activeImage, setActiveImage] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [individualFormData, setIndividualFormData] = useState({ quantity: 1, customization_notes: "" });
+
+  const handleViewProduct = (product) => {
+    setViewingProduct(product);
+    if (product) {
+      const defaultImg = product.generated_image_urls?.[0] || product.processed_image_url || product.raw_image_url;
+      setActiveImage(defaultImg);
+    } else {
+      setActiveImage(null);
+    }
+  };
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -140,7 +151,7 @@ export default function SelectionReviewClient() {
       setTimeout(() => {
         setSuccess(false);
         setIsSidebarOpen(false);
-        setViewingProduct(null);
+        handleViewProduct(null);
         handleRemove(product.id);
       }, 2000);
 
@@ -181,7 +192,7 @@ export default function SelectionReviewClient() {
       <div className="flex items-center justify-between px-6 md:px-12 py-8 relative max-w-[1400px] mx-auto">
         <button 
           onClick={() => {
-            if (viewingProduct) setViewingProduct(null);
+            if (viewingProduct) handleViewProduct(null);
             else router.back();
           }}
           className="w-12 h-12 rounded-full bg-gradient-to-b from-gray-50 to-gray-200 flex items-center justify-center text-gray-500 hover:text-black transition-colors shadow-sm border border-gray-300 absolute left-6 md:left-12 z-10"
@@ -213,17 +224,49 @@ export default function SelectionReviewClient() {
           <div className="grid grid-cols-1 md:grid-cols-[1fr_400px] gap-16 items-start">
              
              {/* Left: Images */}
-             <div className="flex flex-col gap-4">
-                <div className="w-full aspect-[4/4.5] bg-[#343e4b] flex items-center justify-center overflow-hidden">
-                  <img src={viewingProduct.generated_image_urls?.[0] || viewingProduct.processed_image_url || viewingProduct.raw_image_url} className="w-full h-full object-cover" />
-                </div>
-                <div className="grid grid-cols-4 gap-4">
-                   <div className="aspect-square bg-gray-100 border border-black/20 overflow-hidden"><img src={viewingProduct.generated_image_urls?.[0] || viewingProduct.processed_image_url || viewingProduct.raw_image_url} className="w-full h-full object-cover" /></div>
-                   <div className="aspect-square bg-gray-100 opacity-50"></div>
-                   <div className="aspect-square bg-gray-100 opacity-50"></div>
-                   <div className="aspect-square bg-gray-100 opacity-50"></div>
-                </div>
-             </div>
+             {(() => {
+               let allImages = Array.from(new Set([
+                 ...(viewingProduct.generated_image_urls || []),
+                 viewingProduct.processed_image_url
+               ].filter(Boolean)));
+
+               if (allImages.length === 0 && viewingProduct.raw_image_url) {
+                 allImages.push(viewingProduct.raw_image_url);
+               }
+
+               allImages = allImages.slice(0, 4);
+
+               const thumbnailSlots = Array.from({ length: 4 }).map((_, idx) => allImages[idx] || null);
+
+               return (
+                 <div className="flex flex-col gap-4">
+                    <div className="w-full aspect-[4/4.5] bg-[#343e4b] flex items-center justify-center overflow-hidden">
+                      <img src={activeImage} className="w-full h-full object-cover" />
+                    </div>
+                    <div className="grid grid-cols-4 gap-4">
+                       {thumbnailSlots.map((imgSrc, idx) => {
+                         if (imgSrc) {
+                           const isActive = imgSrc === activeImage;
+                           return (
+                             <button
+                               key={idx}
+                               onClick={() => setActiveImage(imgSrc)}
+                               className={`aspect-square bg-white overflow-hidden transition-all relative rounded-sm ${
+                                 isActive ? "border-2 border-transparent opacity-40" : "border-2 border-black ring-1 ring-black scale-[0.98] opacity-100"
+                               }`}
+                             >
+                               <img src={imgSrc} className="w-full h-full object-cover" />
+                             </button>
+                           );
+                         }
+                         return (
+                           <div key={idx} className="aspect-square bg-gray-50 opacity-40 border border-dashed border-gray-200 rounded-sm"></div>
+                         );
+                       })}
+                    </div>
+                 </div>
+               );
+             })()}
 
              {/* Right: Details */}
              <div className="flex flex-col pt-2">
@@ -295,7 +338,7 @@ export default function SelectionReviewClient() {
                 {products.filter(p => p.id !== viewingProduct.id).slice(0, 6).map(product => {
                   const imgUrl = product.generated_image_urls?.[0] || product.processed_image_url || product.raw_image_url;
                   return (
-                    <div key={product.id} className="flex flex-col cursor-pointer hover:opacity-90 transition-opacity" onClick={() => setViewingProduct(product)}>
+                    <div key={product.id} className="flex flex-col cursor-pointer hover:opacity-90 transition-opacity" onClick={() => handleViewProduct(product)}>
                       <div className="w-full aspect-[4/3.5] bg-[#F5F6F8] flex items-center justify-center p-8 overflow-hidden">
                          {imgUrl ? (
                            <img src={imgUrl} className="w-full h-full object-contain mix-blend-multiply" />
@@ -338,7 +381,7 @@ export default function SelectionReviewClient() {
                            <h4 className="font-serif text-[20px] text-gray-900 leading-[1.2]">{viewingProduct.title || "Vintage Cuff half necklace"}</h4>
                         </div>
                         <div className="w-24 h-24 bg-[#343e4b] shrink-0 overflow-hidden">
-                           <img src={viewingProduct.generated_image_urls?.[0] || viewingProduct.processed_image_url || viewingProduct.raw_image_url} className="w-full h-full object-cover" />
+                           <img src={activeImage} className="w-full h-full object-cover" />
                         </div>
                      </div>
 
@@ -385,7 +428,7 @@ export default function SelectionReviewClient() {
             {products.map(product => {
               const imgUrl = product.generated_image_urls?.[0] || product.processed_image_url || product.raw_image_url;
               return (
-                <div key={product.id} className="flex flex-col relative group cursor-pointer hover:opacity-95 transition-opacity" onClick={() => setViewingProduct(product)}>
+                <div key={product.id} className="flex flex-col relative group cursor-pointer hover:opacity-95 transition-opacity" onClick={() => handleViewProduct(product)}>
                   <button 
                     onClick={(e) => { e.stopPropagation(); handleRemove(product.id); }}
                     className="absolute top-4 right-4 z-10 w-8 h-8 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center text-gray-500 hover:bg-red-50 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all shadow-sm"
