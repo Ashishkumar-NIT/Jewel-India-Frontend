@@ -68,7 +68,9 @@ export default async function PlaygroundPage({ searchParams }) {
       .in("id", selectedIds)
       .order("created_at", { ascending: false });
 
-    products = data || [];
+    products = (data || []).filter(
+      (p) => p.processed_image_url && p.processed_image_url.trim() !== ""
+    );
   }
 
   // 3. Apply Filters from Search Params

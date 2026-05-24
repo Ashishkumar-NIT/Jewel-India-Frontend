@@ -164,7 +164,7 @@ export default function InfinityCanvas({ products, onBack, onNext, retailerName 
       >
         {repeatedProducts.map((product, idx) => {
           const isSelected = selectedItems.has(product.id);
-          const imgUrl = product.processed_image_url || product.raw_image_url;
+          const imgUrl = product.processed_image_url;
 
           return (
             <div 
@@ -343,7 +343,7 @@ export default function InfinityCanvas({ products, onBack, onNext, retailerName 
                 {selectedArray.map(item => (
                   <div key={item.id} className="relative group">
                     <div className="bg-white/60 rounded-xl aspect-square p-2 border border-white/50 shadow-sm flex items-center justify-center">
-                      <img src={item.processed_image_url || item.raw_image_url} className="w-full h-full object-contain mix-blend-multiply" />
+                      <img src={item.processed_image_url} className="w-full h-full object-contain mix-blend-multiply" />
                     </div>
                     <p className="text-[10px] text-center mt-1.5 font-medium text-gray-700 truncate px-1">
                       {item.title || item.jewellery_type}

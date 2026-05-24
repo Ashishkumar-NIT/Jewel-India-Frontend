@@ -1,11 +1,11 @@
 "use client";
 
-/**
- * Client wrapper for the employee dashboard main content area.
- * The bottom nav is rendered only on the home page (EmployeeHomeClient).
- */
+import { usePathname } from "next/navigation";
 import EmployeeBottomNav from "./EmployeeTopNav";
+
 export default function EmployeeLayout({ children, hasUnreadQueries = false, latestOrderUpdate = null, isRetailer = false }) {
+  const pathname = usePathname();
+  const isPlayground = pathname?.includes("/dashboard/employee/playground");
   return (
     <div className="theme-employee" style={{ minHeight: "100vh", background: "#FAFAFA", display: "flex", flexDirection: "column" }}>
       {isRetailer && (
@@ -68,7 +68,9 @@ export default function EmployeeLayout({ children, hasUnreadQueries = false, lat
       >
         {children}
       </main>
-      <EmployeeBottomNav hasUnreadQueries={hasUnreadQueries} latestOrderUpdate={latestOrderUpdate} isRetailer={isRetailer} />
+      {!isPlayground && (
+        <EmployeeBottomNav hasUnreadQueries={hasUnreadQueries} latestOrderUpdate={latestOrderUpdate} isRetailer={isRetailer} />
+      )}
     </div>
   );
 }
