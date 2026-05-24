@@ -124,7 +124,7 @@ function RejectionBox({ reason }) {
 function OrderCard({ order, onUpdateStatus, onDeleteOrder, onBusinessClick }) {
   const p = order.products || {};
   const w = order.wholesalers || {};
-  const imgUrl = p.processed_image_url || p.raw_image_url;
+  const imgUrl = p.generated_image_urls?.[0] || p.processed_image_url || p.raw_image_url;
 
   const typeLabel = p.jewellery_type
     ? p.jewellery_type.charAt(0).toUpperCase() + p.jewellery_type.slice(1)

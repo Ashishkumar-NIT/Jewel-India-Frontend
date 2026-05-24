@@ -33,7 +33,7 @@ export default async function EmployeeOrdersPage() {
     .select(`
       *,
       products (
-        id, title, raw_image_url, processed_image_url, jewellery_type, metal_purity, net_weight, category, make_to_order_days
+        id, title, raw_image_url, processed_image_url, generated_image_urls, jewellery_type, metal_purity, net_weight, category, make_to_order_days
       ),
       retailers (
         id, business_name, city, state, created_at

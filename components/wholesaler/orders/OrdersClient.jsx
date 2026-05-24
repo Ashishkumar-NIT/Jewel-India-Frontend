@@ -19,7 +19,7 @@ function HourglassIcon({ className }) {
 function WholesalerOrderCard({ order, onUpdateStatus, onReject, onDeleteOrder, onViewDetails, onBusinessClick }) {
   const p = order.products || {};
   const r = order.retailers || {};
-  const imgUrl = p.processed_image_url || p.raw_image_url;
+  const imgUrl = p.generated_image_urls?.[0] || p.processed_image_url || p.raw_image_url;
 
   // Derive time remaining or status text
   let statusBadge = null;

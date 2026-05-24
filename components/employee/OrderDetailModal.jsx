@@ -26,7 +26,7 @@ export function OrderDetailModal({ order, onClose }) {
   if (!order) return null;
 
   const p = order.products || {};
-  const imgUrl = p.processed_image_url || p.raw_image_url || "https://images.unsplash.com/photo-1599643478514-4a1101859efc?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80";
+  const imgUrl = p.generated_image_urls?.[0] || p.processed_image_url || p.raw_image_url || "https://images.unsplash.com/photo-1599643478514-4a1101859efc?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80";
   const sku = order.id ? order.id.split("-")[0].toUpperCase() : "JK65-JI-1983844";
   const title = p.jewellery_type ? p.jewellery_type.charAt(0).toUpperCase() + p.jewellery_type.slice(1) : "Necklace";
   const purity = p.metal_purity || "18 KT";

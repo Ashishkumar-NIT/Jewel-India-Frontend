@@ -1,6 +1,7 @@
 import { createClient } from "../../../../lib/supabase/server";
 import { redirect } from "next/navigation";
 import OrdersClient from "../../../../components/wholesaler/orders/OrdersClient";
+import { supabaseAdmin } from "../../../../lib/supabase/admin";
 
 export const metadata = {
   title: "Orders — Wholesaler Dashboard",
@@ -32,13 +33,13 @@ export default async function WholesalerOrdersPage() {
     .update({ last_checked_orders_at: new Date().toISOString() })
     .eq("id", wholesaler.id);
 
-  // Fetch orders
-  const { data: orders, error } = await supabase
+  // Fetch orders using supabaseAdmin to bypass RLS on nested tables (e.g. retailers)
+  const { data: orders, error } = await supabaseAdmin
     .from("orders")
     .select(`
       *,
       products (
-        id, title, raw_image_url, processed_image_url, jewellery_type, metal_purity, net_weight, category, make_to_order_days
+        id, title, raw_image_url, processed_image_url, generated_image_urls, jewellery_type, metal_purity, net_weight, category, make_to_order_days
       ),
       employees (
         id, auth_user_id
