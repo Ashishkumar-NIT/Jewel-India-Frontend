@@ -49,7 +49,7 @@ export default async function EmployeeOrdersPage() {
     const wholesalerUserIds = [...new Set(orders.map(o => o.wholesaler_id))];
     const { data: wholesalers } = await supabaseAdmin
       .from("wholesalers")
-      .select("id, user_id, business_name, city, state, created_at")
+      .select("id, user_id, business_name, city, state, created_at, email, full_name")
       .in("user_id", wholesalerUserIds);
       
     if (wholesalers) {

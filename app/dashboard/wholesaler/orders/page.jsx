@@ -44,7 +44,7 @@ export default async function WholesalerOrdersPage() {
         id, auth_user_id
       ),
       retailers (
-        id, business_name, city, state, created_at
+        id, business_name, city, state, created_at, email, full_name
       )
     `)
     .eq("wholesaler_id", user.id)
