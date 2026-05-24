@@ -58,7 +58,7 @@ export default async function PlaygroundPage({ searchParams }) {
   }
 
   let products = (data || []).filter(
-    (p) => p.processed_image_url && p.processed_image_url.trim() !== ""
+    (p) => (p.generated_image_urls && p.generated_image_urls.length > 0) || (p.processed_image_url && p.processed_image_url.trim() !== "") || (p.raw_image_url && p.raw_image_url.trim() !== "")
   );
 
   // 3. Apply Filters from Search Params

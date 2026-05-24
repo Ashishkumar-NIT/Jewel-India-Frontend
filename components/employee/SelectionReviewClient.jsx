@@ -215,10 +215,10 @@ export default function SelectionReviewClient() {
              {/* Left: Images */}
              <div className="flex flex-col gap-4">
                 <div className="w-full aspect-[4/4.5] bg-[#343e4b] flex items-center justify-center overflow-hidden">
-                  <img src={viewingProduct.processed_image_url || viewingProduct.raw_image_url} className="w-full h-full object-cover" />
+                  <img src={viewingProduct.generated_image_urls?.[0] || viewingProduct.processed_image_url || viewingProduct.raw_image_url} className="w-full h-full object-cover" />
                 </div>
                 <div className="grid grid-cols-4 gap-4">
-                   <div className="aspect-square bg-gray-100 border border-black/20 overflow-hidden"><img src={viewingProduct.processed_image_url || viewingProduct.raw_image_url} className="w-full h-full object-cover" /></div>
+                   <div className="aspect-square bg-gray-100 border border-black/20 overflow-hidden"><img src={viewingProduct.generated_image_urls?.[0] || viewingProduct.processed_image_url || viewingProduct.raw_image_url} className="w-full h-full object-cover" /></div>
                    <div className="aspect-square bg-gray-100 opacity-50"></div>
                    <div className="aspect-square bg-gray-100 opacity-50"></div>
                    <div className="aspect-square bg-gray-100 opacity-50"></div>
@@ -293,7 +293,7 @@ export default function SelectionReviewClient() {
              <h2 className="text-[32px] font-serif text-gray-800 mb-10">More, you might like from us</h2>
              <div className="grid grid-cols-1 md:grid-cols-3 gap-x-10 gap-y-12">
                 {products.filter(p => p.id !== viewingProduct.id).slice(0, 6).map(product => {
-                  const imgUrl = product.processed_image_url || product.raw_image_url;
+                  const imgUrl = product.generated_image_urls?.[0] || product.processed_image_url || product.raw_image_url;
                   return (
                     <div key={product.id} className="flex flex-col cursor-pointer hover:opacity-90 transition-opacity" onClick={() => setViewingProduct(product)}>
                       <div className="w-full aspect-[4/3.5] bg-[#F5F6F8] flex items-center justify-center p-8 overflow-hidden">
@@ -338,7 +338,7 @@ export default function SelectionReviewClient() {
                            <h4 className="font-serif text-[20px] text-gray-900 leading-[1.2]">{viewingProduct.title || "Vintage Cuff half necklace"}</h4>
                         </div>
                         <div className="w-24 h-24 bg-[#343e4b] shrink-0 overflow-hidden">
-                           <img src={viewingProduct.processed_image_url || viewingProduct.raw_image_url} className="w-full h-full object-cover" />
+                           <img src={viewingProduct.generated_image_urls?.[0] || viewingProduct.processed_image_url || viewingProduct.raw_image_url} className="w-full h-full object-cover" />
                         </div>
                      </div>
 
@@ -383,7 +383,7 @@ export default function SelectionReviewClient() {
         <div className="max-w-[1200px] mx-auto px-6 md:px-8 pb-32 pt-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-12">
             {products.map(product => {
-              const imgUrl = product.processed_image_url || product.raw_image_url;
+              const imgUrl = product.generated_image_urls?.[0] || product.processed_image_url || product.raw_image_url;
               return (
                 <div key={product.id} className="flex flex-col relative group cursor-pointer hover:opacity-95 transition-opacity" onClick={() => setViewingProduct(product)}>
                   <button 
