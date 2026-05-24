@@ -17,7 +17,7 @@ export function SubmittedFooter({ label = "I understand", actionRoute = "/entry_
       <button 
         disabled={isPending}
         onClick={() => startTransition(() => terminalUserExit(actionRoute))}
-        className={`w-full md:w-auto bg-[#000000] text-white font-extrabold rounded-[10px] px-[clamp(24px,3vw,40px)] py-[clamp(10px,1.2vw,14px)] text-[clamp(13px,1.4vw,15px)] hover:bg-black/90 transition-colors tracking-wide disabled:opacity-50`}
+        className={`w-full md:w-auto bg-[#000000] text-white font-extrabold rounded-[10px] px-[clamp(24px,3vw,40px)] py-[clamp(10px,1.2vw,14px)] text-[clamp(13px,1.4vw,15px)] hover:bg-black/90 transition-colors tracking-wide disabled:opacity-50 whitespace-nowrap`}
       >
         {isPending ? "Loading..." : label}
       </button>
