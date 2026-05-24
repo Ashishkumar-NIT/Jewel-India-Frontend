@@ -321,7 +321,7 @@ export default function AddEmployeeModal() {
                 disabled={isLoading}
                 className="h-[48px] px-10 bg-black text-white font-medium text-[15px] rounded-[12px] hover:bg-gray-800 shadow-md shadow-black/20 transition-colors disabled:opacity-70"
               >
-                {isLoading ? "Saving..." : "Finish"}
+                {isLoading ? "Saving..." : "Create"}
               </button>
             </div>
           </div>

@@ -88,7 +88,7 @@ function RetailerSidebar({ retailer }) {
       <Link
         href="?modal=add-employee"
         scroll={false}
-        className="w-full h-[44px] rounded-full flex items-center justify-center text-[14px] font-semibold text-[#3B82F6] hover:opacity-90 transition-opacity mb-6 shrink-0"
+        className="w-full h-[44px] rounded-[10px] flex items-center justify-center text-[14px] font-semibold text-[#3B82F6] hover:opacity-90 transition-opacity mb-6 shrink-0"
         style={{ backgroundColor: "#DBEAFE" }}
       >
         New Employee
