@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import FullImageViewer from "../shared/FullImageViewer";
 
 function ToggleSwitch({ isOn, onToggle }) {
   return (
@@ -16,6 +17,8 @@ function ToggleSwitch({ isOn, onToggle }) {
 export function OrderDetailModal({ order, onClose }) {
   const [inStock, setInStock] = useState(true);
   const [published, setPublished] = useState(true);
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [isFullViewOpen, setIsFullViewOpen] = useState(false);
 
   // Prevent scrolling when open
   useEffect(() => {
@@ -26,7 +29,17 @@ export function OrderDetailModal({ order, onClose }) {
   if (!order) return null;
 
   const p = order.products || {};
-  const imgUrl = p.generated_image_urls?.[0] || p.processed_image_url || p.raw_image_url || "https://images.unsplash.com/photo-1599643478514-4a1101859efc?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80";
+  
+  const images = Array.from(new Set([
+    p.processed_image_url,
+    ...(p.generated_image_urls || []),
+    p.raw_image_url,
+  ].filter(Boolean)));
+  if (images.length === 0) {
+    images.push("https://images.unsplash.com/photo-1599643478514-4a1101859efc?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80");
+  }
+
+  const imgUrl = images[activeImageIndex] || images[0];
   const sku = order.id ? order.id.split("-")[0].toUpperCase() : "JK65-JI-1983844";
   const title = p.jewellery_type ? p.jewellery_type.charAt(0).toUpperCase() + p.jewellery_type.slice(1) : "Necklace";
   const purity = p.metal_purity || "18 KT";
@@ -58,17 +71,31 @@ export function OrderDetailModal({ order, onClose }) {
           
           {/* Left Column (Images) */}
           <div className="w-full md:w-1/2 flex flex-col gap-4">
-            <div className="w-full aspect-[4/3] bg-[#f9f9f9] rounded-[12px] overflow-hidden flex items-center justify-center p-4">
-              <img src={imgUrl} alt={title} className="w-full h-full object-contain mix-blend-multiply" />
+            <div 
+              onClick={() => setIsFullViewOpen(true)}
+              className="w-full aspect-[4/3] bg-[#f9f9f9] rounded-[12px] overflow-hidden flex items-center justify-center p-4 cursor-pointer relative group/mainimg"
+            >
+              <img src={imgUrl} alt={title} className="w-full h-full object-contain mix-blend-multiply transition-transform duration-300 group-hover/mainimg:scale-[1.02]" />
+              <div className="absolute top-3 right-3 z-10 w-9 h-9 rounded-full bg-white/85 backdrop-blur-sm shadow-sm flex items-center justify-center text-gray-700 opacity-0 group-hover/mainimg:opacity-100 transition-opacity active:scale-90 pointer-events-none md:pointer-events-auto">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>
+                </svg>
+              </div>
             </div>
             {/* Thumbnails */}
-            <div className="flex justify-between gap-3">
-              {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="flex-1 aspect-square bg-[#f9f9f9] rounded-[8px] overflow-hidden border border-transparent hover:border-gray-200 cursor-pointer p-2">
-                  <img src={imgUrl} alt="Thumbnail" className="w-full h-full object-contain mix-blend-multiply" />
-                </div>
-              ))}
-            </div>
+            {images.length > 1 && (
+              <div className="flex gap-3 overflow-x-auto pb-1 max-w-full">
+                {images.map((url, idx) => (
+                  <div 
+                    key={idx} 
+                    onClick={() => setActiveImageIndex(idx)}
+                    className={`shrink-0 w-[64px] h-[64px] bg-[#f9f9f9] rounded-[8px] overflow-hidden border cursor-pointer p-2 transition-all ${activeImageIndex === idx ? 'border-black opacity-100 scale-105 shadow-sm' : 'border-transparent opacity-60 hover:opacity-100'}`}
+                  >
+                    <img src={url} alt="Thumbnail" className="w-full h-full object-contain mix-blend-multiply" />
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Right Column (Details) */}
@@ -196,6 +223,15 @@ export function OrderDetailModal({ order, onClose }) {
         </div>
 
       </div>
+
+      {/* Immersive Tablet-First Full Image Viewer Overlay */}
+      <FullImageViewer
+        isOpen={isFullViewOpen}
+        onClose={() => setIsFullViewOpen(false)}
+        images={images}
+        activeIndex={activeImageIndex}
+        onChangeIndex={(idx) => setActiveImageIndex(idx)}
+      />
     </div>
   );
 }

@@ -3,6 +3,7 @@
 import { useState, memo } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import FullImageViewer from "../../shared/FullImageViewer";
 
 // ── Product Detail Modal ──────────────────────────────────────────────────────
 function ProductDetailModal({ product, onClose }) {
@@ -17,6 +18,7 @@ function ProductDetailModal({ product, onClose }) {
   const hasImages = images.length > 0;
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const activeImageUrl = images[activeImageIndex] || null;
+  const [isFullViewOpen, setIsFullViewOpen] = useState(false);
 
   const router = useRouter();
   const [isUpdatingPublish, setIsUpdatingPublish] = useState(false);
@@ -79,15 +81,25 @@ function ProductDetailModal({ product, onClose }) {
         {/* Left Column - Image Viewer (~58%) */}
         <div className="w-full md:w-[58%] p-6 flex flex-col gap-4 border-r border-[#f0f0f0]">
           {/* Main Image */}
-          <div className="w-full aspect-square bg-[#F5F5F5] rounded-[16px] flex items-center justify-center overflow-hidden relative">
+          <div 
+            onClick={() => setIsFullViewOpen(true)}
+            className="w-full aspect-square bg-[#F5F5F5] rounded-[16px] flex items-center justify-center overflow-hidden relative cursor-pointer group/mainimg"
+          >
             {activeImageUrl ? (
-              <Image
-                src={activeImageUrl}
-                alt={title}
-                fill
-                loading="lazy"
-                className="w-full h-full object-contain mix-blend-multiply"
-              />
+              <>
+                <Image
+                  src={activeImageUrl}
+                  alt={title}
+                  fill
+                  loading="lazy"
+                  className="w-full h-full object-contain mix-blend-multiply transition-transform duration-300 group-hover/mainimg:scale-[1.02]"
+                />
+                <div className="absolute top-3 right-3 z-10 w-9 h-9 rounded-full bg-white/85 backdrop-blur-sm shadow-sm flex items-center justify-center text-gray-700 opacity-0 group-hover/mainimg:opacity-100 transition-opacity active:scale-90 pointer-events-none md:pointer-events-auto">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>
+                  </svg>
+                </div>
+              </>
             ) : (
               <div className="flex flex-col items-center justify-center text-[#999] gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" className="w-10 h-10" viewBox="0 0 24 24" fill="currentColor">
@@ -189,6 +201,15 @@ function ProductDetailModal({ product, onClose }) {
           
         </div>
       </div>
+
+      {/* Immersive Tablet-First Full Image Viewer Overlay */}
+      <FullImageViewer
+        isOpen={isFullViewOpen}
+        onClose={() => setIsFullViewOpen(false)}
+        images={images}
+        activeIndex={activeImageIndex}
+        onChangeIndex={(idx) => setActiveImageIndex(idx)}
+      />
     </div>
   );
 }

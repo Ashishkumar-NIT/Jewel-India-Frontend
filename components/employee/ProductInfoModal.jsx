@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import FullImageViewer from "../shared/FullImageViewer";
 
 function formatWeight(val) {
   if (val === null || val === undefined || val === "") return null;
@@ -35,6 +36,7 @@ function SectionBlock({ title, children }) {
 export function ProductInfoModal({ isOpen, onClose, product, onStartChat }) {
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [mainImgError, setMainImgError] = useState(false);
+  const [isFullViewOpen, setIsFullViewOpen] = useState(false);
 
   // Request sidebar state
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -51,6 +53,7 @@ export function ProductInfoModal({ isOpen, onClose, product, onStartChat }) {
       setRequestSuccess(false);
       setIsSubmitting(false);
       setFormData({ quantity: 1, customization_notes: "" });
+      setIsFullViewOpen(false);
     }
   }, [isOpen]);
 
@@ -170,14 +173,24 @@ export function ProductInfoModal({ isOpen, onClose, product, onStartChat }) {
           </button>
 
           {/* Main image */}
-          <div className="w-full flex-1 min-h-[220px] bg-[#f0f0f0] rounded-[12px] overflow-hidden relative">
+          <div 
+            onClick={() => setIsFullViewOpen(true)}
+            className="w-full flex-1 min-h-[220px] bg-[#f0f0f0] rounded-[12px] overflow-hidden relative cursor-pointer group/mainimg"
+          >
             {!mainImgError && activeImageUrl ? (
-              <img
-                src={activeImageUrl}
-                alt={title}
-                className="absolute inset-0 w-full h-full object-contain p-4 mix-blend-multiply"
-                onError={() => setMainImgError(true)}
-              />
+              <>
+                <img
+                  src={activeImageUrl}
+                  alt={title}
+                  className="absolute inset-0 w-full h-full object-contain p-4 mix-blend-multiply transition-transform duration-300 group-hover/mainimg:scale-[1.02]"
+                  onError={() => setMainImgError(true)}
+                />
+                <div className="absolute top-3 right-3 z-10 w-9 h-9 rounded-full bg-white/85 backdrop-blur-sm shadow-sm flex items-center justify-center text-gray-700 opacity-0 group-hover/mainimg:opacity-100 transition-opacity active:scale-90 pointer-events-none md:pointer-events-auto">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>
+                  </svg>
+                </div>
+              </>
             ) : (
               <div className="flex h-full items-center justify-center text-sm text-gray-400 font-medium min-h-[220px]">
                 No image
@@ -402,6 +415,15 @@ export function ProductInfoModal({ isOpen, onClose, product, onStartChat }) {
           </div>
         </div>
       )}
+
+      {/* Immersive Tablet-First Full Image Viewer Overlay */}
+      <FullImageViewer
+        isOpen={isFullViewOpen}
+        onClose={() => setIsFullViewOpen(false)}
+        images={processedImages}
+        activeIndex={activeImageIndex}
+        onChangeIndex={(idx) => setActiveImageIndex(idx)}
+      />
     </div>
   );
 }
