@@ -183,7 +183,7 @@ export default function UploadDesignPage() {
       
       if (!res.ok) throw new Error("Upload failed");
       
-      router.push("/dashboard/retailer/catalogue/upload/success");
+      router.push("/dashboard/retailer/catalogue");
     } catch (err) {
       alert(err.message);
       setIsUploading(false);
