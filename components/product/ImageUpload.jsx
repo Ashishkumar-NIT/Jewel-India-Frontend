@@ -2,7 +2,7 @@
 
 import { useRef, useState, useEffect } from "react";
 
-export function ImageUpload({ onFileChange }) {
+export function ImageUpload({ onFileChange, error }) {
     const inputRef = useRef(null);
     const [preview, setPreview] = useState(null);
     const [dragOver, setDragOver] = useState(false);
@@ -52,16 +52,19 @@ export function ImageUpload({ onFileChange }) {
     }
 
     return (
-        <div className="w-full">
+        <div className="w-full flex flex-col gap-1" id="image">
             <div
                 onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
                 onDragLeave={() => setDragOver(false)}
                 onDrop={handleDrop}
                 onClick={() => !preview && inputRef.current?.click()}
-                className={`w-full md:w-[420px] h-[200px] md:h-[240px] border-2 border-dashed rounded-[10px] bg-[#F1F5F9] flex items-center justify-center cursor-pointer transition-all ${dragOver
+                className={`w-full md:w-[420px] h-[200px] md:h-[240px] border-2 border-dashed rounded-[10px] flex items-center justify-center cursor-pointer transition-all ${
+                    error
+                        ? "border-red-500 bg-red-50 hover:bg-red-50/70"
+                        : dragOver
                         ? "border-[#2563EB] bg-[#EFF6FF]"
-                        : "border-[#3B82F6] hover:border-[#2563EB] hover:bg-[#F8FAFC]"
-                    }`}
+                        : "border-[#3B82F6] hover:border-[#2563EB] hover:bg-[#F8FAFC] bg-[#F1F5F9]"
+                }`}
             >
                 {preview ? (
                     <div className="relative w-full h-full flex items-center justify-center p-4">
@@ -136,6 +139,11 @@ export function ImageUpload({ onFileChange }) {
                 className="hidden"
                 onChange={handleInputChange}
             />
+            {error && (
+                <p className="text-xs font-semibold text-red-500 font-gilroy mt-1.5 animate-fade-in w-full md:w-[420px] text-center">
+                    {error}
+                </p>
+            )}
         </div>
     );
 }

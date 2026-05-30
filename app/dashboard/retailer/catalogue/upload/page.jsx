@@ -20,6 +20,18 @@ export default function UploadDesignPage() {
   const [netWeight, setNetWeight] = useState("");
   const [inStock, setInStock] = useState(false);
   const [productionTime, setProductionTime] = useState("");
+  const [errors, setErrors] = useState({});
+
+  const updateField = (key, setter, val) => {
+    setter(val);
+    if (errors[key]) {
+      setErrors((prev) => {
+        const updated = { ...prev };
+        delete updated[key];
+        return updated;
+      });
+    }
+  };
 
   // Multiple images state
   const [files, setFiles] = useState([]);
@@ -46,6 +58,14 @@ export default function UploadDesignPage() {
         const newUrls = filesToAdd.map(file => URL.createObjectURL(file));
         previewUrlsRef.current = [...previewUrlsRef.current, ...newUrls];
         setPreviews(prev => [...prev, ...newUrls]);
+        
+        if (errors.images) {
+          setErrors(prev => {
+            const updated = { ...prev };
+            delete updated.images;
+            return updated;
+          });
+        }
       }
     }
     // Reset input so the same file can be selected again if needed
@@ -67,11 +87,67 @@ export default function UploadDesignPage() {
   };
 
   const handleAdd = async () => {
-    if (!title || !category || !material || files.length === 0) {
-      alert("Please provide at least a title, category, material, and 1 image.");
+    const newErrors = {};
+
+    if (files.length === 0) {
+      newErrors.images = "At least one product image is required.";
+    }
+    if (!title || !title.trim()) {
+      newErrors.title = "Product title is required.";
+    }
+    if (!category) {
+      newErrors.category = "Please select a jewellery type.";
+    }
+    if (!material) {
+      newErrors.material = "Please select a material category.";
+    }
+    if (!styleAesthetic) {
+      newErrors.styleAesthetic = "Please select a style aesthetic.";
+    }
+    if (!size) {
+      newErrors.size = "Please select a size.";
+    }
+    if (!purity) {
+      newErrors.purity = "Please select a purity.";
+    }
+
+    const grossVal = parseFloat(grossWeight);
+    if (!grossWeight || isNaN(grossVal) || grossVal <= 0) {
+      newErrors.grossWeight = "Gross weight must be greater than 0.";
+    }
+
+    const stoneVal = parseFloat(stoneWeight);
+    if (stoneWeight === "" || isNaN(stoneVal) || stoneVal < 0) {
+      newErrors.stoneWeight = "Stone weight must be 0 or greater.";
+    }
+
+    const netVal = parseFloat(netWeight);
+    if (!netWeight || isNaN(netVal) || netVal <= 0) {
+      newErrors.netWeight = "Net weight must be greater than 0.";
+    }
+
+    if (!inStock) {
+      const prodTime = parseInt(productionTime);
+      if (!productionTime || isNaN(prodTime) || prodTime <= 0) {
+        newErrors.productionTime = "Production time must be greater than 0 days.";
+      }
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      
+      const firstErrorKey = Object.keys(newErrors)[0];
+      setTimeout(() => {
+        const element = document.getElementById(firstErrorKey);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth", block: "center" });
+          element.focus();
+        }
+      }, 50);
       return;
     }
-    
+
+    setErrors({});
     setIsUploading(true);
     
     try {
@@ -179,11 +255,18 @@ export default function UploadDesignPage() {
                   ))}
                   
                   {previews.length === 0 ? (
-                    <label className="flex flex-col items-center justify-center w-full aspect-[4/3] md:h-[200px] border-2 border-dashed border-[#93C5FD] bg-[#EFF6FF] rounded-[16px] cursor-pointer hover:bg-blue-50 transition-colors">
+                    <label className={`flex flex-col items-center justify-center w-full aspect-[4/3] md:h-[200px] border-2 border-dashed rounded-[16px] cursor-pointer transition-colors ${
+                      errors.images
+                        ? "border-red-400 bg-red-50 hover:bg-red-50/70"
+                        : "border-[#93C5FD] bg-[#EFF6FF] hover:bg-blue-50"
+                    }`} id="images">
                       <input type="file" multiple className="hidden" accept="image/*" onChange={handleFileChange} />
-                      <div className="w-12 h-12 rounded-full border-2 border-[#3B82F6] flex items-center justify-center text-[#3B82F6]">
+                      <div className={`w-12 h-12 rounded-full border-2 flex items-center justify-center ${errors.images ? "border-red-500 text-red-500" : "border-[#3B82F6] text-[#3B82F6]"}`}>
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                       </div>
+                      {errors.images && (
+                        <p className="text-[12px] font-semibold text-red-500 mt-2">{errors.images}</p>
+                      )}
                     </label>
                   ) : previews.length < 5 ? (
                     <label className="flex flex-col items-center justify-center w-[100px] h-[100px] border-2 border-dashed border-[#93C5FD] bg-[#EFF6FF] rounded-[12px] cursor-pointer hover:bg-blue-50 transition-colors shrink-0">
@@ -193,6 +276,7 @@ export default function UploadDesignPage() {
                       </div>
                     </label>
                   ) : null}
+
                 </div>
               </div>
             </div>
@@ -212,11 +296,19 @@ export default function UploadDesignPage() {
                   <label className="text-[13px] font-bold text-[#4B5563]">Product Title</label>
                   <input
                     type="text"
+                    id="title"
                     placeholder="eg. Vintage gold Necklace"
                     value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    className="w-full h-[48px] bg-[#F9FAFB] rounded-[8px] px-4 text-[14px] text-[#111827] outline-none focus:ring-2 focus:ring-black/5"
+                    onChange={(e) => updateField("title", setTitle, e.target.value)}
+                    className={`w-full h-[48px] rounded-[8px] px-4 text-[14px] text-[#111827] outline-none transition-colors border ${
+                      errors.title
+                        ? "bg-red-50 border-red-400 focus:border-red-400 focus:ring-1 focus:ring-red-400"
+                        : "bg-[#F9FAFB] border-transparent focus:ring-2 focus:ring-black/5"
+                    }`}
                   />
+                  {errors.title && (
+                    <p className="text-[11px] font-semibold text-red-500 mt-0.5 animate-fade-in">{errors.title}</p>
+                  )}
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -224,9 +316,14 @@ export default function UploadDesignPage() {
                     <label className="text-[13px] font-bold text-[#4B5563]">Type</label>
                     <div className="relative">
                       <select
+                        id="category"
                         value={category}
-                        onChange={(e) => setCategory(e.target.value)}
-                        className="w-full h-[48px] bg-[#F9FAFB] rounded-[8px] px-4 pr-10 text-[14px] text-[#111827] outline-none focus:ring-2 focus:ring-black/5 appearance-none"
+                        onChange={(e) => updateField("category", setCategory, e.target.value)}
+                        className={`w-full h-[48px] rounded-[8px] px-4 pr-10 text-[14px] text-[#111827] outline-none transition-colors border appearance-none ${
+                          errors.category
+                            ? "bg-red-50 border-red-400 focus:border-red-400 focus:ring-1 focus:ring-red-400"
+                            : "bg-[#F9FAFB] border-transparent focus:ring-2 focus:ring-black/5"
+                        }`}
                       >
                         <option value="" disabled hidden>select</option>
                         <option value="Necklace">Necklace</option>
@@ -243,15 +340,23 @@ export default function UploadDesignPage() {
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
                       </div>
                     </div>
+                    {errors.category && (
+                      <p className="text-[11px] font-semibold text-red-500 mt-0.5 animate-fade-in">{errors.category}</p>
+                    )}
                   </div>
                   
                   <div className="flex flex-col gap-1.5">
                     <label className="text-[13px] font-bold text-[#4B5563]">Material category</label>
                     <div className="relative">
                       <select
+                        id="material"
                         value={material}
-                        onChange={(e) => setMaterial(e.target.value)}
-                        className="w-full h-[48px] bg-[#F9FAFB] rounded-[8px] px-4 pr-10 text-[14px] text-[#111827] outline-none focus:ring-2 focus:ring-black/5 appearance-none"
+                        onChange={(e) => updateField("material", setMaterial, e.target.value)}
+                        className={`w-full h-[48px] rounded-[8px] px-4 pr-10 text-[14px] text-[#111827] outline-none transition-colors border appearance-none ${
+                          errors.material
+                            ? "bg-red-50 border-red-400 focus:border-red-400 focus:ring-1 focus:ring-red-400"
+                            : "bg-[#F9FAFB] border-transparent focus:ring-2 focus:ring-black/5"
+                        }`}
                       >
                         <option value="" disabled hidden>select</option>
                         <option value="Gold">Gold</option>
@@ -263,6 +368,9 @@ export default function UploadDesignPage() {
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
                       </div>
                     </div>
+                    {errors.material && (
+                      <p className="text-[11px] font-semibold text-red-500 mt-0.5 animate-fade-in">{errors.material}</p>
+                    )}
                   </div>
                 </div>
 
@@ -271,9 +379,14 @@ export default function UploadDesignPage() {
                     <label className="text-[13px] font-bold text-[#4B5563]">Style Aesthetic</label>
                     <div className="relative">
                       <select
+                        id="styleAesthetic"
                         value={styleAesthetic}
-                        onChange={(e) => setStyleAesthetic(e.target.value)}
-                        className="w-full h-[48px] bg-[#F9FAFB] rounded-[8px] px-4 pr-10 text-[14px] text-[#111827] outline-none focus:ring-2 focus:ring-black/5 appearance-none"
+                        onChange={(e) => updateField("styleAesthetic", setStyleAesthetic, e.target.value)}
+                        className={`w-full h-[48px] rounded-[8px] px-4 pr-10 text-[14px] text-[#111827] outline-none transition-colors border appearance-none ${
+                          errors.styleAesthetic
+                            ? "bg-red-50 border-red-400 focus:border-red-400 focus:ring-1 focus:ring-red-400"
+                            : "bg-[#F9FAFB] border-transparent focus:ring-2 focus:ring-black/5"
+                        }`}
                       >
                         <option value="" disabled hidden>select</option>
                         <option value="Vintage">Vintage</option>
@@ -285,15 +398,23 @@ export default function UploadDesignPage() {
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
                       </div>
                     </div>
+                    {errors.styleAesthetic && (
+                      <p className="text-[11px] font-semibold text-red-500 mt-0.5 animate-fade-in">{errors.styleAesthetic}</p>
+                    )}
                   </div>
                   
                   <div className="flex flex-col gap-1.5">
                     <label className="text-[13px] font-bold text-[#4B5563]">Size</label>
                     <div className="relative">
                       <select
+                        id="size"
                         value={size}
-                        onChange={(e) => setSize(e.target.value)}
-                        className="w-full h-[48px] bg-[#F9FAFB] rounded-[8px] px-4 pr-10 text-[14px] text-[#111827] outline-none focus:ring-2 focus:ring-black/5 appearance-none"
+                        onChange={(e) => updateField("size", setSize, e.target.value)}
+                        className={`w-full h-[48px] rounded-[8px] px-4 pr-10 text-[14px] text-[#111827] outline-none transition-colors border appearance-none ${
+                          errors.size
+                            ? "bg-red-50 border-red-400 focus:border-red-400 focus:ring-1 focus:ring-red-400"
+                            : "bg-[#F9FAFB] border-transparent focus:ring-2 focus:ring-black/5"
+                        }`}
                       >
                         <option value="" disabled hidden>select</option>
                         <option value="Small">Small</option>
@@ -305,15 +426,23 @@ export default function UploadDesignPage() {
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
                       </div>
                     </div>
+                    {errors.size && (
+                      <p className="text-[11px] font-semibold text-red-500 mt-0.5 animate-fade-in">{errors.size}</p>
+                    )}
                   </div>
                   
                   <div className="flex flex-col gap-1.5">
                     <label className="text-[13px] font-bold text-[#4B5563]">Purity</label>
                     <div className="relative">
                       <select
+                        id="purity"
                         value={purity}
-                        onChange={(e) => setPurity(e.target.value)}
-                        className="w-full h-[48px] bg-[#F9FAFB] rounded-[8px] px-4 pr-10 text-[14px] text-[#111827] outline-none focus:ring-2 focus:ring-black/5 appearance-none"
+                        onChange={(e) => updateField("purity", setPurity, e.target.value)}
+                        className={`w-full h-[48px] rounded-[8px] px-4 pr-10 text-[14px] text-[#111827] outline-none transition-colors border appearance-none ${
+                          errors.purity
+                            ? "bg-red-50 border-red-400 focus:border-red-400 focus:ring-1 focus:ring-red-400"
+                            : "bg-[#F9FAFB] border-transparent focus:ring-2 focus:ring-black/5"
+                        }`}
                       >
                         <option value="" disabled hidden>select</option>
                         <option value="18K">18K</option>
@@ -325,8 +454,12 @@ export default function UploadDesignPage() {
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
                       </div>
                     </div>
+                    {errors.purity && (
+                      <p className="text-[11px] font-semibold text-red-500 mt-0.5 animate-fade-in">{errors.purity}</p>
+                    )}
                   </div>
                 </div>
+
               </div>
             </div>
 
@@ -347,39 +480,63 @@ export default function UploadDesignPage() {
                     <div className="relative">
                       <input
                         type="number"
+                        id="grossWeight"
                         placeholder="0.0"
                         value={grossWeight}
-                        onChange={(e) => setGrossWeight(e.target.value)}
-                        className="w-full h-[48px] bg-[#F9FAFB] rounded-[8px] pl-4 pr-8 text-[14px] text-[#111827] outline-none focus:ring-2 focus:ring-black/5"
+                        onChange={(e) => updateField("grossWeight", setGrossWeight, e.target.value)}
+                        className={`w-full h-[48px] rounded-[8px] pl-4 pr-8 text-[14px] text-[#111827] outline-none transition-colors border ${
+                          errors.grossWeight
+                            ? "bg-red-50 border-red-400 focus:border-red-400 focus:ring-1 focus:ring-red-400"
+                            : "bg-[#F9FAFB] border-transparent focus:ring-2 focus:ring-black/5"
+                        }`}
                       />
                       <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[14px] text-[#9CA3AF] font-bold pointer-events-none">g</span>
                     </div>
+                    {errors.grossWeight && (
+                      <p className="text-[11px] font-semibold text-red-500 mt-0.5 animate-fade-in">{errors.grossWeight}</p>
+                    )}
                   </div>
                   <div className="flex flex-col gap-1.5">
                     <label className="text-[13px] font-bold text-[#4B5563]">Stone weight</label>
                     <div className="relative">
                       <input
                         type="number"
+                        id="stoneWeight"
                         placeholder="0.0"
                         value={stoneWeight}
-                        onChange={(e) => setStoneWeight(e.target.value)}
-                        className="w-full h-[48px] bg-[#F9FAFB] rounded-[8px] pl-4 pr-8 text-[14px] text-[#111827] outline-none focus:ring-2 focus:ring-black/5"
+                        onChange={(e) => updateField("stoneWeight", setStoneWeight, e.target.value)}
+                        className={`w-full h-[48px] rounded-[8px] pl-4 pr-8 text-[14px] text-[#111827] outline-none transition-colors border ${
+                          errors.stoneWeight
+                            ? "bg-red-50 border-red-400 focus:border-red-400 focus:ring-1 focus:ring-red-400"
+                            : "bg-[#F9FAFB] border-transparent focus:ring-2 focus:ring-black/5"
+                        }`}
                       />
                       <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[14px] text-[#9CA3AF] font-bold pointer-events-none">g</span>
                     </div>
+                    {errors.stoneWeight && (
+                      <p className="text-[11px] font-semibold text-red-500 mt-0.5 animate-fade-in">{errors.stoneWeight}</p>
+                    )}
                   </div>
                   <div className="flex flex-col gap-1.5">
                     <label className="text-[13px] font-bold text-[#4B5563]">Net Weight</label>
                     <div className="relative">
                       <input
                         type="number"
+                        id="netWeight"
                         placeholder="0.0"
                         value={netWeight}
-                        onChange={(e) => setNetWeight(e.target.value)}
-                        className="w-full h-[48px] bg-[#F9FAFB] rounded-[8px] pl-4 pr-8 text-[14px] text-[#111827] outline-none focus:ring-2 focus:ring-black/5"
+                        onChange={(e) => updateField("netWeight", setNetWeight, e.target.value)}
+                        className={`w-full h-[48px] rounded-[8px] pl-4 pr-8 text-[14px] text-[#111827] outline-none transition-colors border ${
+                          errors.netWeight
+                            ? "bg-red-50 border-red-400 focus:border-red-400 focus:ring-1 focus:ring-red-400"
+                            : "bg-[#F9FAFB] border-transparent focus:ring-2 focus:ring-black/5"
+                        }`}
                       />
                       <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[14px] text-[#9CA3AF] font-bold pointer-events-none">g</span>
                     </div>
+                    {errors.netWeight && (
+                      <p className="text-[11px] font-semibold text-red-500 mt-0.5 animate-fade-in">{errors.netWeight}</p>
+                    )}
                   </div>
                 </div>
 
@@ -389,7 +546,17 @@ export default function UploadDesignPage() {
                     <span className="text-[12px] text-[#6B7280]">Is this piece ready to ship right away?</span>
                   </div>
                   <div 
-                    onClick={() => setInStock(!inStock)}
+                    onClick={() => {
+                      const nextInStock = !inStock;
+                      setInStock(nextInStock);
+                      if (nextInStock && errors.productionTime) {
+                        setErrors(prev => {
+                          const updated = { ...prev };
+                          delete updated.productionTime;
+                          return updated;
+                        });
+                      }
+                    }}
                     className={`w-12 h-6 flex items-center rounded-full p-1 cursor-pointer transition-colors duration-300 ${inStock ? "bg-[#34D399]" : "bg-gray-200"}`}
                   >
                     <div 
@@ -398,19 +565,29 @@ export default function UploadDesignPage() {
                   </div>
                 </div>
 
-                <div className="flex flex-col gap-1.5 w-full md:w-[320px]">
-                  <label className="text-[13px] font-bold text-[#4B5563]">Production time</label>
-                  <div className="relative">
-                    <input
-                      type="number"
-                      placeholder="eg. 14"
-                      value={productionTime}
-                      onChange={(e) => setProductionTime(e.target.value)}
-                      className="w-full h-[48px] bg-[#F9FAFB] rounded-[8px] pl-4 pr-12 text-[14px] text-[#111827] outline-none focus:ring-2 focus:ring-black/5"
-                    />
-                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[13px] text-[#9CA3AF] pointer-events-none">days</span>
+                {!inStock && (
+                  <div className="flex flex-col gap-1.5 w-full md:w-[320px] animate-fade-in">
+                    <label className="text-[13px] font-bold text-[#4B5563]">Production time</label>
+                    <div className="relative">
+                      <input
+                        type="number"
+                        id="productionTime"
+                        placeholder="eg. 14"
+                        value={productionTime}
+                        onChange={(e) => updateField("productionTime", setProductionTime, e.target.value)}
+                        className={`w-full h-[48px] rounded-[8px] pl-4 pr-12 text-[14px] text-[#111827] outline-none transition-colors border ${
+                          errors.productionTime
+                            ? "bg-red-50 border-red-400 focus:border-red-400 focus:ring-1 focus:ring-red-400"
+                            : "bg-[#F9FAFB] border-transparent focus:ring-2 focus:ring-black/5"
+                        }`}
+                      />
+                      <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[13px] text-[#9CA3AF] pointer-events-none">days</span>
+                    </div>
+                    {errors.productionTime && (
+                      <p className="text-[11px] font-semibold text-red-500 mt-0.5 animate-fade-in">{errors.productionTime}</p>
+                    )}
                   </div>
-                </div>
+                )}
               </div>
             </div>
 

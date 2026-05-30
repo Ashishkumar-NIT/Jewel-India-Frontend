@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 
-export function Select({ id, label, options = [], value, onChange, placeholder = "select", placeholderClassName = "text-[#9CA3AF]", ...props }) {
+export function Select({ id, label, options = [], value, onChange, placeholder = "select", placeholderClassName = "text-[#9CA3AF]", error, ...props }) {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef(null);
 
@@ -26,7 +26,7 @@ export function Select({ id, label, options = [], value, onChange, placeholder =
   const selectedOption = options.find((opt) => opt.value === value);
 
   return (
-    <div className="flex flex-col gap-2 w-full" ref={containerRef}>
+    <div className="flex flex-col gap-1 w-full" ref={containerRef}>
       {label && (
         <label
           htmlFor={id}
@@ -55,10 +55,12 @@ export function Select({ id, label, options = [], value, onChange, placeholder =
         <button
           type="button"
           onClick={() => setIsOpen(!isOpen)}
-          className={`w-full h-11 border border-[#e5e5e5] rounded-lg px-3 flex items-center justify-between text-sm transition-colors font-gilroy font-semibold ${
-            isOpen
+          className={`w-full h-11 border rounded-lg px-3 flex items-center justify-between text-sm transition-colors font-gilroy font-semibold ${
+            error
+              ? "border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500"
+              : isOpen
               ? "border-[#3B82F6] ring-1 ring-[#3B82F6]"
-              : "hover:border-[#d1d5db]"
+              : "hover:border-[#d1d5db] border-[#e5e5e5]"
           }`}
         >
           <span className={selectedOption ? "text-[#111827]" : placeholderClassName}>
@@ -100,6 +102,11 @@ export function Select({ id, label, options = [], value, onChange, placeholder =
           </div>
         )}
       </div>
+      {error && (
+        <p className="text-xs font-semibold text-red-500 font-gilroy mt-0.5 animate-fade-in">
+          {error}
+        </p>
+      )}
     </div>
   );
 }

@@ -3,10 +3,11 @@ export function Input({
   label,
   type = "text",
   placeholder,
+  error,
   ...props
 }) {
   return (
-    <div className="flex flex-col gap-2 w-full">
+    <div className="flex flex-col gap-1 w-full">
       {label && (
         <label
           htmlFor={id}
@@ -18,10 +19,19 @@ export function Input({
       <input
         id={id}
         type={type}
-        className="h-11 w-full border border-[#e5e5e5] rounded-lg px-3 text-sm text-[#111827] placeholder:text-[#9CA3AF] placeholder:font-gilroy placeholder:font-semibold focus:outline-none focus:border-[#3B82F6] focus:ring-1 focus:ring-[#3B82F6] transition-colors font-gilroy font-semibold"
+        className={`h-11 w-full border rounded-lg px-3 text-sm text-[#111827] placeholder:text-[#9CA3AF] placeholder:font-gilroy placeholder:font-semibold focus:outline-none transition-colors font-gilroy font-semibold ${
+          error
+            ? "border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500"
+            : "border-[#e5e5e5] focus:border-[#3B82F6] focus:ring-1 focus:ring-[#3B82F6]"
+        }`}
         placeholder={placeholder}
         {...props}
       />
+      {error && (
+        <p className="text-xs font-semibold text-red-500 font-gilroy mt-0.5 animate-fade-in">
+          {error}
+        </p>
+      )}
     </div>
   );
 }

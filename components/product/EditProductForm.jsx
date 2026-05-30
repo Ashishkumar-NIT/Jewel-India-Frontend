@@ -82,14 +82,86 @@ export function EditProductForm({ product }) {
 
   const [status, setStatus] = useState("idle");
   const [error, setError] = useState(null);
+  const [errors, setErrors] = useState({});
 
   function setField(key, value) {
     setForm((prev) => ({ ...prev, [key]: value }));
+    if (errors[key]) {
+      setErrors((prev) => {
+        const updated = { ...prev };
+        delete updated[key];
+        return updated;
+      });
+    }
   }
+
+  const imgUrl = product?.processed_image_url || product?.generated_image_urls?.[0] || product?.raw_image_url;
 
   async function handleSubmit(e) {
     e.preventDefault();
     setError(null);
+    const newErrors = {};
+
+    if (!imgUrl) {
+      newErrors.image = "Product does not have a valid image in the database.";
+    }
+    if (!form.title || !form.title.trim()) {
+      newErrors.title = "Product title is required.";
+    }
+    if (!form.jewellery_type) {
+      newErrors.jewellery_type = "Please select a jewellery type.";
+    }
+    if (!form.category) {
+      newErrors.category = "Please select a material category.";
+    }
+    if (!form.style) {
+      newErrors.style = "Please select a style aesthetic.";
+    }
+    if (!form.size) {
+      newErrors.size = "Please select a size.";
+    }
+    if (!form.metalPurity) {
+      newErrors.metalPurity = "Please select a purity.";
+    }
+
+    const grossVal = parseFloat(form.grossWeight);
+    if (!form.grossWeight || isNaN(grossVal) || grossVal <= 0) {
+      newErrors.grossWeight = "Gross weight must be greater than 0.";
+    }
+
+    const stoneVal = parseFloat(form.stoneWeight);
+    if (form.stoneWeight === "" || isNaN(stoneVal) || stoneVal < 0) {
+      newErrors.stoneWeight = "Stone weight must be 0 or greater.";
+    }
+
+    const netVal = parseFloat(form.netWeight);
+    if (!form.netWeight || isNaN(netVal) || netVal <= 0) {
+      newErrors.netWeight = "Net weight must be greater than 0.";
+    }
+
+    if (!form.stockAvailable) {
+      const orderDays = parseInt(form.makeToOrderDays);
+      if (!form.makeToOrderDays || isNaN(orderDays) || orderDays <= 0) {
+        newErrors.makeToOrderDays = "Production time must be greater than 0 days.";
+      }
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      setError("Please correct the fields highlighted in red below.");
+      
+      const firstErrorKey = Object.keys(newErrors)[0];
+      setTimeout(() => {
+        const element = document.getElementById(firstErrorKey);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth", block: "center" });
+          element.focus();
+        }
+      }, 50);
+      return;
+    }
+
+    setErrors({});
 
     try {
       setStatus("saving");
@@ -122,7 +194,6 @@ export function EditProductForm({ product }) {
   }
 
   const isProcessing = status === "saving" || status === "done";
-  const imgUrl = product?.processed_image_url || product?.generated_image_urls?.[0] || product?.raw_image_url;
 
   if (isProcessing) {
     return (
@@ -175,7 +246,7 @@ export function EditProductForm({ product }) {
                 placeholder="eg. Vintage gold Necklace"
                 value={form.title}
                 onChange={(e) => setField("title", e.target.value)}
-                required
+                error={errors.title}
               />
             </div>
           </div>
@@ -189,6 +260,7 @@ export function EditProductForm({ product }) {
                 value={form.jewellery_type}
                 onChange={(e) => setField("jewellery_type", e.target.value)}
                 placeholder="select"
+                error={errors.jewellery_type}
               />
             </div>
             <div className="w-full md:flex-1">
@@ -199,6 +271,7 @@ export function EditProductForm({ product }) {
                 value={form.category}
                 onChange={(e) => setField("category", e.target.value)}
                 placeholder="select"
+                error={errors.category}
               />
             </div>
           </div>
@@ -212,6 +285,7 @@ export function EditProductForm({ product }) {
                 value={form.style}
                 onChange={(e) => setField("style", e.target.value)}
                 placeholder="select"
+                error={errors.style}
               />
             </div>
             <div className="w-full md:flex-1">
@@ -222,6 +296,7 @@ export function EditProductForm({ product }) {
                 value={form.size}
                 onChange={(e) => setField("size", e.target.value)}
                 placeholder="select"
+                error={errors.size}
               />
             </div>
             <div className="w-full md:flex-1">
@@ -232,6 +307,7 @@ export function EditProductForm({ product }) {
                 value={form.metalPurity}
                 onChange={(e) => setField("metalPurity", e.target.value)}
                 placeholder="select"
+                error={errors.metalPurity}
               />
             </div>
           </div>
@@ -260,6 +336,7 @@ export function EditProductForm({ product }) {
                 suffix="g"
                 value={form.grossWeight}
                 onChange={(e) => setField("grossWeight", e.target.value)}
+                error={errors.grossWeight}
               />
             </div>
             <div className="col-span-1 md:flex-1">
@@ -273,6 +350,7 @@ export function EditProductForm({ product }) {
                 suffix="g"
                 value={form.stoneWeight}
                 onChange={(e) => setField("stoneWeight", e.target.value)}
+                error={errors.stoneWeight}
               />
             </div>
             <div className="col-span-1 md:flex-1">
@@ -286,6 +364,7 @@ export function EditProductForm({ product }) {
                 suffix="g"
                 value={form.netWeight}
                 onChange={(e) => setField("netWeight", e.target.value)}
+                error={errors.netWeight}
               />
             </div>
           </div>
@@ -299,7 +378,16 @@ export function EditProductForm({ product }) {
               id="stockAvailable"
               label=""
               checked={form.stockAvailable}
-              onChange={(val) => setField("stockAvailable", val)}
+              onChange={(val) => {
+                setField("stockAvailable", val);
+                if (val && errors.makeToOrderDays) {
+                  setErrors((prev) => {
+                    const updated = { ...prev };
+                    delete updated.makeToOrderDays;
+                    return updated;
+                  });
+                }
+              }}
             />
           </div>
 
@@ -314,10 +402,12 @@ export function EditProductForm({ product }) {
                 suffix="days"
                 value={form.makeToOrderDays}
                 onChange={(e) => setField("makeToOrderDays", e.target.value)}
+                error={errors.makeToOrderDays}
               />
             </div>
           )}
         </div>
+
 
         {error && (
           <div className="border border-red-200 bg-red-50 p-4 rounded-lg animate-fade-in">
