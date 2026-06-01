@@ -220,7 +220,10 @@ export default function FullImageViewer({
     <div
       ref={containerRef}
       className="fixed inset-0 z-[300] bg-black/95 backdrop-blur-xl flex flex-col justify-between select-none overflow-hidden transition-all duration-300 ease-out"
-      onClick={onClose}
+      onClick={(e) => {
+        e.stopPropagation();
+        onClose();
+      }}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
@@ -261,6 +264,7 @@ export default function FullImageViewer({
       <div 
         className="flex-1 w-full flex items-center justify-center relative overflow-hidden px-4 md:px-12"
         onClick={(e) => {
+          e.stopPropagation();
           // Double-tap or simple tap resets/zooms
           if (e.target === e.currentTarget) {
             onClose();
