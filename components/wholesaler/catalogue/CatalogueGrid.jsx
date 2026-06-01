@@ -121,6 +121,7 @@ function ProductDetailModal({ product, onClose, onUpdate }) {
       }, 1500);
 
     } catch (err) {
+      alert(err.message);
       setReprocessError(err.message || "Failed to reprocess product");
       setReprocessStatus("error");
     }
