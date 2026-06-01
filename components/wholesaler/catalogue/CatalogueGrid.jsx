@@ -4,9 +4,11 @@ import { useState, memo } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import FullImageViewer from "../../shared/FullImageViewer";
+import { clearProductImages } from "../../../lib/actions/products";
+import { reprocessProduct, pollForResult } from "../../../lib/api/products";
 
 // ── Product Detail Modal ──────────────────────────────────────────────────────
-function ProductDetailModal({ product, onClose }) {
+function ProductDetailModal({ product, onClose, onUpdate }) {
   if (!product) return null;
 
   // TODO: replace with Supabase product/processed/{product.sku} fetch once SKU is available
@@ -23,6 +25,12 @@ function ProductDetailModal({ product, onClose }) {
   const router = useRouter();
   const [isUpdatingPublish, setIsUpdatingPublish] = useState(false);
   const [isPublished, setIsPublished] = useState(product.is_published ?? true);
+
+  // States for reprocessing
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [isReprocessing, setIsReprocessing] = useState(false);
+  const [reprocessStatus, setReprocessStatus] = useState("");
+  const [reprocessError, setReprocessError] = useState(null);
 
   // Data fallbacks/parsing
   const title = product.title || (product.jewellery_type ? product.jewellery_type.charAt(0).toUpperCase() + product.jewellery_type.slice(1) : "Jewelry Piece");
@@ -72,6 +80,51 @@ function ProductDetailModal({ product, onClose }) {
     }
   };
 
+  const handleReprocess = async () => {
+    setShowConfirm(false);
+    setIsReprocessing(true);
+    setReprocessError(null);
+    setReprocessStatus("Initiating re-upload...");
+
+    try {
+      // 1. Clear existing images in Supabase to start fresh
+      setReprocessStatus("Clearing old images...");
+      const clearRes = await clearProductImages(product.id);
+      if (clearRes.error) {
+        throw new Error(clearRes.error);
+      }
+
+      // 2. Call backend reprocessing endpoint
+      setReprocessStatus("Queueing AI pipeline...");
+      await reprocessProduct(product.id);
+
+      // 3. Poll for results
+      setReprocessStatus("AI processing in progress...");
+      const variantUrls = await pollForResult(product.id, (bgUrl) => {
+        setReprocessStatus("Background removed, enhancing...");
+      });
+
+      // 4. Update parent and local state
+      const updatedProduct = {
+        ...product,
+        processed_image_url: variantUrls[0] || null,
+        generated_image_urls: variantUrls,
+      };
+
+      setReprocessStatus("Processing complete!");
+      onUpdate?.(updatedProduct);
+      
+      setTimeout(() => {
+        setIsReprocessing(false);
+        setReprocessStatus("");
+      }, 1500);
+
+    } catch (err) {
+      setReprocessError(err.message || "Failed to reprocess product");
+      setReprocessStatus("error");
+    }
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-[rgba(0,0,0,0.4)] backdrop-blur-sm p-4 overflow-hidden" onClick={onClose}>
       <div 
@@ -82,10 +135,44 @@ function ProductDetailModal({ product, onClose }) {
         <div className="w-full md:w-[58%] p-6 flex flex-col gap-4 border-r border-[#f0f0f0]">
           {/* Main Image */}
           <div 
-            onClick={() => setIsFullViewOpen(true)}
-            className="w-full aspect-square bg-[#F5F5F5] rounded-[16px] flex items-center justify-center overflow-hidden relative cursor-pointer group/mainimg"
+            onClick={() => {
+              if (isReprocessing || reprocessStatus === "error") return;
+              if (activeImageUrl) setIsFullViewOpen(true);
+            }}
+            className={`w-full aspect-square bg-[#F5F5F5] rounded-[16px] flex items-center justify-center overflow-hidden relative ${isReprocessing || reprocessStatus === "error" ? "cursor-default" : "cursor-pointer group/mainimg"}`}
           >
-            {activeImageUrl ? (
+            {isReprocessing ? (
+              <div className="absolute inset-0 bg-[#F5F5F5] flex flex-col items-center justify-center p-6 text-center gap-4">
+                {reprocessStatus === "error" ? (
+                  <>
+                    <div className="w-12 h-12 rounded-full bg-red-50 text-red-500 flex items-center justify-center">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      <p className="text-[16px] font-bold text-red-600">Reprocessing Failed</p>
+                      <p className="text-[12px] text-[#666] max-w-[240px] mx-auto leading-relaxed">{reprocessError}</p>
+                    </div>
+                    <button
+                      onClick={() => {
+                        setIsReprocessing(false);
+                        setReprocessStatus("");
+                      }}
+                      className="px-6 py-2 bg-black text-white rounded-full text-[13px] font-semibold hover:bg-black/90 cursor-pointer transition-colors"
+                    >
+                      Close
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <div className="w-10 h-10 border-[1.5px] border-gray-300 border-t-black rounded-full animate-spin" />
+                    <div className="flex flex-col gap-1">
+                      <p className="text-[16px] font-bold text-[#1A1A1A]">{reprocessStatus}</p>
+                      <p className="text-[12px] text-[#888]">This may take up to a minute</p>
+                    </div>
+                  </>
+                )}
+              </div>
+            ) : activeImageUrl ? (
               <>
                 <Image
                   src={activeImageUrl}
@@ -111,7 +198,7 @@ function ProductDetailModal({ product, onClose }) {
           </div>
           
           {/* Thumbnail Strip */}
-          {hasImages && (
+          {!isReprocessing && hasImages && (
             <div className="flex gap-3 pb-2 custom-scrollbar overflow-x-auto">
               {images.slice(0, 4).map((imgUrl, idx) => (
                 <button
@@ -177,18 +264,32 @@ function ProductDetailModal({ product, onClose }) {
                 <span className="text-[14px] font-semibold text-[#1A1A1A]">{product.gross_weight ? `${product.gross_weight}g` : '-'}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-[14px] text-[#666]">Net weight</span>
-                <span className="text-[14px] font-semibold text-[#1A1A1A]">{product.net_weight ? `${product.net_weight}g` : '-'}</span>
-              </div>
-              <div className="flex justify-between items-center">
                 <span className="text-[14px] text-[#666]">Stone weight</span>
                 <span className="text-[14px] font-semibold text-[#1A1A1A]">{product.stone_weight ? `${product.stone_weight}g` : '-'}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-[14px] text-[#666]">Net weight</span>
+                <span className="text-[14px] font-semibold text-[#1A1A1A]">{product.net_weight ? `${product.net_weight}g` : '-'}</span>
               </div>
             </div>
           </div>
 
+          {/* Re-upload to AI Button */}
+          <div className="mt-auto mb-4 pt-4 border-t border-[#f0f0f0]">
+            <button
+              onClick={() => setShowConfirm(true)}
+              disabled={isReprocessing}
+              className="w-full py-3 rounded-xl border border-[#111] hover:bg-[#111] hover:text-white text-[#111] text-[14px] font-semibold transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+              </svg>
+              Re-upload to AI
+            </button>
+          </div>
+
           {/* Publish Toggle */}
-          <div className="flex items-center justify-between mt-auto pt-4 border-t border-[#f0f0f0]">
+          <div className="flex items-center justify-between pt-4 border-t border-[#f0f0f0]">
             <span className="text-[15px] font-semibold text-[#1A1A1A]">Publish to Retailer</span>
             <button
               onClick={handleTogglePublish}
@@ -210,6 +311,41 @@ function ProductDetailModal({ product, onClose }) {
         activeIndex={activeImageIndex}
         onChangeIndex={(idx) => setActiveImageIndex(idx)}
       />
+
+      {/* Re-upload Confirmation Dialog */}
+      {showConfirm && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-xs p-4">
+          <div className="bg-white rounded-[24px] p-6 max-w-sm w-full shadow-[0_20px_50px_rgba(0,0,0,0.3)] flex flex-col gap-4 text-center animate-fade-in">
+            <div className="w-12 h-12 rounded-full bg-amber-50 text-amber-500 flex items-center justify-center mx-auto">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                <line x1="12" y1="9" x2="12" y2="13"/>
+                <line x1="12" y1="17" x2="12.01" y2="17"/>
+              </svg>
+            </div>
+            <div>
+              <h4 className="text-[18px] font-bold text-[#1A1A1A] font-sans">Re-upload to AI?</h4>
+              <p className="text-[14px] text-[#666] mt-2 leading-relaxed">
+                Are you sure you want to re-upload this image to AI? This will clear the current results and trigger the processing pipeline again.
+              </p>
+            </div>
+            <div className="flex gap-3 mt-2">
+              <button
+                onClick={() => setShowConfirm(false)}
+                className="flex-1 py-3 rounded-full border border-[#ddd] text-[#333] hover:bg-[#f9f9f9] text-[14px] font-semibold cursor-pointer transition-colors"
+              >
+                No
+              </button>
+              <button
+                onClick={handleReprocess}
+                className="flex-1 py-3 rounded-full bg-[#1A1A1A] text-white hover:bg-black text-[14px] font-semibold cursor-pointer transition-colors"
+              >
+                Yes
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -351,6 +487,7 @@ export default function CatalogueGrid({
   isError = false,
   onRetry,
   activeCategory = "All",
+  onUpdateProduct,
 }) {
   const router = useRouter();
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -424,6 +561,10 @@ export default function CatalogueGrid({
         <ProductDetailModal
           product={selectedProduct}
           onClose={() => setSelectedProduct(null)}
+          onUpdate={(updatedProduct) => {
+            setSelectedProduct(updatedProduct);
+            onUpdateProduct?.(updatedProduct);
+          }}
         />
       )}
     </>

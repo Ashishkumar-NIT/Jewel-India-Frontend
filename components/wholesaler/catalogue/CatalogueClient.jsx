@@ -219,6 +219,17 @@ export default function CatalogueClient({
      window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const handleUpdateProduct = useCallback((updatedProduct) => {
+    setProducts((prevProducts) =>
+      prevProducts.map((p) => (p.id === updatedProduct.id ? updatedProduct : p))
+    );
+    if (productsCache.data) {
+      productsCache.data = productsCache.data.map((p) =>
+        p.id === updatedProduct.id ? updatedProduct : p
+      );
+    }
+  }, []);
+
   const getActiveCatName = () => {
     if (activeCategory === "all") return "All Categories";
     const match = dynamicCategories?.find(c => c.slug === activeCategory);
@@ -380,6 +391,7 @@ export default function CatalogueClient({
           isError={isError}
           onRetry={() => fetchProducts(activeCategory, page, filters)}
           activeCategory={getActiveCatName()}
+          onUpdateProduct={handleUpdateProduct}
         />
 
         {/* ── Pagination ── */}
