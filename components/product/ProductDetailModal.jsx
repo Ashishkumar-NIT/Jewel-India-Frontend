@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import ProtectedImage from "../shared/ProtectedImage";
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
 const fmt = (val, suffix = "") =>
@@ -147,7 +148,7 @@ export function ProductDetailModal({ product, onClose }) {
                 {!imgLoaded && (
                   <div className="absolute inset-0 z-10 skeleton-shimmer" />
                 )}
-                <img
+                <ProtectedImage
                   key={activeImg}
                   src={activeImg}
                   alt={displayTitle}
@@ -211,7 +212,7 @@ export function ProductDetailModal({ product, onClose }) {
                       : "border-transparent opacity-50 hover:opacity-80"
                   }`}
                 >
-                  <img src={url} alt={`Variant ${i + 1}`} className="w-full h-full object-cover" />
+                  <ProtectedImage src={url} alt={`Variant ${i + 1}`} className="w-full h-full object-cover" />
                 </button>
               ))}
             </div>

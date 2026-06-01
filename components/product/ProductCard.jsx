@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { ProductDetailModal } from "./ProductDetailModal";
+import ProtectedImage from "../shared/ProtectedImage";
 
 // ── Skeleton placeholder (matches card proportions exactly) ────────────────
 export function ProductCardSkeleton() {
@@ -89,11 +90,9 @@ export function ProductCard({ product, index = 0 }) {
         )}
 
         {activeUrl && !imgError ? (
-          <img
+          <ProtectedImage
             src={activeUrl}
             alt={product.title || product.jewellery_type || "Jewellery"}
-            loading="lazy"
-            decoding="async"
             className={`w-full h-full object-cover mix-blend-multiply transition-all duration-700 group-hover:scale-105 ${
               imgLoaded ? "opacity-100" : "opacity-0"
             }`}

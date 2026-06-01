@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import ProtectedImage from "../../shared/ProtectedImage";
 
 import { OrderDetailModal } from "../../../components/employee/OrderDetailModal";
 import { BusinessProfileModal } from "../../../components/shared/BusinessProfileModal";
@@ -71,7 +72,7 @@ function WholesalerOrderCard({ order, onUpdateStatus, onReject, onDeleteOrder, o
       {/* Left Image */}
       <div className="w-[240px] h-[240px] bg-gray-50 rounded-sm overflow-hidden shrink-0 border border-gray-100">
         {imgUrl ? (
-          <img src={imgUrl} alt={p.title} className="w-full h-full object-cover" />
+          <ProtectedImage src={imgUrl} alt={p.title} className="w-full h-full object-cover" />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-[12px] text-gray-400">No Image</div>
         )}

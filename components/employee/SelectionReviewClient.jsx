@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import ProtectedImage from "../shared/ProtectedImage";
 
 export default function SelectionReviewClient() {
   const router = useRouter();
@@ -241,7 +242,7 @@ export default function SelectionReviewClient() {
                return (
                  <div className="flex flex-col gap-4">
                     <div className="w-full aspect-[4/4.5] bg-[#343e4b] flex items-center justify-center overflow-hidden">
-                      <img src={activeImage} className="w-full h-full object-cover" />
+                      <ProtectedImage src={activeImage} className="w-full h-full object-cover" />
                     </div>
                     <div className="grid grid-cols-4 gap-4">
                        {thumbnailSlots.map((imgSrc, idx) => {
@@ -255,7 +256,7 @@ export default function SelectionReviewClient() {
                                  isActive ? "border-2 border-transparent opacity-40" : "border-2 border-black ring-1 ring-black scale-[0.98] opacity-100"
                                }`}
                              >
-                               <img src={imgSrc} className="w-full h-full object-cover" />
+                               <ProtectedImage src={imgSrc} className="w-full h-full object-cover" />
                              </button>
                            );
                          }
@@ -341,7 +342,7 @@ export default function SelectionReviewClient() {
                     <div key={product.id} className="flex flex-col cursor-pointer hover:opacity-90 transition-opacity" onClick={() => handleViewProduct(product)}>
                       <div className="w-full aspect-[4/3.5] bg-[#F5F6F8] flex items-center justify-center p-8 overflow-hidden">
                          {imgUrl ? (
-                           <img src={imgUrl} className="w-full h-full object-contain mix-blend-multiply" />
+                           <ProtectedImage src={imgUrl} className="w-full h-full object-contain mix-blend-multiply" />
                          ) : (
                            <span className="text-gray-400 font-serif text-sm">No Image</span>
                          )}
@@ -381,7 +382,7 @@ export default function SelectionReviewClient() {
                            <h4 className="font-serif text-[20px] text-gray-900 leading-[1.2]">{viewingProduct.title || "Vintage Cuff half necklace"}</h4>
                         </div>
                         <div className="w-24 h-24 bg-[#343e4b] shrink-0 overflow-hidden">
-                           <img src={activeImage} className="w-full h-full object-cover" />
+                           <ProtectedImage src={activeImage} className="w-full h-full object-cover" />
                         </div>
                      </div>
 
@@ -437,7 +438,7 @@ export default function SelectionReviewClient() {
                   </button>
                   <div className="w-full aspect-[4/3.5] bg-[#F5F6F8] flex items-center justify-center p-8 overflow-hidden">
                      {imgUrl ? (
-                       <img src={imgUrl} alt={product.title} className="w-full h-full object-contain mix-blend-multiply pointer-events-none" />
+                       <ProtectedImage src={imgUrl} alt={product.title} className="w-full h-full object-contain mix-blend-multiply pointer-events-none" />
                      ) : (
                        <span className="text-gray-400 font-serif text-sm">No Image</span>
                      )}

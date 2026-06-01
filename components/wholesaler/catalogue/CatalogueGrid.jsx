@@ -4,6 +4,7 @@ import { useState, memo } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import FullImageViewer from "../../shared/FullImageViewer";
+import ProtectedImage from "../../shared/ProtectedImage";
 import { clearProductImages } from "../../../lib/actions/products";
 import { reprocessProduct, pollForResult } from "../../../lib/api/products";
 
@@ -174,11 +175,9 @@ function ProductDetailModal({ product, onClose, onUpdate }) {
               </div>
             ) : activeImageUrl ? (
               <>
-                <Image
+                <ProtectedImage
                   src={activeImageUrl}
                   alt={title}
-                  fill
-                  loading="lazy"
                   className="w-full h-full object-contain mix-blend-multiply transition-transform duration-300 group-hover/mainimg:scale-[1.02]"
                 />
                 <div className="absolute top-3 right-3 z-10 w-9 h-9 rounded-full bg-white/85 backdrop-blur-sm shadow-sm flex items-center justify-center text-gray-700 opacity-0 group-hover/mainimg:opacity-100 transition-opacity active:scale-90 pointer-events-none md:pointer-events-auto">
@@ -206,12 +205,11 @@ function ProductDetailModal({ product, onClose, onUpdate }) {
                   onClick={() => setActiveImageIndex(idx)}
                   className={`shrink-0 w-[64px] h-[64px] md:w-[72px] md:h-[72px] rounded-[10px] bg-[#f5f5f5] overflow-hidden transition-all border-2 ${activeImageIndex === idx ? 'border-[#111] opacity-30' : 'border-transparent opacity-100'}`}
                 >
-                  <Image
+                  <ProtectedImage
                     src={imgUrl}
                     alt={`Thumb ${idx}`}
                     width={72}
                     height={72}
-                    loading="lazy"
                     className="w-full h-full object-cover mix-blend-multiply"
                   />
                 </button>
@@ -415,11 +413,9 @@ const CatalogueProductCard = memo(function CatalogueProductCard({ product, onCli
     >
       <div className="w-full aspect-square bg-[#f9f9f9] rounded-t-xl overflow-hidden relative">
         {imgUrl && !imgError ? (
-          <Image
+          <ProtectedImage
             src={imgUrl}
             alt={title}
-            fill
-            loading="lazy"
             className="w-full h-full object-cover"
             onError={() => setImgError(true)}
           />

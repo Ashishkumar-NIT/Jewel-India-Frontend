@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import FullImageViewer from "../shared/FullImageViewer";
+import ProtectedImage from "../shared/ProtectedImage";
 
 function formatWeight(val) {
   if (val === null || val === undefined || val === "") return null;
@@ -179,7 +180,7 @@ export function ProductInfoModal({ isOpen, onClose, product, onStartChat }) {
           >
             {!mainImgError && activeImageUrl ? (
               <>
-                <img
+                <ProtectedImage
                   src={activeImageUrl}
                   alt={title}
                   className="absolute inset-0 w-full h-full object-contain p-4 mix-blend-multiply transition-transform duration-300 group-hover/mainimg:scale-[1.02]"
@@ -213,7 +214,7 @@ export function ProductInfoModal({ isOpen, onClose, product, onStartChat }) {
                   style={{ width: 64, height: 64 }}
                   aria-label={`Image ${idx + 1}`}
                 >
-                  <img src={imgUrl} alt={`thumb-${idx}`} className="w-full h-full object-cover" />
+                  <ProtectedImage src={imgUrl} alt={`thumb-${idx}`} className="w-full h-full object-cover" />
                 </button>
               ))}
             </div>
@@ -362,7 +363,7 @@ export function ProductInfoModal({ isOpen, onClose, product, onStartChat }) {
                     </div>
                     {activeImageUrl && (
                       <div className="w-20 h-20 rounded-[8px] overflow-hidden shrink-0 bg-gray-100">
-                        <img src={activeImageUrl} alt={title} className="w-full h-full object-cover" />
+                        <ProtectedImage src={activeImageUrl} alt={title} className="w-full h-full object-cover" />
                       </div>
                     )}
                   </div>

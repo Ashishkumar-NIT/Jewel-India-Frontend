@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import ProtectedImage from "./ProtectedImage";
 
 export default function FullImageViewer({
   isOpen,
@@ -306,7 +307,7 @@ export default function FullImageViewer({
           }}
         >
           {currentImageUrl ? (
-            <img
+            <ProtectedImage
               src={currentImageUrl}
               alt="Jewelry artwork details"
               className="max-w-full max-h-full object-contain pointer-events-none drop-shadow-[0_10px_30px_rgba(255,255,255,0.05)] transition-all duration-300"
@@ -402,7 +403,7 @@ export default function FullImageViewer({
                 }`}
                 aria-label={`Thumbnail ${idx + 1}`}
               >
-                <img
+                <ProtectedImage
                   src={imgUrl}
                   alt={`Thumb ${idx}`}
                   className="w-full h-full object-cover pointer-events-none"

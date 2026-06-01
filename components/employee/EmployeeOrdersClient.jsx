@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import ProtectedImage from "../shared/ProtectedImage";
 import { BusinessProfileModal } from "../shared/BusinessProfileModal";
 import { ConfirmationModal } from "../shared/ConfirmationModal";
 
@@ -143,7 +144,7 @@ function OrderCard({ order, onUpdateStatus, onDeleteOrder, onBusinessClick }) {
       {/* Left: Image */}
       <div className="w-[140px] h-[160px] shrink-0 bg-gray-100 overflow-hidden rounded-[2px] border border-gray-200">
         {imgUrl ? (
-          <img src={imgUrl} alt={p.title} className="w-full h-full object-cover" />
+          <ProtectedImage src={imgUrl} alt={p.title} className="w-full h-full object-cover" />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-[11px] text-gray-400">No Image</div>
         )}

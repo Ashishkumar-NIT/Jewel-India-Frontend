@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import FullImageViewer from "../shared/FullImageViewer";
+import ProtectedImage from "../shared/ProtectedImage";
 
 function ToggleSwitch({ isOn, onToggle }) {
   return (
@@ -69,7 +70,7 @@ export function OrderDetailModal({ order, onClose }) {
               onClick={() => setIsFullViewOpen(true)}
               className="w-full aspect-[4/3] bg-[#f9f9f9] rounded-[12px] overflow-hidden flex items-center justify-center p-4 cursor-pointer relative group/mainimg"
             >
-              <img src={imgUrl} alt={title} className="w-full h-full object-contain mix-blend-multiply transition-transform duration-300 group-hover/mainimg:scale-[1.02]" />
+              <ProtectedImage src={imgUrl} alt={title} className="w-full h-full object-contain mix-blend-multiply transition-transform duration-300 group-hover/mainimg:scale-[1.02]" />
               <div className="absolute top-3 right-3 z-10 w-9 h-9 rounded-full bg-white/85 backdrop-blur-sm shadow-sm flex items-center justify-center text-gray-700 opacity-0 group-hover/mainimg:opacity-100 transition-opacity active:scale-90 pointer-events-none md:pointer-events-auto">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>
@@ -85,7 +86,7 @@ export function OrderDetailModal({ order, onClose }) {
                     onClick={() => setActiveImageIndex(idx)}
                     className={`shrink-0 w-[64px] h-[64px] bg-[#f9f9f9] rounded-[8px] overflow-hidden border cursor-pointer p-2 transition-all ${activeImageIndex === idx ? 'border-black opacity-100 scale-105 shadow-sm' : 'border-transparent opacity-60 hover:opacity-100'}`}
                   >
-                    <img src={url} alt="Thumbnail" className="w-full h-full object-contain mix-blend-multiply" />
+                    <ProtectedImage src={url} alt="Thumbnail" className="w-full h-full object-contain mix-blend-multiply" />
                   </div>
                 ))}
               </div>

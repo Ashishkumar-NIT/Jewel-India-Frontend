@@ -493,3 +493,10 @@ body {
     stroke-dashoffset: 0 !important;
   }
 }
+
+/* ── Image Copy Protection ─────────────────────────────────── */
+canvas.protected-image {
+  user-select: none;
+  -webkit-user-drag: none;
+  -webkit-touch-callout: none;
+}

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ProductInfoModal } from "./ProductInfoModal";
+import ProtectedImage from "../shared/ProtectedImage";
 
 const VERTICAL_IMAGES = [
   "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1778318369/emp_static1_ywv9ro.svg",
@@ -49,7 +50,7 @@ export default function DesignerCollectionSection({ employee, businessName, desi
             >
               {/* Image Container */}
               <div className="w-full bg-[#f8f8f8] p-0 flex items-center justify-center overflow-hidden" style={{ aspectRatio: "5/4" }}>
-                <img
+                <ProtectedImage
                   src={design.image_url}
                   alt={design.title || "Untitled design"}
                   className="w-full h-full object-contain mix-blend-multiply shadow-sm transition-transform group-hover/card:scale-105 duration-700"

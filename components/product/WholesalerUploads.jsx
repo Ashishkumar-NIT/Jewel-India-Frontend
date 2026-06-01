@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import ProtectedImage from "../shared/ProtectedImage";
 function UploadCard({ product }) {
   const [imgError, setImgError] = useState(false);
   const [variantIdx, setVariantIdx] = useState(0);
@@ -27,7 +28,7 @@ function UploadCard({ product }) {
       {/* ── Image ── */}
       <div className="relative aspect-4/5 w-full overflow-hidden bg-celestique-taupe/20 mb-5">
         {activeUrl && !imgError ? (
-          <img
+          <ProtectedImage
             src={activeUrl}
             alt={product.title || product.jewellery_type || "Jewellery"}
             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
