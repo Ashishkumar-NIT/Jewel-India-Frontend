@@ -220,7 +220,7 @@ export default function FullImageViewer({
   return (
     <div
       ref={containerRef}
-      className="fixed inset-0 z-[300] bg-black/95 backdrop-blur-xl flex flex-col justify-between select-none overflow-hidden transition-all duration-300 ease-out"
+      className="fixed inset-0 z-[300] bg-black/95 backdrop-blur-xl select-none overflow-hidden transition-all duration-300 ease-out"
       onClick={(e) => {
         e.stopPropagation();
         onClose();
@@ -230,7 +230,7 @@ export default function FullImageViewer({
       onTouchEnd={handleTouchEnd}
     >
       {/* ── HEADER ── */}
-      <header className="w-full flex items-center justify-between px-6 py-6 pointer-events-none z-[310]">
+      <header className="absolute top-0 left-0 right-0 flex items-center justify-between px-6 py-6 pointer-events-none z-[320]">
         {/* Finger-friendly back/close button */}
         <button
           onClick={(e) => {
@@ -266,7 +266,7 @@ export default function FullImageViewer({
 
       {/* ── MAIN PRODUCT VIEWER AREA ── */}
       <div 
-        className="flex-1 w-full flex items-center justify-center relative overflow-hidden px-4 md:px-12"
+        className="w-full h-full flex items-center justify-center relative overflow-hidden px-4 md:px-12"
         onClick={(e) => {
           e.stopPropagation();
           // Double-tap or simple tap resets/zooms
@@ -300,7 +300,7 @@ export default function FullImageViewer({
 
         {/* Large Main Product Image Container */}
         <div
-          className="relative max-w-full max-h-[75vh] md:max-h-[78vh] aspect-square flex items-center justify-center z-[310] transition-transform duration-200 ease-out"
+          className="relative max-w-[90vw] max-h-[85vh] md:max-h-[88vh] aspect-square flex items-center justify-center z-[310] transition-transform duration-200 ease-out"
           style={{
             transform: `scale(${zoom}) translate(${pan.x}px, ${pan.y}px)`,
             cursor: zoom > 1 ? "grab" : "zoom-in",
@@ -394,7 +394,7 @@ export default function FullImageViewer({
 
       {/* ── FOOTER: Large Thumbnails strip ── */}
       <footer 
-        className="w-full flex justify-center py-6 px-6 bg-gradient-to-t from-black/60 to-transparent z-[310]"
+        className="absolute bottom-0 left-0 right-0 flex justify-center py-6 px-6 bg-gradient-to-t from-black/90 via-black/40 to-transparent z-[320]"
         onClick={(e) => e.stopPropagation()}
         onTouchStart={(e) => e.stopPropagation()}
         onTouchMove={(e) => e.stopPropagation()}
