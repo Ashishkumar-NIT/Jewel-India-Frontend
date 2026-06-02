@@ -27,7 +27,7 @@ export default async function RetailerSubmittedPage() {
   }
 
   if (retailer.verification_status === "verified") {
-    redirect("/dashboard/retailer");
+    redirect("/dashboard/employee");
   }
 
   const timeSubmitted = new Date(retailer.created_at).toLocaleString('en-IN', {

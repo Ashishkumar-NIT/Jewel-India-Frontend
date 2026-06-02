@@ -110,13 +110,13 @@ export async function POST(request) {
     } 
     
     if (mode === "retailer") {
-      // Clear the context cookie
-      cookieStore.set("jewel_view_mode", "", {
+      // Set the retailer context cookie
+      cookieStore.set("jewel_view_mode", "retailer", {
         path: "/",
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "lax",
-        maxAge: 0, // Immediately expired
+        maxAge: 60 * 60 * 24 * 7, // 7 days
       });
 
       return NextResponse.json({ success: true, activeView: "retailer" });

@@ -1,6 +1,7 @@
 import { createClient } from "../../../lib/supabase/server";
 import { redirect } from "next/navigation";
 import EmployeeLayout from "../../../components/employee/EmployeeLayout";
+import { ensureVirtualEmployee } from "../../../lib/supabase/queries";
 
 export const metadata = {
   title: "Employee Dashboard — Jewel India",
@@ -18,15 +19,10 @@ export default async function EmployeeDashboardLayout({ children }) {
     redirect("/entry_page/signin");
   }
 
-  // Fetch the employee record linked to this auth user
-  const { data: employee, error: empError } = await supabase
-    .from("employees")
-    .select("id, full_name, designation, retailer_id, status")
-    .eq("auth_user_id", user.id)
-    .single();
+  // Fetch the employee record linked to this auth user, auto-provisioning if retailer admin
+  const employee = await ensureVirtualEmployee(user);
 
-  if (empError || !employee) {
-    // Edge case: user has 'employee' role but no row in employees table
+  if (!employee) {
     redirect("/entry_page/signin");
   }
 

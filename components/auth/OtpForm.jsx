@@ -209,7 +209,17 @@ export function OtpForm() {
     } else {
       // Returning user
       if (data.userRole === "retailer") {
-        router.push("/dashboard/retailer"); // Or maybe just '/' if middleware handles it
+        const cookies = document.cookie.split(";").reduce((acc, c) => {
+          const [k, v] = c.trim().split("=");
+          acc[k] = v;
+          return acc;
+        }, {});
+        const viewMode = cookies["jewel_view_mode"];
+        if (viewMode === "retailer") {
+          router.push("/dashboard/retailer");
+        } else {
+          router.push("/dashboard/employee");
+        }
       } else {
         router.push("/dashboard/wholesaler");
       }

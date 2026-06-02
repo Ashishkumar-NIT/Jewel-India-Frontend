@@ -2,6 +2,7 @@ import { createClient } from "../../../lib/supabase/server";
 import { supabaseAdmin } from "../../../lib/supabase/admin";
 import { redirect } from "next/navigation";
 import EmployeeHomeClient from "../../../components/employee/EmployeeHomeClient";
+import { ensureVirtualEmployee } from "../../../lib/supabase/queries";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -15,12 +16,8 @@ export default async function EmployeeDashboardPage() {
 
   if (!user) redirect("/entry_page/signin");
 
-  // Fetch employee record
-  const { data: employee } = await supabase
-    .from("employees")
-    .select("id, full_name, designation, retailer_id")
-    .eq("auth_user_id", user.id)
-    .single();
+  // Fetch employee record (auto-provisioning if retailer admin)
+  const employee = await ensureVirtualEmployee(user);
 
   if (!employee) redirect("/entry_page/signin");
 
