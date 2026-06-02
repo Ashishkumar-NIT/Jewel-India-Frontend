@@ -75,8 +75,6 @@ export default function ProtectedImage({
   return (
     <canvas
       ref={canvasRef}
-      width={width}
-      height={height}
       className={`protected-image ${className}`}
       role="img"
       aria-label={alt}
