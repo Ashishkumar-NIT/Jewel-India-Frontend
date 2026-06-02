@@ -47,31 +47,25 @@ export default function EmployeeHomeClient({ employee, businessName, designs }) 
             {/* No overlays as requested */}
 
             {/* Content — full height flex */}
-            <div className="relative z-10 flex flex-col h-full p-8 pb-6">
+            <div className="relative z-10 flex flex-col h-full p-8 pb-8">
               {/* Top: large serif text left-aligned */}
               <h3
-                className="font-serif text-white leading-[1.1] text-left"
+                className="font-serif text-white leading-[1.2] text-left uppercase tracking-wider"
                 style={{ fontSize: "clamp(20px, 5vw, 26px)", fontWeight: 400 }}
               >
-                let&apos;s find out what you<br />are looking for
+                explore the<br />design collection
               </h3>
 
               {/* Spacer */}
               <div className="flex-1" />
 
-              {/* Bottom: button + skip */}
-              <div className="flex flex-col items-center gap-3">
-                <button
-                  onClick={() => router.push('/dashboard/employee/questionnaire')}
-                  className="w-full py-3.5 rounded-none bg-[#1a1a1a]/90 backdrop-blur-sm text-white text-[15px] font-medium tracking-wide border border-white/10 hover:bg-[#111] transition-all"
-                >
-                  Start with some question
-                </button>
+              {/* Bottom: single direct button */}
+              <div className="flex flex-col items-center w-full">
                 <button
                   onClick={() => router.push('/dashboard/employee/playground')}
-                  className="text-white/75 text-[14px] font-medium hover:text-white transition-colors"
+                  className="w-full py-4 rounded-none bg-[#1a1a1a]/90 backdrop-blur-sm text-white text-[14px] font-semibold tracking-wider uppercase border border-white/10 hover:bg-black hover:scale-[1.02] transition-all duration-300 shadow-lg"
                 >
-                  Skip
+                  Take me directly to playground
                 </button>
               </div>
             </div>
