@@ -346,50 +346,6 @@ export default function FullImageViewer({
           </svg>
         </button>
 
-        {/* ── ZOOM SLIDER OVERLAY (Bottom Right for Tablet UX) ── */}
-        <div 
-          className="absolute bottom-4 right-6 md:right-12 bg-black/40 border border-white/10 backdrop-blur-md px-4 py-3 rounded-full flex items-center gap-3 shadow-2xl z-[320] pointer-events-auto"
-          onClick={(e) => e.stopPropagation()}
-          onTouchStart={(e) => e.stopPropagation()}
-          onTouchMove={(e) => e.stopPropagation()}
-          onTouchEnd={(e) => e.stopPropagation()}
-        >
-          <button
-            onClick={() => {
-              const nextScale = Math.max(1, zoom - 0.5);
-              setZoom(nextScale);
-              if (nextScale === 1) setPan({ x: 0, y: 0 });
-            }}
-            className="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 text-white text-lg font-bold"
-          >
-            −
-          </button>
-          
-          <input
-            type="range"
-            min="1"
-            max="4"
-            step="0.1"
-            value={zoom}
-            onChange={(e) => {
-              const val = parseFloat(e.target.value);
-              setZoom(val);
-              if (val === 1) setPan({ x: 0, y: 0 });
-            }}
-            className="w-[120px] h-[3px] bg-white/20 accent-white rounded-lg appearance-none cursor-pointer"
-          />
-
-          <button
-            onClick={() => setZoom(Math.min(4, zoom + 0.5))}
-            className="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 text-white text-lg font-bold"
-          >
-            +
-          </button>
-          
-          <span className="text-[11px] text-white/70 font-semibold min-w-[28px] text-right">
-            {zoom.toFixed(1)}x
-          </span>
-        </div>
       </div>
 
       {/* ── FOOTER: Large Thumbnails strip ── */}
@@ -428,6 +384,51 @@ export default function FullImageViewer({
           })}
         </div>
       </footer>
+
+      {/* ── ZOOM SLIDER OVERLAY (Bottom Right for Tablet UX) ── */}
+      <div 
+        className="absolute bottom-4 right-6 md:right-12 bg-black/40 border border-white/10 backdrop-blur-md px-4 py-3 rounded-full flex items-center gap-3 shadow-2xl z-[330] pointer-events-auto"
+        onClick={(e) => e.stopPropagation()}
+        onTouchStart={(e) => e.stopPropagation()}
+        onTouchMove={(e) => e.stopPropagation()}
+        onTouchEnd={(e) => e.stopPropagation()}
+      >
+        <button
+          onClick={() => {
+            const nextScale = Math.max(1, zoom - 0.5);
+            setZoom(nextScale);
+            if (nextScale === 1) setPan({ x: 0, y: 0 });
+          }}
+          className="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 text-white text-lg font-bold"
+        >
+          −
+        </button>
+        
+        <input
+          type="range"
+          min="1"
+          max="4"
+          step="0.1"
+          value={zoom}
+          onChange={(e) => {
+            const val = parseFloat(e.target.value);
+            setZoom(val);
+            if (val === 1) setPan({ x: 0, y: 0 });
+          }}
+          className="w-[120px] h-[3px] bg-white/20 accent-white rounded-lg appearance-none cursor-pointer"
+        />
+
+        <button
+          onClick={() => setZoom(Math.min(4, zoom + 0.5))}
+          className="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 text-white text-lg font-bold"
+        >
+          +
+        </button>
+        
+        <span className="text-[11px] text-white/70 font-semibold min-w-[28px] text-right">
+          {zoom.toFixed(1)}x
+        </span>
+      </div>
     </div>
   );
 }
