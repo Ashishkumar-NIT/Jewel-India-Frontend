@@ -15,6 +15,10 @@ export default function InfinityCanvas({ products, onBack, onNext, retailerName 
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const searchParams = useSearchParams();
 
+  // Refs for tracking long-press events (Touch and Mouse)
+  const longPressTimer = useRef(null);
+  const isLongPressRef = useRef(false);
+
 
   // Use refs for GSAP animation to avoid state re-renders
   const targetX = useRef(0);
@@ -116,8 +120,7 @@ export default function InfinityCanvas({ products, onBack, onNext, retailerName 
     };
   }, [products]);
 
-  const toggleSelection = (product, e) => {
-    e.stopPropagation();
+  const toggleSelection = (product) => {
     setSelectedItems(prev => {
       const next = new Set(prev);
       if (next.has(product.id)) {
@@ -136,6 +139,33 @@ export default function InfinityCanvas({ products, onBack, onNext, retailerName 
       next.delete(id);
       return next;
     });
+  };
+
+  const handleStart = (product, e) => {
+    isLongPressRef.current = false;
+    longPressTimer.current = setTimeout(() => {
+      toggleSelection(product);
+      isLongPressRef.current = true;
+      if (window.navigator?.vibrate) {
+        window.navigator.vibrate(50);
+      }
+    }, 550);
+  };
+
+  const handleEnd = (e) => {
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current);
+    }
+    if (isLongPressRef.current) {
+      if (e && typeof e.preventDefault === "function") e.preventDefault();
+      if (e && typeof e.stopPropagation === "function") e.stopPropagation();
+    }
+  };
+
+  const handleMove = () => {
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current);
+    }
   };
 
   const handleNext = () => {
@@ -172,7 +202,20 @@ export default function InfinityCanvas({ products, onBack, onNext, retailerName 
               ref={el => itemRefs.current[idx] = el}
               className={`absolute top-0 left-0 cursor-pointer will-change-transform group/tile`}
               style={{ width: "260px", height: "360px" }}
-              onClick={(e) => toggleSelection(product, e)}
+              onClick={(e) => {
+                if (isLongPressRef.current) {
+                  isLongPressRef.current = false;
+                  return;
+                }
+                setViewingProductForModal(product);
+              }}
+              onTouchStart={(e) => handleStart(product, e)}
+              onTouchEnd={(e) => handleEnd(e)}
+              onTouchMove={handleMove}
+              onMouseDown={(e) => handleStart(product, e)}
+              onMouseUp={(e) => handleEnd(e)}
+              onMouseMove={handleMove}
+              onMouseLeave={handleMove}
             >
               <div className={`w-full h-full bg-white flex flex-col transition-all duration-300 rounded-[2px] overflow-hidden ${isSelected ? 'border-[3px] border-[#007AFF] shadow-lg scale-[0.97]' : 'border border-gray-100 shadow-sm hover:shadow-xl hover:scale-[1.02]'}`}>
                 <div className="w-full bg-gray-50 flex items-center justify-center p-4 overflow-hidden relative" style={{ flex: "1 1 0", minHeight: 0 }}>
