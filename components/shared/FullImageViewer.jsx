@@ -237,6 +237,9 @@ export default function FullImageViewer({
             e.stopPropagation();
             onClose();
           }}
+          onTouchStart={(e) => e.stopPropagation()}
+          onTouchMove={(e) => e.stopPropagation()}
+          onTouchEnd={(e) => e.stopPropagation()}
           className="pointer-events-auto flex items-center justify-center gap-2.5 px-5 py-3 rounded-full bg-white/10 hover:bg-white/15 border border-white/10 backdrop-blur-md shadow-lg transition-all duration-200 active:scale-95 text-white text-[14px] font-medium"
         >
           <svg
@@ -275,6 +278,9 @@ export default function FullImageViewer({
         {/* Navigation Chevron — Left */}
         <button
           onClick={handlePrev}
+          onTouchStart={(e) => e.stopPropagation()}
+          onTouchMove={(e) => e.stopPropagation()}
+          onTouchEnd={(e) => e.stopPropagation()}
           className="absolute left-6 md:left-10 w-14 h-14 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 backdrop-blur-md flex items-center justify-center text-white/80 hover:text-white transition-all shadow-lg active:scale-90 z-[320]"
           aria-label="Previous Image"
         >
@@ -294,7 +300,7 @@ export default function FullImageViewer({
 
         {/* Large Main Product Image Container */}
         <div
-          className="relative max-w-full max-h-[60vh] md:max-h-[65vh] aspect-square flex items-center justify-center z-[310] transition-transform duration-200 ease-out"
+          className="relative max-w-full max-h-[75vh] md:max-h-[78vh] aspect-square flex items-center justify-center z-[310] transition-transform duration-200 ease-out"
           style={{
             transform: `scale(${zoom}) translate(${pan.x}px, ${pan.y}px)`,
             cursor: zoom > 1 ? "grab" : "zoom-in",
@@ -320,6 +326,9 @@ export default function FullImageViewer({
         {/* Navigation Chevron — Right */}
         <button
           onClick={handleNext}
+          onTouchStart={(e) => e.stopPropagation()}
+          onTouchMove={(e) => e.stopPropagation()}
+          onTouchEnd={(e) => e.stopPropagation()}
           className="absolute right-6 md:right-10 w-14 h-14 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 backdrop-blur-md flex items-center justify-center text-white/80 hover:text-white transition-all shadow-lg active:scale-90 z-[320]"
           aria-label="Next Image"
         >
@@ -341,6 +350,9 @@ export default function FullImageViewer({
         <div 
           className="absolute bottom-4 right-6 md:right-12 bg-black/40 border border-white/10 backdrop-blur-md px-4 py-3 rounded-full flex items-center gap-3 shadow-2xl z-[320] pointer-events-auto"
           onClick={(e) => e.stopPropagation()}
+          onTouchStart={(e) => e.stopPropagation()}
+          onTouchMove={(e) => e.stopPropagation()}
+          onTouchEnd={(e) => e.stopPropagation()}
         >
           <button
             onClick={() => {
@@ -384,6 +396,9 @@ export default function FullImageViewer({
       <footer 
         className="w-full flex justify-center py-6 px-6 bg-gradient-to-t from-black/60 to-transparent z-[310]"
         onClick={(e) => e.stopPropagation()}
+        onTouchStart={(e) => e.stopPropagation()}
+        onTouchMove={(e) => e.stopPropagation()}
+        onTouchEnd={(e) => e.stopPropagation()}
       >
         <div className="flex gap-4.5 overflow-x-auto py-2 scrollbar-hide max-w-full px-4">
           {images.map((imgUrl, idx) => {
