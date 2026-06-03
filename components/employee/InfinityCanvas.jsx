@@ -260,14 +260,16 @@ export default function InfinityCanvas({ products, onBack, onNext, retailerName,
           height: "120px",
           background: "linear-gradient(to bottom, rgba(252,252,252,0.92) 0%, rgba(252,252,252,0.5) 55%, transparent 100%)",
         }}
-      />
-
-      {/* Top Header */}
+      />      {/* Top Header */}
       <div className="absolute top-0 left-0 right-0 px-8 pt-7 flex justify-between items-center pointer-events-none z-10">
         <div className="flex justify-start items-center w-[160px]">
           {/* Back Button */}
           <button
             onClick={onBack}
+            onPointerDown={(e) => e.stopPropagation()}
+            onTouchStart={(e) => e.stopPropagation()}
+            onTouchEnd={(e) => e.stopPropagation()}
+            onMouseDown={(e) => e.stopPropagation()}
             className="w-11 h-11 bg-white/60 backdrop-blur-md rounded-full shadow-lg flex items-center justify-center text-gray-600 hover:text-black pointer-events-auto border border-white/40 transition-transform hover:scale-105 shrink-0"
           >
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
@@ -290,6 +292,10 @@ export default function InfinityCanvas({ products, onBack, onNext, retailerName,
           {/* Layout Toggle Button */}
           <button
             onClick={() => onToggleLayout("catalogue")}
+            onPointerDown={(e) => e.stopPropagation()}
+            onTouchStart={(e) => e.stopPropagation()}
+            onTouchEnd={(e) => e.stopPropagation()}
+            onMouseDown={(e) => e.stopPropagation()}
             className="h-11 px-5 bg-white/60 backdrop-blur-md rounded-full shadow-lg flex items-center gap-2 text-gray-600 hover:text-black pointer-events-auto border border-white/40 transition-transform hover:scale-105 shrink-0 font-medium text-[13px]"
             title="Switch to Catalogue Grid"
           >
@@ -306,7 +312,13 @@ export default function InfinityCanvas({ products, onBack, onNext, retailerName,
 
       {/* Bottom Filter Tags (Glassmorphism) */}
       <div className="absolute bottom-10 left-1/2 -translate-x-1/2 pointer-events-none z-10">
-        <div className="bg-gradient-to-r from-white/30 via-white/50 to-white/30 backdrop-blur-md shadow-[0_10px_40px_rgba(0,0,0,0.1)] border border-white/40 rounded-full px-10 py-3 flex gap-8 pointer-events-auto items-center">
+        <div 
+          onPointerDown={(e) => e.stopPropagation()}
+          onTouchStart={(e) => e.stopPropagation()}
+          onTouchEnd={(e) => e.stopPropagation()}
+          onMouseDown={(e) => e.stopPropagation()}
+          className="bg-gradient-to-r from-white/30 via-white/55 to-white/30 backdrop-blur-md shadow-[0_10px_40px_rgba(0,0,0,0.1)] border border-white/40 rounded-full px-10 py-3 flex gap-8 pointer-events-auto items-center"
+        >
           
           {occasion && (
             <div className="flex flex-col items-center">
@@ -357,6 +369,10 @@ export default function InfinityCanvas({ products, onBack, onNext, retailerName,
       {!sidebarOpen && (
         <button
           onClick={() => setSidebarOpen(true)}
+          onPointerDown={(e) => e.stopPropagation()}
+          onTouchStart={(e) => e.stopPropagation()}
+          onTouchEnd={(e) => e.stopPropagation()}
+          onMouseDown={(e) => e.stopPropagation()}
           className="absolute top-1/2 -translate-y-1/2 right-0 z-20 pointer-events-auto w-8 h-14 bg-white/70 backdrop-blur-md border border-white/60 rounded-l-xl shadow-lg flex items-center justify-center text-gray-600 hover:text-black hover:bg-white/90 transition-all"
           title="Show selected items"
         >
@@ -369,6 +385,11 @@ export default function InfinityCanvas({ products, onBack, onNext, retailerName,
 
       <div
         className="absolute top-1/2 z-10 pointer-events-auto"
+        onPointerDown={(e) => e.stopPropagation()}
+        onTouchStart={(e) => e.stopPropagation()}
+        onTouchEnd={(e) => e.stopPropagation()}
+        onMouseDown={(e) => e.stopPropagation()}
+        onWheel={(e) => e.stopPropagation()}
         style={{
           right: sidebarOpen ? "32px" : "-320px",
           transform: "translateY(-50%)",
@@ -382,6 +403,10 @@ export default function InfinityCanvas({ products, onBack, onNext, retailerName,
             {/* Toggle button — inside panel, collapses it to the right */}
             <button
               onClick={() => setSidebarOpen(false)}
+              onPointerDown={(e) => e.stopPropagation()}
+              onTouchStart={(e) => e.stopPropagation()}
+              onTouchEnd={(e) => e.stopPropagation()}
+              onMouseDown={(e) => e.stopPropagation()}
               className="w-8 h-8 rounded-full bg-white/70 shadow-sm border border-white flex items-center justify-center text-gray-600 hover:text-black hover:bg-white transition-all"
               title="Hide selected items"
             >
@@ -410,6 +435,10 @@ export default function InfinityCanvas({ products, onBack, onNext, retailerName,
                     </p>
                     <button
                       onClick={(e) => removeSelection(item.id, e)}
+                      onPointerDown={(e) => e.stopPropagation()}
+                      onTouchStart={(e) => e.stopPropagation()}
+                      onTouchEnd={(e) => e.stopPropagation()}
+                      onMouseDown={(e) => e.stopPropagation()}
                       className="absolute -top-1 -right-1 w-5 h-5 bg-gray-200/80 hover:bg-red-500 hover:text-white rounded-full flex items-center justify-center text-gray-600 text-[10px] opacity-0 group-hover:opacity-100 transition-all shadow-sm backdrop-blur-sm"
                     >
                       ✕

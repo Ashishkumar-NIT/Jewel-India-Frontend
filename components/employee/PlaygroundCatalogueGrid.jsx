@@ -71,6 +71,10 @@ const DesignCard = memo(function DesignCard({ product, isSelected, onToggleSelec
             e.stopPropagation();
             onShowInfo(product);
           }}
+          onPointerDown={(e) => e.stopPropagation()}
+          onTouchStart={(e) => e.stopPropagation()}
+          onTouchEnd={(e) => e.stopPropagation()}
+          onMouseDown={(e) => e.stopPropagation()}
           className="absolute top-3 right-3 w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center text-gray-400 hover:text-black hover:scale-110 transition-all opacity-100 md:opacity-0 group-hover:opacity-100 shadow-sm border border-gray-100 z-[2]"
           title="View Details"
         >
@@ -149,6 +153,10 @@ export default function PlaygroundCatalogueGrid({
           {/* Back Button */}
           <button
             onClick={onBack}
+            onPointerDown={(e) => e.stopPropagation()}
+            onTouchStart={(e) => e.stopPropagation()}
+            onTouchEnd={(e) => e.stopPropagation()}
+            onMouseDown={(e) => e.stopPropagation()}
             className="w-11 h-11 bg-white/60 backdrop-blur-md rounded-full shadow-lg flex items-center justify-center text-gray-600 hover:text-black pointer-events-auto border border-white/40 transition-transform hover:scale-105 shrink-0"
           >
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -173,6 +181,10 @@ export default function PlaygroundCatalogueGrid({
           {/* Layout Toggle Button */}
           <button
             onClick={() => onToggleLayout("playground")}
+            onPointerDown={(e) => e.stopPropagation()}
+            onTouchStart={(e) => e.stopPropagation()}
+            onTouchEnd={(e) => e.stopPropagation()}
+            onMouseDown={(e) => e.stopPropagation()}
             className="h-11 px-5 bg-white/60 backdrop-blur-md rounded-full shadow-lg flex items-center gap-2 text-gray-600 hover:text-black pointer-events-auto border border-white/40 transition-transform hover:scale-105 shrink-0 font-medium text-[13px]"
             title="Switch to Interactive Canvas"
           >
@@ -207,6 +219,10 @@ export default function PlaygroundCatalogueGrid({
         {!sidebarOpen && (
           <button
             onClick={() => setSidebarOpen(true)}
+            onPointerDown={(e) => e.stopPropagation()}
+            onTouchStart={(e) => e.stopPropagation()}
+            onTouchEnd={(e) => e.stopPropagation()}
+            onMouseDown={(e) => e.stopPropagation()}
             className="absolute top-1/2 -translate-y-1/2 right-0 z-20 pointer-events-auto w-8 h-14 bg-white/70 backdrop-blur-md border border-white/60 rounded-l-xl shadow-lg flex items-center justify-center text-gray-600 hover:text-black hover:bg-white/90 transition-all"
             title="Show selected items"
           >
@@ -218,6 +234,11 @@ export default function PlaygroundCatalogueGrid({
 
         <div
           className="absolute top-1/2 z-10 pointer-events-auto"
+          onPointerDown={(e) => e.stopPropagation()}
+          onTouchStart={(e) => e.stopPropagation()}
+          onTouchEnd={(e) => e.stopPropagation()}
+          onMouseDown={(e) => e.stopPropagation()}
+          onWheel={(e) => e.stopPropagation()}
           style={{
             right: sidebarOpen ? "32px" : "-320px",
             transform: "translateY(-50%)",
@@ -229,6 +250,10 @@ export default function PlaygroundCatalogueGrid({
             <div className="flex items-center gap-3 mb-6 shrink-0">
               <button
                 onClick={() => setSidebarOpen(false)}
+                onPointerDown={(e) => e.stopPropagation()}
+                onTouchStart={(e) => e.stopPropagation()}
+                onTouchEnd={(e) => e.stopPropagation()}
+                onMouseDown={(e) => e.stopPropagation()}
                 className="w-8 h-8 rounded-full bg-white/70 shadow-sm border border-white flex items-center justify-center text-gray-600 hover:text-black hover:bg-white transition-all"
                 title="Hide selected items"
               >
@@ -262,6 +287,10 @@ export default function PlaygroundCatalogueGrid({
                         </p>
                         <button
                           onClick={(e) => removeSelection(item.id, e)}
+                          onPointerDown={(e) => e.stopPropagation()}
+                          onTouchStart={(e) => e.stopPropagation()}
+                          onTouchEnd={(e) => e.stopPropagation()}
+                          onMouseDown={(e) => e.stopPropagation()}
                           className="absolute -top-1 -right-1 w-5 h-5 bg-gray-200/80 hover:bg-red-500 hover:text-white rounded-full flex items-center justify-center text-gray-600 text-[10px] opacity-0 group-hover:opacity-100 transition-all shadow-sm backdrop-blur-sm"
                         >
                           ✕
