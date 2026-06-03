@@ -7,10 +7,9 @@ import gsap from "gsap";
 import { Observer } from "gsap/Observer";
 import { ProductInfoModal } from "./ProductInfoModal";
 
-export default function InfinityCanvas({ products, onBack, onNext, retailerName }) {
+export default function InfinityCanvas({ products, onBack, onNext, retailerName, selectedItems, setSelectedItems, onToggleLayout }) {
   const containerRef = useRef(null);
   const wrapperRef = useRef(null);
-  const [selectedItems, setSelectedItems] = useState(new Set());
   const [viewingProductForModal, setViewingProductForModal] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const searchParams = useSearchParams();
@@ -265,26 +264,44 @@ export default function InfinityCanvas({ products, onBack, onNext, retailerName 
 
       {/* Top Header */}
       <div className="absolute top-0 left-0 right-0 px-8 pt-7 flex justify-between items-center pointer-events-none z-10">
-        {/* Back Button */}
-        <button
-          onClick={onBack}
-          className="w-11 h-11 bg-white/60 backdrop-blur-md rounded-full shadow-lg flex items-center justify-center text-gray-600 hover:text-black pointer-events-auto border border-white/40 transition-transform hover:scale-105 shrink-0"
-        >
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-        </button>
-
-        {/* Store Name Pill — frosted glass, matches bottom filter bar */}
-        <div className="bg-gradient-to-r from-white/30 via-white/55 to-white/30 backdrop-blur-md shadow-[0_8px_32px_rgba(0,0,0,0.08)] border border-white/50 rounded-full px-7 py-2.5 pointer-events-auto flex items-center gap-2">
-          {/* Small jewel dot accent */}
-          <span className="w-1.5 h-1.5 rounded-full bg-gray-400/60 shrink-0" />
-          <h1 className="font-serif text-[17px] tracking-widest text-gray-800/90 whitespace-nowrap">
-            {retailerName || "Jewel India"}
-          </h1>
-          <span className="w-1.5 h-1.5 rounded-full bg-gray-400/60 shrink-0" />
+        <div className="flex justify-start items-center w-[160px]">
+          {/* Back Button */}
+          <button
+            onClick={onBack}
+            className="w-11 h-11 bg-white/60 backdrop-blur-md rounded-full shadow-lg flex items-center justify-center text-gray-600 hover:text-black pointer-events-auto border border-white/40 transition-transform hover:scale-105 shrink-0"
+          >
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+          </button>
         </div>
 
-        {/* Spacer to keep pill centered */}
-        <div className="w-11 shrink-0" />
+        {/* Store Name Pill — frosted glass, matches bottom filter bar */}
+        <div className="flex justify-center items-center flex-1">
+          <div className="bg-gradient-to-r from-white/30 via-white/55 to-white/30 backdrop-blur-md shadow-[0_8px_32px_rgba(0,0,0,0.08)] border border-white/50 rounded-full px-7 py-2.5 pointer-events-auto flex items-center gap-2">
+            {/* Small jewel dot accent */}
+            <span className="w-1.5 h-1.5 rounded-full bg-gray-400/60 shrink-0" />
+            <h1 className="font-serif text-[17px] tracking-widest text-gray-800/90 whitespace-nowrap">
+              {retailerName || "Jewel India"}
+            </h1>
+            <span className="w-1.5 h-1.5 rounded-full bg-gray-400/60 shrink-0" />
+          </div>
+        </div>
+
+        <div className="flex justify-end items-center w-[160px]">
+          {/* Layout Toggle Button */}
+          <button
+            onClick={() => onToggleLayout("catalogue")}
+            className="h-11 px-5 bg-white/60 backdrop-blur-md rounded-full shadow-lg flex items-center gap-2 text-gray-600 hover:text-black pointer-events-auto border border-white/40 transition-transform hover:scale-105 shrink-0 font-medium text-[13px]"
+            title="Switch to Catalogue Grid"
+          >
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+              <rect x="3" y="3" width="7" height="7"></rect>
+              <rect x="14" y="3" width="7" height="7"></rect>
+              <rect x="14" y="14" width="7" height="7"></rect>
+              <rect x="3" y="14" width="7" height="7"></rect>
+            </svg>
+            <span>Catalogue View</span>
+          </button>
+        </div>
       </div>
 
       {/* Bottom Filter Tags (Glassmorphism) */}

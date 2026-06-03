@@ -1,19 +1,25 @@
 "use client";
 
-import { Suspense } from "react";
+import { Suspense, useState } from "react";
 import { useRouter } from "next/navigation";
 import InfinityCanvas from "./InfinityCanvas";
+import PlaygroundCatalogueGrid from "./PlaygroundCatalogueGrid";
 
 export default function PlaygroundClient({ products, employeeId, retailerName }) {
   const router = useRouter();
+  
+  // Shared state between InfinityCanvas and PlaygroundCatalogueGrid
+  const [selectedItems, setSelectedItems] = useState(new Set());
+  const [viewMode, setViewMode] = useState("playground"); // "playground" (infinite canvas) or "catalogue" (grid)
 
   const handleNext = () => {
-    // Navigate to Selection Review
+    // Save to session storage and proceed
+    sessionStorage.setItem('employee_selected_products', JSON.stringify(Array.from(selectedItems)));
     router.push('/dashboard/employee/playground/review');
   };
 
   const handleBack = () => {
-    // Go back to dashboard home or questionnaire
+    // Go back to dashboard home
     router.push('/dashboard/employee');
   };
 
@@ -36,15 +42,29 @@ export default function PlaygroundClient({ products, employeeId, retailerName })
     );
   }
 
-  // Render InfinityCanvas directly full screen
   return (
-    <Suspense fallback={<div className="fixed inset-0 flex items-center justify-center">Loading canvas...</div>}>
-      <InfinityCanvas 
-        products={products}
-        onNext={handleNext}
-        onBack={handleBack}
-        retailerName={retailerName}
-      />
+    <Suspense fallback={<div className="fixed inset-0 flex items-center justify-center bg-[#FAFAFA] text-gray-500 font-medium">Loading layout...</div>}>
+      {viewMode === "playground" ? (
+        <InfinityCanvas 
+          products={products}
+          selectedItems={selectedItems}
+          setSelectedItems={setSelectedItems}
+          onNext={handleNext}
+          onBack={handleBack}
+          retailerName={retailerName}
+          onToggleLayout={setViewMode}
+        />
+      ) : (
+        <PlaygroundCatalogueGrid 
+          products={products}
+          selectedItems={selectedItems}
+          setSelectedItems={setSelectedItems}
+          onNext={handleNext}
+          onBack={handleBack}
+          retailerName={retailerName}
+          onToggleLayout={setViewMode}
+        />
+      )}
     </Suspense>
   );
 }
