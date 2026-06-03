@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import ProtectedImage from "../shared/ProtectedImage";
+import FullImageViewer from "../shared/FullImageViewer";
 
 export default function SelectionReviewClient() {
   const router = useRouter();
@@ -17,14 +18,19 @@ export default function SelectionReviewClient() {
   const [activeImage, setActiveImage] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [individualFormData, setIndividualFormData] = useState({ quantity: 1, customization_notes: "" });
+  
+  const [isFullViewOpen, setIsFullViewOpen] = useState(false);
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
 
   const handleViewProduct = (product) => {
     setViewingProduct(product);
     if (product) {
       const defaultImg = product.generated_image_urls?.[0] || product.processed_image_url || product.raw_image_url;
       setActiveImage(defaultImg);
+      setActiveImageIndex(0);
     } else {
       setActiveImage(null);
+      setActiveImageIndex(0);
     }
   };
 
@@ -221,148 +227,245 @@ export default function SelectionReviewClient() {
           </button>
         </div>
       ) : viewingProduct ? (
-        <div className="max-w-[1200px] mx-auto px-6 md:px-8 pb-32 pt-10">
-          <div className="grid grid-cols-1 md:grid-cols-[1fr_400px] gap-16 items-start">
-             
-             {/* Left: Images */}
-             {(() => {
-               let allImages = Array.from(new Set([
-                 ...(viewingProduct.generated_image_urls || []),
-                 viewingProduct.processed_image_url
-               ].filter(Boolean)));
+        <div className="fixed inset-0 overflow-y-auto bg-white z-[60] flex flex-col items-center pb-24 font-sans select-none">
+          {/* Arch Background image */}
+          <img 
+            src="/image/figma-arch-bg.png" 
+            alt="Arch Background" 
+            className="absolute inset-0 w-full h-full object-cover object-center pointer-events-none -z-10" 
+          />
 
-               if (allImages.length === 0 && viewingProduct.raw_image_url) {
-                 allImages.push(viewingProduct.raw_image_url);
-               }
+          {/* Glassmorphic back button */}
+          <button 
+            onClick={() => handleViewProduct(null)}
+            className="absolute left-6 md:left-10 top-10 w-[48px] h-[48px] rounded-full border-[#696969] border-[0.436px] flex items-center justify-center text-black hover:opacity-80 active:scale-95 transition-all shadow-[0px_2.182px_3.382px_0px_rgba(0,0,0,0.25),inset_-1.091px_-1.091px_2.291px_0px_rgba(0,0,0,0.25),inset_2.182px_2.182px_4.691px_0px_rgba(255,255,255,0.25)] z-50"
+            style={{
+              backdropFilter: "blur(12.55px)",
+              WebkitBackdropFilter: "blur(12.55px)",
+              backgroundImage: "linear-gradient(155.556deg, rgba(255, 255, 255, 0.43) 17.827%, rgba(224, 224, 224, 0.43) 90.412%)"
+            }}
+            aria-label="Go back"
+          >
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+          </button>
 
-               allImages = allImages.slice(0, 4);
+          {/* Main content wrapper centered inside the arch */}
+          <div className="relative w-full max-w-[800px] flex flex-col items-center pt-28 pb-16 px-6 md:px-8">
+            
+            {/* Header section — centered, sits inside the white arch opening visually */}
+            <div className="flex flex-col items-center text-center mb-10">
+              <div className="flex items-center justify-center gap-3 mb-3">
+                <span className="text-[20px] font-bold uppercase tracking-[0.2em] text-[#6e6e6e] font-sans">
+                  {viewingProduct.category || "NECKLACE"}
+                </span>
+                <div className="border border-[#a8a8a8] rounded-[6px] py-[4px] px-[8px] flex items-center justify-center">
+                  <span className="text-[12px] text-[#515151] tracking-[0.02em] font-medium font-sans">
+                    {viewingProduct.style_aesthetic || viewingProduct.style || "Traditional"}
+                  </span>
+                </div>
+              </div>
+              <h1 className="text-[44px] font-serif text-black leading-[1.2] tracking-wide" style={{ fontFamily: "var(--font-gilda)" }}>
+                {viewingProduct.title || "Vintage Cuff half necklace"}
+              </h1>
+            </div>
 
-               const thumbnailSlots = Array.from({ length: 4 }).map((_, idx) => allImages[idx] || null);
+            {/* Image section — main image and thumbnails side by side */}
+            {(() => {
+              let allImages = Array.from(new Set([
+                ...(viewingProduct.generated_image_urls || []),
+                viewingProduct.processed_image_url
+              ].filter(Boolean)));
 
-               return (
-                 <div className="flex flex-col gap-4">
-                    <div className="w-full aspect-[4/4.5] bg-[#343e4b] flex items-center justify-center overflow-hidden">
-                      <ProtectedImage src={activeImage} className="w-full h-full object-cover" />
+              if (allImages.length === 0 && viewingProduct.raw_image_url) {
+                allImages.push(viewingProduct.raw_image_url);
+              }
+
+              allImages = allImages.slice(0, 4);
+
+              return (
+                <div className="flex items-start justify-center gap-6 mb-12 relative">
+                  
+                  {/* Main image container */}
+                  <div 
+                    onClick={() => setIsFullViewOpen(true)}
+                    className="w-[302px] h-[302px] bg-[#f5f5f5] rounded-sm overflow-hidden relative cursor-pointer shadow-sm flex items-center justify-center border border-gray-100/60"
+                  >
+                    {activeImage ? (
+                      <ProtectedImage src={activeImage} className="w-full h-full object-cover mix-blend-multiply" />
+                    ) : (
+                      <span className="text-gray-300 font-light text-sm">No image</span>
+                    )}
+                    
+                    {/* Glassmorphic zoom/fullscreen button */}
+                    <button 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setIsFullViewOpen(true);
+                      }}
+                      className="absolute right-3 bottom-3 w-[48px] h-[48px] rounded-full border-[#696969] border-[0.436px] flex items-center justify-center text-black hover:opacity-85 transition-opacity shadow-[0px_2.182px_3.382px_0px_rgba(0,0,0,0.25),inset_-1.091px_-1.091px_2.291px_0px_rgba(0,0,0,0.25),inset_2.182px_2.182px_4.691px_0px_rgba(255,255,255,0.25)] z-20"
+                      style={{
+                        backdropFilter: "blur(12.55px)",
+                        WebkitBackdropFilter: "blur(12.55px)",
+                        backgroundImage: "linear-gradient(155.556deg, rgba(255, 255, 255, 0.43) 17.827%, rgba(224, 224, 224, 0.43) 90.412%)"
+                      }}
+                      aria-label="Zoom image"
+                    >
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>
+                      </svg>
+                    </button>
+                  </div>
+
+                  {/* Vertical Thumbnails strip */}
+                  <div className="flex flex-col gap-2 shrink-0">
+                    {allImages.map((imgSrc, idx) => {
+                      const isActive = imgSrc === activeImage;
+                      return (
+                        <button
+                          key={idx}
+                          onClick={() => {
+                            setActiveImage(imgSrc);
+                            setActiveImageIndex(idx);
+                          }}
+                          className={`w-[61.3px] h-[61.3px] overflow-hidden transition-all bg-white relative rounded-sm ${
+                            isActive ? "border-2 border-white ring-1 ring-black/10 scale-[1.02] shadow-md z-10" : "border border-gray-200/80 opacity-60 hover:opacity-90"
+                          }`}
+                        >
+                          <ProtectedImage src={imgSrc} className="w-full h-full object-cover mix-blend-multiply" />
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* Specifications section */}
+            <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-8 mt-4">
+              
+              {/* Left Column: MATERIAL & WEIGHT */}
+              <div className="flex flex-col gap-6">
+                {/* MATERIAL */}
+                <div>
+                  <div className="flex items-center gap-3 mb-2">
+                    <span className="text-[12px] font-bold text-black uppercase tracking-[0.2em] font-sans">MATERIAL</span>
+                    <div className="flex-grow border-t border-dashed border-[#a8a8a8]" />
+                  </div>
+                  <div className="flex justify-between text-[16px] text-gray-800 font-sans px-1">
+                    <span className="text-[#6e6e6e] font-medium">Gold</span>
+                    <span className="text-black font-semibold">{viewingProduct.metal_purity || viewingProduct.purity || "22k"}</span>
+                  </div>
+                </div>
+
+                {/* WEIGHT */}
+                <div>
+                  <div className="flex items-center gap-3 mb-2">
+                    <span className="text-[12px] font-bold text-black uppercase tracking-[0.2em] font-sans">WEIGHT</span>
+                    <div className="flex-grow border-t border-dashed border-[#a8a8a8]" />
+                  </div>
+                  <div className="flex flex-col gap-2 px-1">
+                    <div className="flex justify-between text-[16px] font-sans">
+                      <span className="text-[#6e6e6e] font-medium">Net weight</span>
+                      <span className="text-black font-semibold">
+                        {viewingProduct.net_weight ? `${viewingProduct.net_weight}g` : "—"}
+                      </span>
                     </div>
-                    <div className="grid grid-cols-4 gap-4">
-                       {thumbnailSlots.map((imgSrc, idx) => {
-                         if (imgSrc) {
-                           const isActive = imgSrc === activeImage;
-                           return (
-                             <button
-                               key={idx}
-                               onClick={() => setActiveImage(imgSrc)}
-                               className={`aspect-square bg-white overflow-hidden transition-all relative rounded-sm ${
-                                 isActive ? "border-2 border-transparent opacity-40" : "border-2 border-black ring-1 ring-black scale-[0.98] opacity-100"
-                               }`}
-                             >
-                               <ProtectedImage src={imgSrc} className="w-full h-full object-cover" />
-                             </button>
-                           );
-                         }
-                         return (
-                           <div key={idx} className="aspect-square bg-gray-50 opacity-40 border border-dashed border-gray-200 rounded-sm"></div>
-                         );
-                       })}
+                    <div className="flex justify-between text-[16px] font-sans">
+                      <span className="text-[#6e6e6e] font-medium">Gross weight</span>
+                      <span className="text-black font-semibold">
+                        {viewingProduct.gross_weight ? `${viewingProduct.gross_weight}g` : "—"}
+                      </span>
                     </div>
+                    <div className="flex justify-between text-[16px] font-sans">
+                      <span className="text-[#6e6e6e] font-medium">Stone weight</span>
+                      <span className="text-black font-semibold">
+                        {viewingProduct.stone_weight ? `${viewingProduct.stone_weight}g` : "—"}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Column: AVAILABILITY & CTAs */}
+              <div className="flex flex-col gap-6">
+                {/* AVAILABILITY */}
+                <div>
+                  <div className="flex items-center gap-3 mb-2">
+                    <span className="text-[12px] font-bold text-black uppercase tracking-[0.2em] font-sans">AVAILABILITY</span>
+                    <div className="flex-grow border-t border-dashed border-[#a8a8a8]" />
+                  </div>
+                  <div className="flex justify-between text-[16px] text-gray-800 font-sans px-1">
+                    <span className="text-[#6e6e6e] font-medium">Made to order</span>
+                    <span className="text-black font-semibold">
+                      {viewingProduct.make_to_order_days || viewingProduct.production_time_days || "12 to 14"} days
+                    </span>
+                  </div>
+                </div>
+
+                {/* Actions / CTA Buttons */}
+                <div className="flex flex-col items-center gap-4 mt-2">
+                  <button 
+                    onClick={() => setIsSidebarOpen(true)}
+                    className="w-full bg-gradient-to-t from-black to-[#3c3c3c] hover:opacity-90 active:scale-[0.99] text-white font-sans font-bold tracking-widest text-[16px] py-4 rounded-[4px] shadow-[0px_2px_4px_rgba(0,0,0,0.25)] border border-black transition-all uppercase"
+                  >
+                    Send Request
+                  </button>
+                  <Link 
+                    href={`/dashboard/employee/messages?productId=${viewingProduct.id}`}
+                    className="text-[16px] text-black hover:underline underline-offset-4 font-bold tracking-wide transition-colors text-center"
+                    style={{ textShadow: "0px 1px 5px rgba(0,0,0,0.25)" }}
+                  >
+                    Chat with us
+                  </Link>
+                </div>
+              </div>
+
+            </div>
+
+            {/* More you might like */}
+            {products.filter(p => p.id !== viewingProduct.id).length > 0 && (
+              <div className="mt-24 pt-12 border-t border-gray-200/50 w-full">
+                 <h2 className="text-[28px] font-serif text-gray-800 mb-8 text-center" style={{ fontFamily: "var(--font-gilda)" }}>
+                   More, you might like from us
+                 </h2>
+                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    {products.filter(p => p.id !== viewingProduct.id).slice(0, 6).map(product => {
+                      const imgUrl = product.generated_image_urls?.[0] || product.processed_image_url || product.raw_image_url;
+                      return (
+                        <div 
+                          key={product.id} 
+                          className="flex flex-col cursor-pointer hover:opacity-95 transition-opacity bg-white border border-gray-100 shadow-sm"
+                          onClick={() => handleViewProduct(product)}
+                        >
+                          <div className="w-full aspect-[4/3.5] bg-[#F5F6F8] flex items-center justify-center p-6 overflow-hidden">
+                             {imgUrl ? (
+                               <ProtectedImage src={imgUrl} className="w-full h-full object-contain mix-blend-multiply" />
+                             ) : (
+                               <span className="text-gray-400 font-serif text-sm">No Image</span>
+                             )}
+                          </div>
+                          <div className="bg-[#FAFAFA] py-3 text-center border-t border-white">
+                             <span className="font-serif text-[15px] text-gray-800 tracking-wide">
+                               {product.title || product.jewellery_type || "Jewellery"}
+                             </span>
+                          </div>
+                        </div>
+                      )
+                    })}
                  </div>
-               );
-             })()}
+              </div>
+            )}
 
-             {/* Right: Details */}
-             <div className="flex flex-col pt-2">
-                <div className="text-[10px] uppercase tracking-widest text-gray-400 mb-6">HOME / DESIGN / NECKLACE / INFO</div>
-                
-                <div className="flex items-center gap-2 mb-4">
-                  <span className="text-[10px] font-bold tracking-widest text-black uppercase border border-gray-200 px-2 py-1 rounded-sm">NECKLACE</span>
-                  <span className="text-[10px] text-gray-400 tracking-widest uppercase border border-gray-200 px-2 py-1 rounded-sm">Traditional</span>
-                </div>
-
-                <h1 className="text-[44px] font-serif leading-[1.15] text-gray-900 mb-10">
-                  {viewingProduct.title || "Vintage Cuff half necklace"}
-                </h1>
-
-                {/* Details list */}
-                <div className="flex flex-col gap-6 text-[14px]">
-                   <div>
-                      <div className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-3 border-b border-gray-100 border-dashed pb-1.5">MATERIAL</div>
-                      <div className="flex justify-between font-serif text-gray-800 px-1">
-                         <span>Gold</span>
-                         <span>{viewingProduct.metal_purity || "22k"}</span>
-                      </div>
-                   </div>
-
-                   <div>
-                      <div className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-3 border-b border-gray-100 border-dashed pb-1.5">WEIGHT</div>
-                      <div className="flex justify-between font-serif text-gray-800 px-1 mb-2">
-                         <span className="text-gray-500">Net weight</span>
-                         <span>{viewingProduct.net_weight || "24"}g</span>
-                      </div>
-                      <div className="flex justify-between font-serif text-gray-800 px-1 mb-2">
-                         <span className="text-gray-500">Gross weight</span>
-                         <span>{viewingProduct.gross_weight || "20"}g</span>
-                      </div>
-                      <div className="flex justify-between font-serif text-gray-800 px-1">
-                         <span className="text-gray-500">Stone weight</span>
-                         <span>{viewingProduct.stone_weight || "4"}g</span>
-                      </div>
-                   </div>
-
-                   <div>
-                      <div className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-3 border-b border-gray-100 border-dashed pb-1.5">AVAILABILITY</div>
-                      <div className="flex justify-between font-serif text-gray-800 px-1">
-                         <span>Made to order</span>
-                         <span>{viewingProduct.make_to_order_days || "12 to 14"} days</span>
-                      </div>
-                   </div>
-                </div>
-
-                <div className="mt-12 flex flex-col items-center">
-                   <button 
-                     onClick={() => setIsSidebarOpen(true)}
-                     className="w-full bg-gradient-to-b from-[#222] to-[#000] text-white font-sans font-semibold tracking-widest text-[13px] py-4 shadow-lg hover:shadow-xl transition-all border border-black uppercase"
-                     style={{ boxShadow: "inset 0 1px 1px rgba(255,255,255,0.15)" }}
-                   >
-                     Request Item
-                   </button>
-                   <Link href={`/dashboard/employee/messages?productId=${viewingProduct.id}`} className="mt-5 text-[12px] text-gray-500 hover:text-black font-semibold underline underline-offset-4 decoration-gray-300">
-                     Chat with us
-                   </Link>
-                </div>
-             </div>
-          </div>
-
-          {/* More you might like */}
-          <div className="mt-32 pt-16 border-t border-gray-100">
-             <h2 className="text-[32px] font-serif text-gray-800 mb-10">More, you might like from us</h2>
-             <div className="grid grid-cols-1 md:grid-cols-3 gap-x-10 gap-y-12">
-                {products.filter(p => p.id !== viewingProduct.id).slice(0, 6).map(product => {
-                  const imgUrl = product.generated_image_urls?.[0] || product.processed_image_url || product.raw_image_url;
-                  return (
-                    <div key={product.id} className="flex flex-col cursor-pointer hover:opacity-90 transition-opacity" onClick={() => handleViewProduct(product)}>
-                      <div className="w-full aspect-[4/3.5] bg-[#F5F6F8] flex items-center justify-center p-8 overflow-hidden">
-                         {imgUrl ? (
-                           <ProtectedImage src={imgUrl} className="w-full h-full object-contain mix-blend-multiply" />
-                         ) : (
-                           <span className="text-gray-400 font-serif text-sm">No Image</span>
-                         )}
-                      </div>
-                      <div className="bg-[#FAFAFA] py-5 text-center border-t border-white">
-                         <span className="font-serif text-[16px] text-gray-800 tracking-wide">
-                           {product.title || product.jewellery_type || "Jewellery"}
-                         </span>
-                      </div>
-                    </div>
-                  )
-                })}
-             </div>
           </div>
 
           {/* Sidebar Overlay */}
           {isSidebarOpen && (
-            <div className="fixed inset-0 z-50 flex justify-end">
+            <div className="fixed inset-0 z-[70] flex justify-end">
                <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]" onClick={() => setIsSidebarOpen(false)}></div>
-               <div className="relative w-full max-w-[420px] bg-white h-full shadow-2xl flex flex-col animate-slide-in-right">
+               <div className="relative w-full max-w-[420px] bg-white h-full shadow-2xl flex flex-col animate-slide-in-right z-10">
                   
                   <div className="flex items-center justify-between p-6 border-b border-gray-100">
                     <h3 className="text-[14px] font-sans text-gray-800">Request this Design</h3>
@@ -422,7 +525,37 @@ export default function SelectionReviewClient() {
             </div>
           )}
 
+          {/* Full Image Viewer Overlay */}
+          {(() => {
+            let allImages = Array.from(new Set([
+              ...(viewingProduct.generated_image_urls || []),
+              viewingProduct.processed_image_url
+            ].filter(Boolean)));
+
+            if (allImages.length === 0 && viewingProduct.raw_image_url) {
+              allImages.push(viewingProduct.raw_image_url);
+            }
+
+            allImages = allImages.slice(0, 4);
+
+            return (
+              <FullImageViewer
+                isOpen={isFullViewOpen}
+                onClose={() => setIsFullViewOpen(false)}
+                images={allImages}
+                activeIndex={activeImageIndex}
+                onChangeIndex={(idx) => {
+                  setActiveImageIndex(idx);
+                  if (allImages[idx]) {
+                    setActiveImage(allImages[idx]);
+                  }
+                }}
+              />
+            );
+          })()}
+
         </div>
+
       ) : (
         <div className="max-w-[1200px] mx-auto px-6 md:px-8 pb-32 pt-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-12">
