@@ -95,6 +95,7 @@ export default function DesignerCollectionSection({ employee, businessName, desi
         isOpen={!!selectedProduct} 
         onClose={() => setSelectedProduct(null)} 
         product={selectedProduct} 
+        isFullScreen={true}
       />
       </div>
     </section>

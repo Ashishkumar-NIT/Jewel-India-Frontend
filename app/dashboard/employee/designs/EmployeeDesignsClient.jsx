@@ -462,6 +462,7 @@ export default function EmployeeDesignsClient({ designs, categoryTabs, businessN
           isOpen={!!selectedProduct}
           onClose={() => setSelectedProduct(null)}
           product={selectedProduct}
+          isFullScreen={true}
         />
       </div>
     </div>

@@ -37,7 +37,7 @@ const DesignCard = memo(function DesignCard({ product, isSelected, onToggleSelec
 
   return (
     <div 
-      onClick={() => onToggleSelect(product)}
+      onClick={() => onShowInfo(product)}
       className={`cursor-pointer rounded-[14px] bg-white overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] hover:scale-[1.01] transition-all duration-300 flex flex-col border-[2px] ${
         isSelected ? "border-[#007AFF] ring-1 ring-[#007AFF]" : "border-transparent"
       }`}
@@ -56,32 +56,25 @@ const DesignCard = memo(function DesignCard({ product, isSelected, onToggleSelec
           </div>
         )}
 
-        {/* Checkmark overlay for selected state */}
-        {isSelected && (
-          <div className="absolute top-3 left-3 bg-[#007AFF] text-white rounded-full w-6 h-6 flex items-center justify-center shadow-md z-[2]">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="20 6 9 17 4 12" />
-            </svg>
-          </div>
-        )}
-
-        {/* Info Button Overlay */}
+        {/* Selection toggle overlay button */}
         <button
           onClick={(e) => {
             e.stopPropagation();
-            onShowInfo(product);
+            onToggleSelect(product);
           }}
           onPointerDown={(e) => e.stopPropagation()}
           onTouchStart={(e) => e.stopPropagation()}
           onTouchEnd={(e) => e.stopPropagation()}
           onMouseDown={(e) => e.stopPropagation()}
-          className="absolute top-3 right-3 w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center text-gray-400 hover:text-black hover:scale-110 transition-all opacity-100 md:opacity-0 group-hover:opacity-100 shadow-sm border border-gray-100 z-[2]"
-          title="View Details"
+          className={`absolute top-3 left-3 rounded-full w-7 h-7 flex items-center justify-center shadow-md z-[2] transition-all hover:scale-110 ${
+            isSelected 
+              ? "bg-[#007AFF] text-white border-none" 
+              : "bg-white/80 backdrop-blur-sm border border-gray-200 text-transparent hover:text-gray-400"
+          }`}
+          title={isSelected ? "Deselect Item" : "Select Item"}
         >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="10"></circle>
-            <line x1="12" y1="16" x2="12" y2="12"></line>
-            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="20 6 9 17 4 12" />
           </svg>
         </button>
       </div>

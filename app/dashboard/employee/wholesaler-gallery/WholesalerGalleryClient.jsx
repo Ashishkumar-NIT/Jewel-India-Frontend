@@ -506,6 +506,7 @@ export default function WholesalerGalleryClient({ products, categoryTabs, initia
           onClose={() => setSelectedProduct(null)}
           product={selectedProduct}
           onStartChat={handleStartChat}
+          isFullScreen={true}
         />
 
 
