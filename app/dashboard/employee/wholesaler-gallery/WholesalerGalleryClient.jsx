@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { ProductInfoModal } from "@/components/employee/ProductInfoModal";
 import EmployeeBottomNav from "@/components/employee/EmployeeTopNav";
@@ -118,24 +118,33 @@ export default function WholesalerGalleryClient({ products, categoryTabs, initia
 
   // Scroll visibility state: 'top', 'down', 'up'
   const [scrollState, setScrollState] = useState('top');
-  const [lastScrollY, setLastScrollY] = useState(0);
+  const lastScrollY = useRef(0);
+  const ticking = useRef(false);
 
   useEffect(() => {
+    lastScrollY.current = window.scrollY;
+
     const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      if (currentScrollY < 50) {
-        setScrollState('top');
-      } else if (currentScrollY > lastScrollY) {
-        setScrollState('down');
-      } else {
-        setScrollState('up');
+      if (!ticking.current) {
+        window.requestAnimationFrame(() => {
+          const currentScrollY = window.scrollY;
+          if (currentScrollY < 50) {
+            setScrollState('top');
+          } else if (currentScrollY > lastScrollY.current) {
+            setScrollState('down');
+          } else if (currentScrollY < lastScrollY.current) {
+            setScrollState('up');
+          }
+          lastScrollY.current = currentScrollY;
+          ticking.current = false;
+        });
+        ticking.current = true;
       }
-      setLastScrollY(currentScrollY);
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [lastScrollY]);
+  }, []);
 
   const [filters, setFilters] = useState({
     size: [],
@@ -325,13 +334,13 @@ export default function WholesalerGalleryClient({ products, categoryTabs, initia
       <div
         className={`sticky z-40 bg-white/95 backdrop-blur-md transition-all duration-700 cubic-bezier(0.4, 0, 0.2, 1) w-full border-b border-gray-100 ${scrollState === 'top' ? 'translate-y-0 top-0 pt-8 pb-6 shadow-none' :
             scrollState === 'down' ? 'translate-y-0 top-0 pt-3 pb-3 shadow-sm' :
-              '-translate-y-full top-0'
+              '-translate-y-full top-0 pt-3 pb-3 shadow-sm'
           }`}
       >
         <div className="w-full max-w-7xl mx-auto px-4 md:px-8 flex flex-col transition-all duration-700 ease-in-out">
 
-          {/* Top Title & Back - Hidden when scrolling down */}
-          <div className={`relative w-full flex items-center justify-center transition-all duration-700 ease-in-out overflow-hidden ${scrollState === 'down' ? 'max-h-0 opacity-0 pointer-events-none mb-0' : 'max-h-[120px] opacity-100 mb-16'}`}>
+          {/* Top Title & Back - Hidden when scrolling down/up */}
+          <div className={`relative w-full flex items-center justify-center transition-all duration-700 ease-in-out overflow-hidden ${scrollState === 'top' ? 'max-h-[120px] opacity-100 mb-16' : 'max-h-0 opacity-0 pointer-events-none mb-0'}`}>
             <button 
               onClick={() => window.history.back()}
               className="absolute left-0 w-12 h-12 flex items-center justify-center rounded-full border border-gray-100 text-gray-400 hover:text-gray-900 hover:bg-gray-50 transition-all shadow-sm"
@@ -342,8 +351,8 @@ export default function WholesalerGalleryClient({ products, categoryTabs, initia
           </div>
 
           <div className="flex flex-col gap-10">
-            {/* Curated Collection Header - Hidden when scrolling down */}
-            <div className={`transition-all duration-700 ease-in-out overflow-hidden ${scrollState === 'down' ? 'max-h-0 opacity-0 pointer-events-none mb-0' : 'max-h-[100px] opacity-100 mb-0'}`}>
+            {/* Curated Collection Header - Hidden when scrolling down/up */}
+            <div className={`transition-all duration-700 ease-in-out overflow-hidden ${scrollState === 'top' ? 'max-h-[100px] opacity-100 mb-0' : 'max-h-0 opacity-0 pointer-events-none mb-0'}`}>
               <h2 className="text-[24px] md:text-[28px] font-serif text-[#111827] leading-tight mb-2">
                 Curated Collection
               </h2>
@@ -353,10 +362,10 @@ export default function WholesalerGalleryClient({ products, categoryTabs, initia
             </div>
 
             {/* Categories & Filters */}
-            <div className={`flex flex-col transition-all duration-700 ease-in-out ${scrollState === 'down' ? 'gap-0' : 'gap-12'}`}>
+            <div className={`flex flex-col transition-all duration-700 ease-in-out ${scrollState === 'top' ? 'gap-12' : 'gap-0'}`}>
               
               {/* Category Row - Optimized for Tablet/Mobile fit */}
-              <div className={`flex items-center justify-center transition-all duration-700 ease-in-out overflow-hidden ${scrollState === 'down' ? 'max-h-0 opacity-0 pointer-events-none mb-0' : 'max-h-[400px] opacity-100 mb-0'}`}>
+              <div className={`flex items-center justify-center transition-all duration-700 ease-in-out overflow-hidden ${scrollState === 'top' ? 'max-h-[400px] opacity-100 mb-0' : 'max-h-0 opacity-0 pointer-events-none mb-0'}`}>
                 <div className="flex flex-wrap items-start justify-start gap-x-4 md:gap-x-8 gap-y-6 w-full py-4">
                   {displayTabs.filter(t => t.toLowerCase() !== "all").map((tab) => {
                     const key = tab.toLowerCase();
