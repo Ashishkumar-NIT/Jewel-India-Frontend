@@ -65,7 +65,7 @@ export default function EmployeeHomeClient({ employee, businessName, designs }) 
                   onClick={() => router.push('/dashboard/employee/wholesaler-gallery')}
                   className="w-full py-3.5 bg-white text-black text-[13px] font-bold tracking-widest uppercase hover:bg-gray-100 hover:scale-[1.02] transition-all duration-300 shadow-md border-none outline-none cursor-pointer"
                 >
-                  Catalog
+                  Catalogue
                 </button>
                 <button
                   onClick={() => router.push('/dashboard/employee/playground')}
