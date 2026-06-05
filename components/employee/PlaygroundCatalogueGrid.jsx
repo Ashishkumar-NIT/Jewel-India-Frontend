@@ -171,21 +171,6 @@ export default function PlaygroundCatalogueGrid({
         </div>
 
         <div className="flex justify-end items-center w-[160px]">
-          {/* Layout Toggle Button */}
-          <button
-            onClick={() => onToggleLayout("playground")}
-            onPointerDown={(e) => e.stopPropagation()}
-            onTouchStart={(e) => e.stopPropagation()}
-            onTouchEnd={(e) => e.stopPropagation()}
-            onMouseDown={(e) => e.stopPropagation()}
-            className="h-11 px-5 bg-white/60 backdrop-blur-md rounded-full shadow-lg flex items-center gap-2 text-gray-600 hover:text-black pointer-events-auto border border-white/40 transition-transform hover:scale-105 shrink-0 font-medium text-[13px]"
-            title="Switch to Interactive Canvas"
-          >
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
-              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-            </svg>
-            <span>Canvas View</span>
-          </button>
         </div>
       </div>
 

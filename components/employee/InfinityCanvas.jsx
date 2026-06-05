@@ -289,24 +289,6 @@ export default function InfinityCanvas({ products, onBack, onNext, retailerName,
         </div>
 
         <div className="flex justify-end items-center w-[160px]">
-          {/* Layout Toggle Button */}
-          <button
-            onClick={() => onToggleLayout("catalogue")}
-            onPointerDown={(e) => e.stopPropagation()}
-            onTouchStart={(e) => e.stopPropagation()}
-            onTouchEnd={(e) => e.stopPropagation()}
-            onMouseDown={(e) => e.stopPropagation()}
-            className="h-11 px-5 bg-white/60 backdrop-blur-md rounded-full shadow-lg flex items-center gap-2 text-gray-600 hover:text-black pointer-events-auto border border-white/40 transition-transform hover:scale-105 shrink-0 font-medium text-[13px]"
-            title="Switch to Catalogue Grid"
-          >
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
-              <rect x="3" y="3" width="7" height="7"></rect>
-              <rect x="14" y="3" width="7" height="7"></rect>
-              <rect x="14" y="14" width="7" height="7"></rect>
-              <rect x="3" y="14" width="7" height="7"></rect>
-            </svg>
-            <span>Catalogue View</span>
-          </button>
         </div>
       </div>
 
