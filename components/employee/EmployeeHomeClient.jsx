@@ -59,13 +59,19 @@ export default function EmployeeHomeClient({ employee, businessName, designs }) 
               {/* Spacer */}
               <div className="flex-1" />
 
-              {/* Bottom: single direct button */}
-              <div className="flex flex-col items-center w-full">
+              {/* Bottom: two CTAs with clear visual hierarchy */}
+              <div className="flex flex-col gap-2.5 w-full">
+                <button
+                  onClick={() => router.push('/dashboard/employee/wholesaler-gallery')}
+                  className="w-full py-3.5 bg-white text-black text-[13px] font-bold tracking-widest uppercase hover:bg-gray-100 hover:scale-[1.02] transition-all duration-300 shadow-md border-none outline-none cursor-pointer"
+                >
+                  Catalog
+                </button>
                 <button
                   onClick={() => router.push('/dashboard/employee/playground')}
-                  className="w-full py-4 rounded-none bg-[#1a1a1a]/90 backdrop-blur-sm text-white text-[14px] font-semibold tracking-wider uppercase border border-white/10 hover:bg-black hover:scale-[1.02] transition-all duration-300 shadow-lg"
+                  className="w-full py-3 bg-transparent text-white text-[12px] font-semibold tracking-widest uppercase border border-white/40 hover:bg-white/10 hover:border-white/70 hover:scale-[1.01] transition-all duration-300 outline-none cursor-pointer"
                 >
-                  Take me directly to playground
+                  Infinite Canvas
                 </button>
               </div>
             </div>
