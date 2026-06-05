@@ -227,7 +227,7 @@ export default function SelectionReviewClient() {
           </button>
         </div>
       ) : viewingProduct ? (
-        <div className="fixed inset-0 overflow-y-auto bg-white z-[60] flex flex-col items-center pb-24 font-sans select-none">
+        <div className="fixed inset-0 overflow-y-auto z-50 flex flex-col items-center pb-24 font-sans select-none">
           {/* Arch Background image */}
           <img 
             src="/image/figma-arch-bg.png" 
@@ -238,17 +238,16 @@ export default function SelectionReviewClient() {
           {/* Glassmorphic back button */}
           <button 
             onClick={() => handleViewProduct(null)}
-            className="absolute left-6 md:left-10 top-10 w-[48px] h-[48px] rounded-full border-[#696969] border-[0.436px] flex items-center justify-center text-black hover:opacity-80 active:scale-95 transition-all shadow-[0px_2.182px_3.382px_0px_rgba(0,0,0,0.25),inset_-1.091px_-1.091px_2.291px_0px_rgba(0,0,0,0.25),inset_2.182px_2.182px_4.691px_0px_rgba(255,255,255,0.25)] z-50"
+            className="absolute top-10 left-10 w-12 h-12 rounded-full border-[0.436px] border-[#696969] flex items-center justify-center text-black hover:opacity-80 active:scale-95 transition-all shadow-[0px_2.182px_3.382px_0px_rgba(0,0,0,0.25),inset_-1.091px_-1.091px_2.291px_0px_rgba(0,0,0,0.25),inset_2.182px_2.182px_4.691px_0px_rgba(255,255,255,0.25)] z-50"
             style={{
-              backdropFilter: "blur(12.55px)",
-              WebkitBackdropFilter: "blur(12.55px)",
+              backdropFilter: "blur(12.5px)",
+              WebkitBackdropFilter: "blur(12.5px)",
               backgroundImage: "linear-gradient(155.556deg, rgba(255, 255, 255, 0.43) 17.827%, rgba(224, 224, 224, 0.43) 90.412%)"
             }}
             aria-label="Go back"
           >
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="19" y1="12" x2="5" y2="12"></line>
-              <polyline points="12 19 5 12 12 5"></polyline>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="15 18 9 12 15 6"></polyline>
             </svg>
           </button>
 
