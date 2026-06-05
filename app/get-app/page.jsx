@@ -55,6 +55,8 @@ export default function GetAppPage() {
         setShowInstallBtn(false);
       }
       setDeferredPrompt(null);
+    } else {
+      alert("To install, tap the 3-dot menu (⋮) in the top-right corner of Chrome and select 'Add to Home Screen' or 'Install App'.");
     }
   };
 
@@ -120,19 +122,19 @@ export default function GetAppPage() {
                   <ul className="flex flex-col gap-4 text-[13.5px]">
                     <li className="flex gap-4 items-start bg-white/40 p-4 border border-white/50 rounded-2xl">
                       <div className="w-6 h-6 rounded-full bg-[#6B4F4F]/10 text-[#6B4F4F] font-bold text-[12px] flex items-center justify-center shrink-0 mt-0.5">1</div>
-                      <p className="text-gray-700 leading-relaxed">Open this page in the **Safari browser** on your iPhone/iPad.</p>
+                      <p className="text-gray-700 leading-relaxed">Open this page in the <strong>Safari browser</strong> on your iPhone/iPad.</p>
                     </li>
                     <li className="flex gap-4 items-start bg-white/40 p-4 border border-white/50 rounded-2xl">
                       <div className="w-6 h-6 rounded-full bg-[#6B4F4F]/10 text-[#6B4F4F] font-bold text-[12px] flex items-center justify-center shrink-0 mt-0.5">2</div>
-                      <p className="text-gray-700 leading-relaxed">Tap the **Share button** at the bottom (the square icon with an upward-pointing arrow).</p>
+                      <p className="text-gray-700 leading-relaxed">Tap the <strong>Share button</strong> at the bottom (the square icon with an upward-pointing arrow).</p>
                     </li>
                     <li className="flex gap-4 items-start bg-white/40 p-4 border border-white/50 rounded-2xl">
                       <div className="w-6 h-6 rounded-full bg-[#6B4F4F]/10 text-[#6B4F4F] font-bold text-[12px] flex items-center justify-center shrink-0 mt-0.5">3</div>
-                      <p className="text-gray-700 leading-relaxed">Scroll down the menu list and tap **&apos;Add to Home Screen&apos;**.</p>
+                      <p className="text-gray-700 leading-relaxed">Scroll down the menu list and tap <strong>&apos;Add to Home Screen&apos;</strong>.</p>
                     </li>
                     <li className="flex gap-4 items-start bg-white/40 p-4 border border-white/50 rounded-2xl">
                       <div className="w-6 h-6 rounded-full bg-[#6B4F4F]/10 text-[#6B4F4F] font-bold text-[12px] flex items-center justify-center shrink-0 mt-0.5">4</div>
-                      <p className="text-gray-700 leading-relaxed">Tap **&apos;Add&apos;** in the top-right corner to complete the install.</p>
+                      <p className="text-gray-700 leading-relaxed">Tap <strong>&apos;Add&apos;</strong> in the top-right corner to complete the install.</p>
                     </li>
                   </ul>
                 </div>
@@ -141,31 +143,29 @@ export default function GetAppPage() {
               {/* Android Panel */}
               {deviceOS === "android" && (
                 <div className="flex flex-col gap-6 animate-fade-in w-full">
-                  {showInstallBtn && (
-                    <button
-                      onClick={handleInstallClick}
-                      className="w-full py-4 bg-gradient-to-tr from-[#3D3232] to-[#6B4F4F] text-white rounded-2xl text-[14px] font-bold tracking-wider uppercase hover:opacity-95 shadow-lg active:scale-[0.98] transition-all duration-200"
-                    >
-                      Install App Now
-                    </button>
-                  )}
+                  <button
+                    onClick={handleInstallClick}
+                    className="w-full py-4 bg-gradient-to-tr from-[#3D3232] to-[#6B4F4F] text-white rounded-2xl text-[14px] font-bold tracking-wider uppercase hover:opacity-95 shadow-lg active:scale-[0.98] transition-all duration-200"
+                  >
+                    Install App Now
+                  </button>
 
                   <ul className="flex flex-col gap-4 text-[13.5px]">
                     <li className="flex gap-4 items-start bg-white/40 p-4 border border-white/50 rounded-2xl">
                       <div className="w-6 h-6 rounded-full bg-[#6B4F4F]/10 text-[#6B4F4F] font-bold text-[12px] flex items-center justify-center shrink-0 mt-0.5">1</div>
-                      <p className="text-gray-700 leading-relaxed">Ensure you are using **Chrome browser** for the best installation experience.</p>
+                      <p className="text-gray-700 leading-relaxed">Ensure you are using <strong>Chrome browser</strong> for the best installation experience.</p>
                     </li>
                     <li className="flex gap-4 items-start bg-white/40 p-4 border border-white/50 rounded-2xl">
                       <div className="w-6 h-6 rounded-full bg-[#6B4F4F]/10 text-[#6B4F4F] font-bold text-[12px] flex items-center justify-center shrink-0 mt-0.5">2</div>
-                      <p className="text-gray-700 leading-relaxed">Tap the **Install App Now** button above or click the 3-dot menu (⋮) in the top right.</p>
+                      <p className="text-gray-700 leading-relaxed">Tap the <strong>Install App Now</strong> button above or click the 3-dot menu (⋮) in the top right.</p>
                     </li>
                     <li className="flex gap-4 items-start bg-white/40 p-4 border border-white/50 rounded-2xl">
                       <div className="w-6 h-6 rounded-full bg-[#6B4F4F]/10 text-[#6B4F4F] font-bold text-[12px] flex items-center justify-center shrink-0 mt-0.5">3</div>
-                      <p className="text-gray-700 leading-relaxed">Select **&apos;Add to Home Screen&apos;** or **&apos;Install app&apos;**.</p>
+                      <p className="text-gray-700 leading-relaxed">Select <strong>&apos;Add to Home Screen&apos;</strong> or <strong>&apos;Install app&apos;</strong>.</p>
                     </li>
                     <li className="flex gap-4 items-start bg-white/40 p-4 border border-white/50 rounded-2xl">
                       <div className="w-6 h-6 rounded-full bg-[#6B4F4F]/10 text-[#6B4F4F] font-bold text-[12px] flex items-center justify-center shrink-0 mt-0.5">4</div>
-                      <p className="text-gray-700 leading-relaxed">Confirm by clicking **&apos;Add&apos;** and find the app icon on your home screen.</p>
+                      <p className="text-gray-700 leading-relaxed">Confirm by clicking <strong>&apos;Add&apos;</strong> and find the app icon on your home screen.</p>
                     </li>
                   </ul>
                 </div>
@@ -177,11 +177,11 @@ export default function GetAppPage() {
                   <div className="w-full text-[13.5px] flex flex-col gap-4">
                     <div className="flex gap-4 items-start bg-white/40 p-4 border border-white/50 rounded-2xl">
                       <div className="w-6 h-6 rounded-full bg-[#6B4F4F]/10 text-[#6B4F4F] font-bold text-[12px] flex items-center justify-center shrink-0 mt-0.5">1</div>
-                      <p className="text-gray-700 leading-relaxed">Look for the install icon **(⊕)** in your browser&apos;s address bar at the top right.</p>
+                      <p className="text-gray-700 leading-relaxed">Look for the install icon <strong>(⊕)</strong> in your browser&apos;s address bar at the top right.</p>
                     </div>
                     <div className="flex gap-4 items-start bg-white/40 p-4 border border-white/50 rounded-2xl">
                       <div className="w-6 h-6 rounded-full bg-[#6B4F4F]/10 text-[#6B4F4F] font-bold text-[12px] flex items-center justify-center shrink-0 mt-0.5">2</div>
-                      <p className="text-gray-700 leading-relaxed">Click it and follow the prompt to install **Jewel India** as a standalone desktop app.</p>
+                      <p className="text-gray-700 leading-relaxed">Click it and follow the prompt to install <strong>Jewel India</strong> as a standalone desktop app.</p>
                     </div>
                   </div>
 
