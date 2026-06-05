@@ -14,11 +14,7 @@ export async function POST(request) {
 
     const { data: products, error } = await supabase
       .from("products")
-      .select(`
-        id, title, jewellery_type, category, style, size,
-        metal_purity, net_weight, raw_image_url, processed_image_url, generated_image_urls,
-        wholesaler_id, wholesaler_email
-      `)
+      .select("*")
       .in("id", ids);
 
     if (error) throw error;

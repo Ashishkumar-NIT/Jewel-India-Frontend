@@ -244,13 +244,6 @@ export default function SelectionReviewClient() {
         <div className="flex justify-center py-32">
           <div className="animate-spin rounded-full h-8 w-8 border-2 border-black border-t-transparent"></div>
         </div>
-      ) : products.length === 0 ? (
-        <div className="text-center py-32">
-          <p className="text-gray-500 font-serif text-[18px]">No products selected.</p>
-          <button onClick={() => router.back()} className="text-blue-600 text-[14px] font-sans mt-4 underline underline-offset-4">
-            Return to selection
-          </button>
-        </div>
       ) : viewingProduct ? (
         <div className="fixed inset-0 overflow-y-auto z-50 flex flex-col items-center pb-24 font-sans select-none">
           {/* Arch Background image */}
@@ -319,12 +312,12 @@ export default function SelectionReviewClient() {
               allImages = allImages.slice(0, 4);
 
               return (
-                <div className="flex items-start justify-center gap-6 mb-12 relative">
+                <div className="flex items-start justify-center gap-4 sm:gap-6 mb-12 relative">
                   
                   {/* Main image container */}
                   <div 
                     onClick={() => setIsFullViewOpen(true)}
-                    className="w-[302px] h-[302px] bg-[#f5f5f5] rounded-sm overflow-hidden relative cursor-pointer shadow-sm flex items-center justify-center border border-gray-100/60"
+                    className="w-[60vw] h-[60vw] sm:w-[450px] sm:h-[450px] md:w-[500px] md:h-[500px] max-w-full max-h-[500px] bg-[#f5f5f5] rounded-sm overflow-hidden relative cursor-pointer shadow-sm flex items-center justify-center border border-gray-100/60"
                   >
                     {activeImage ? (
                       <ProtectedImage src={activeImage} className="w-full h-full object-cover mix-blend-multiply" />
@@ -363,7 +356,7 @@ export default function SelectionReviewClient() {
                             setActiveImage(imgSrc);
                             setActiveImageIndex(idx);
                           }}
-                          className={`w-[61.3px] h-[61.3px] overflow-hidden transition-all bg-white relative rounded-sm ${
+                          className={`w-[12vw] h-[12vw] sm:w-[90px] sm:h-[90px] md:w-[100px] md:h-[100px] max-w-[100px] max-h-[100px] overflow-hidden transition-all bg-white relative rounded-sm ${
                             isActive ? "border-2 border-white ring-1 ring-black/10 scale-[1.02] shadow-md z-10" : "border border-gray-200/80 opacity-60 hover:opacity-90"
                           }`}
                         >
@@ -589,6 +582,13 @@ export default function SelectionReviewClient() {
 
         </div>
 
+      ) : products.length === 0 ? (
+        <div className="text-center py-32">
+          <p className="text-gray-500 font-serif text-[18px]">No products selected.</p>
+          <button onClick={() => router.back()} className="text-blue-600 text-[14px] font-sans mt-4 underline underline-offset-4">
+            Return to selection
+          </button>
+        </div>
       ) : (
         <div className="max-w-[1200px] mx-auto px-6 md:px-8 pb-32 pt-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-12">
