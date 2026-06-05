@@ -184,7 +184,7 @@ export function ProductInfoModal({ isOpen, onClose, product, onStartChat, isFull
             {/* Header section — centered, sits inside the white arch opening visually */}
             <div className="flex flex-col items-center text-center mb-10">
               <div className="flex items-center justify-center gap-3 mb-3">
-                <span className="text-[20px] font-bold uppercase tracking-[0.2em] text-[#6e6e6e] font-sans">
+                <span className="text-[16px] md:text-[20px] font-bold uppercase tracking-[0.2em] text-[#6e6e6e] font-sans">
                   {category}
                 </span>
                 {styleAesthetic && (
@@ -195,7 +195,7 @@ export function ProductInfoModal({ isOpen, onClose, product, onStartChat, isFull
                   </div>
                 )}
               </div>
-              <h1 className="text-[44px] font-serif text-black leading-[1.2] tracking-wide" style={{ fontFamily: "var(--font-gilda)" }}>
+              <h1 className="text-[32px] md:text-[44px] font-serif text-black leading-[1.2] tracking-wide" style={{ fontFamily: "var(--font-gilda)" }}>
                 {title}
               </h1>
             </div>
@@ -488,10 +488,10 @@ export function ProductInfoModal({ isOpen, onClose, product, onStartChat, isFull
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
     >
       {/* Modal card */}
-      <div className="relative w-full max-w-[860px] bg-white rounded-[20px] shadow-2xl overflow-hidden flex flex-col md:flex-row max-h-[95dvh] md:max-h-[88dvh]">
+      <div className="relative w-full max-w-[860px] bg-white rounded-[20px] shadow-2xl overflow-y-auto lg:overflow-hidden flex flex-col lg:flex-row max-h-[95dvh] lg:max-h-[88dvh]">
 
         {/* ── LEFT PANEL: Image + Thumbnails ── */}
-        <div className="w-full md:w-[48%] shrink-0 flex flex-col bg-[#f5f5f5] p-4 md:p-5">
+        <div className="w-full lg:w-[48%] shrink-0 flex flex-col bg-[#f5f5f5] p-4 lg:p-5">
 
           {/* Back arrow */}
           <button
@@ -554,7 +554,7 @@ export function ProductInfoModal({ isOpen, onClose, product, onStartChat, isFull
         </div>
 
         {/* ── RIGHT PANEL: Details ── */}
-        <div className="w-full md:flex-1 flex flex-col overflow-y-auto px-6 md:px-8 py-6 md:py-8">
+        <div className="w-full lg:flex-1 flex flex-col lg:overflow-y-auto px-6 lg:px-8 py-6 lg:py-8">
 
           {/* Category + Style tags */}
           <div className="flex flex-wrap items-center gap-2 mb-4">
@@ -569,7 +569,7 @@ export function ProductInfoModal({ isOpen, onClose, product, onStartChat, isFull
           </div>
 
           {/* Title */}
-          <h2 className="font-serif text-[30px] md:text-[38px] text-[#111] leading-[1.1] tracking-tight mb-7">
+          <h2 className="font-serif text-[26px] md:text-[38px] text-[#111] leading-[1.1] tracking-tight mb-7">
             {title}
           </h2>
 

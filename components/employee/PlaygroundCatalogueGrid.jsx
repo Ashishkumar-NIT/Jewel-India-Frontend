@@ -225,8 +225,16 @@ export default function PlaygroundCatalogueGrid({
           </button>
         )}
 
+        {/* Drawer backdrop for tablet portrait / mobile viewports */}
+        {sidebarOpen && (
+          <div
+            className="absolute inset-0 bg-black/45 backdrop-blur-[2px] z-10 lg:hidden transition-all duration-300"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
+
         <div
-          className="absolute top-1/2 z-10 pointer-events-auto"
+          className="absolute top-1/2 z-20 lg:z-10 pointer-events-auto"
           onPointerDown={(e) => e.stopPropagation()}
           onTouchStart={(e) => e.stopPropagation()}
           onTouchEnd={(e) => e.stopPropagation()}

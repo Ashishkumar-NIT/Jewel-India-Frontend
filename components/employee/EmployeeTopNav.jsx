@@ -123,7 +123,7 @@ export default function EmployeeBottomNav({ hasUnreadQueries = false, latestOrde
 
   return (
     <nav
-      className="fixed bottom-5 left-1/2 z-[100] -translate-x-1/2"
+      className="fixed bottom-5 left-1/2 z-[100] -translate-x-1/2 max-w-[95vw] sm:max-w-max gap-[2px] lg:gap-1"
       style={{
         background: "rgba(255,255,255,0.55)",
         backdropFilter: "blur(20px)",
@@ -133,7 +133,6 @@ export default function EmployeeBottomNav({ hasUnreadQueries = false, latestOrde
         padding: "6px 6px",
         display: "flex",
         alignItems: "center",
-        gap: "2px",
         boxShadow: "0 8px 32px rgba(0,0,0,0.10), 0 1.5px 4px rgba(0,0,0,0.06)",
       }}
     >
@@ -152,15 +151,10 @@ export default function EmployeeBottomNav({ hasUnreadQueries = false, latestOrde
           <Link
             key={item.name}
             href={item.href}
-            className="relative"
+            className={`relative flex items-center gap-1.5 lg:gap-2 px-2.5 py-1.5 md:px-4 md:py-2 lg:px-5 lg:py-2.5 text-[11px] md:text-[12px] lg:text-[13px]`}
             style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-              padding: "10px 20px",
               borderRadius: "100px",
               textDecoration: "none",
-              fontSize: "13px",
               fontWeight: isActive ? "600" : "500",
               color: isActive ? "#111827" : "#6b7280",
               background: isActive ? "rgba(255,255,255,0.85)" : "transparent",
@@ -180,7 +174,7 @@ export default function EmployeeBottomNav({ hasUnreadQueries = false, latestOrde
                 </span>
               )}
             </span>
-            {item.name}
+            <span className="hidden sm:inline">{item.name}</span>
           </Link>
         );
       })}
@@ -188,24 +182,19 @@ export default function EmployeeBottomNav({ hasUnreadQueries = false, latestOrde
       {isRetailer && (
         <button
           onClick={handleSwitchToAdmin}
+          className="flex items-center gap-1.5 lg:gap-2 px-3 py-1.5 md:px-4 md:py-2 lg:px-5 lg:py-2.5 ml-1 select-none text-[11px] md:text-[12px] lg:text-[13px]"
           style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "8px",
-            padding: "10px 20px",
             borderRadius: "100px",
             border: "none",
             outline: "none",
             background: "linear-gradient(135deg, #3B82F6, #1D4ED8)",
             color: "#FFFFFF",
-            fontSize: "13px",
             fontWeight: "600",
             cursor: "pointer",
             boxShadow: "0 4px 12px rgba(29, 78, 216, 0.2)",
             transition: "transform 0.15s ease, opacity 0.15s ease",
             letterSpacing: "0.01em",
             whiteSpace: "nowrap",
-            marginLeft: "4px",
           }}
           onMouseEnter={(e) => {
             e.currentTarget.style.opacity = "0.9";
@@ -216,11 +205,12 @@ export default function EmployeeBottomNav({ hasUnreadQueries = false, latestOrde
             e.currentTarget.style.transform = "scale(1)";
           }}
         >
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
             <circle cx="12" cy="7" r="4" />
           </svg>
-          Take me to dashboard
+          <span className="hidden lg:inline">Take me to dashboard</span>
+          <span className="inline lg:hidden">Dashboard</span>
         </button>
       )}
     </nav>

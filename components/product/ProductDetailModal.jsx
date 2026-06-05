@@ -123,7 +123,7 @@ export function ProductDetailModal({ product, onClose }) {
     >
       {/* ── Panel ── */}
       <div
-        className="relative w-full max-w-5xl max-h-[92vh] bg-celestique-cream flex flex-col md:flex-row overflow-hidden"
+        className="relative w-full max-w-5xl max-h-[92vh] bg-celestique-cream flex flex-col lg:flex-row overflow-y-auto lg:overflow-hidden"
         style={{ animation: "fadeInUp 0.3s ease both" }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -139,9 +139,9 @@ export function ProductDetailModal({ product, onClose }) {
         </button>
 
         {/* ═══════════════ LEFT — Image Canvas ═══════════════════════════════ */}
-        <div className="w-full md:w-[52%] shrink-0 relative flex flex-col">
+        <div className="w-full lg:w-[52%] shrink-0 relative flex flex-col">
           {/* Main image */}
-          <div className="relative flex-1 min-h-75 md:min-h-0" style={checkerStyle}>
+          <div className="relative flex-1 min-h-[300px] lg:min-h-0" style={checkerStyle}>
             {activeImg ? (
               <>
                 {/* Shimmer */}
@@ -220,7 +220,7 @@ export function ProductDetailModal({ product, onClose }) {
         </div>
 
         {/* ═══════════════ RIGHT — Details Panel ═════════════════════════════ */}
-        <div className="flex-1 overflow-y-auto flex flex-col">
+        <div className="flex-1 lg:overflow-y-auto flex flex-col">
           {/* Top stripe */}
           <div className="px-8 pt-8 pb-6 border-b border-celestique-dark/10">
             <span className="text-[9px] uppercase tracking-[0.3em] font-bold text-celestique-dark/30 block mb-4">

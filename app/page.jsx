@@ -144,8 +144,8 @@ export default async function HomePage() {
 
       {/* ── Footer ── */}
       <footer className="border-t border-celestique-dark/10 pt-24 pb-12 px-6 md:px-12 max-w-[1400px] mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-24">
-          <div className="md:col-span-2 space-y-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-12 mb-24">
+          <div className="lg:col-span-2 space-y-8">
             <div className="text-4xl font-serif tracking-tighter text-celestique-dark">CELESTIQUE</div>
             <p className="text-[10px] uppercase tracking-[0.2em] font-medium text-celestique-dark/60 max-w-xs leading-relaxed">
               Timeless jewelry for the modern spirit. Handcrafted with precision and passion in our studio.
@@ -168,7 +168,7 @@ export default async function HomePage() {
             </ul>
           </div>
         </div>
-        <div className="flex flex-col md:flex-row justify-between items-center pt-12 border-t border-celestique-dark/5 gap-4">
+        <div className="flex flex-col lg:flex-row justify-between items-center pt-12 border-t border-celestique-dark/5 gap-4 text-center">
           <span className="text-[9px] uppercase tracking-[0.2em] text-celestique-dark/40">&copy; 2025 Studio Celestique. All rights reserved.</span>
           <span className="text-[9px] uppercase tracking-[0.2em] text-celestique-dark/40 font-bold italic">Crafted by hand. Born from nature.</span>
         </div>

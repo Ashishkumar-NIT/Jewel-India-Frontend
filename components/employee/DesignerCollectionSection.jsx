@@ -38,7 +38,7 @@ export default function DesignerCollectionSection({ employee, businessName, desi
         </div>
 
       {/* Main Layout: left grid + right dynamic tall image */}
-      <div className="flex flex-col md:flex-row gap-8 items-stretch">
+      <div className="flex flex-col lg:flex-row gap-8 items-stretch">
 
         {/* LEFT: 2-column grid — only actual designs */}
         <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-12 md:gap-y-16">
@@ -64,9 +64,9 @@ export default function DesignerCollectionSection({ employee, businessName, desi
           ))}
         </div>
 
-        {/* RIGHT: Super tall vertical image — hidden on mobile */}
+        {/* RIGHT: Super tall vertical image — hidden on mobile & portrait */}
         <div
-          className="hidden md:block shrink-0 overflow-hidden relative shadow-2xl"
+          className="hidden lg:block shrink-0 overflow-hidden relative shadow-2xl"
           style={{ width: "28%" }}
         >
           <img
