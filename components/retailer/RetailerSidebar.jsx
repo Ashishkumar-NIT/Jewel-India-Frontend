@@ -169,9 +169,6 @@ function RetailerSidebar({ retailer }) {
 
       <style>{`
         @media (max-height: 780px) {
-          .sidebar-illustration {
-            display: none !important;
-          }
           .sidebar-profile {
             margin-bottom: 12px !important;
           }
@@ -188,13 +185,13 @@ function RetailerSidebar({ retailer }) {
       {/* Sidebar Drawer */}
       <aside
         ref={sidebarRef}
-        className={`fixed top-0 left-0 h-screen z-50 flex flex-col w-[200px] bg-white border-r border-gray-100 transition-transform duration-300 lg:translate-x-0 overflow-y-auto overflow-x-hidden overscroll-contain ${
+        className={`fixed top-0 left-0 h-dvh z-50 flex flex-col w-[200px] bg-white border-r border-gray-100 transition-transform duration-300 lg:translate-x-0 overflow-y-auto overflow-x-hidden overscroll-contain ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
         style={{ padding: "20px 16px 24px 16px" }}
       >
         {/* Close button inside drawer for mobile */}
-        <div className="flex justify-end lg:hidden mb-2">
+        <div className="flex justify-end lg:hidden mb-2 shrink-0">
           <button
             onClick={() => setIsOpen(false)}
             className="p-1 text-gray-500 hover:text-black focus:outline-none"
@@ -219,7 +216,7 @@ function RetailerSidebar({ retailer }) {
         </Link>
 
         {/* User Profile */}
-        <div className="sidebar-profile flex items-center gap-2.5 mb-7 px-1">
+        <div className="sidebar-profile flex items-center gap-2.5 mb-7 px-1 shrink-0">
           <div className="w-[36px] h-[36px] rounded-full overflow-hidden bg-gray-200 shrink-0 border-2 border-gray-100">
             <Image src={logoUrl} alt="Logo" width={36} height={36} className="object-cover w-full h-full" />
           </div>
@@ -230,13 +227,13 @@ function RetailerSidebar({ retailer }) {
         </div>
 
         {/* Navigation */}
-        <nav className="flex flex-col gap-0.5 flex-1">
+        <nav className="flex flex-col gap-0.5 flex-1 shrink-0">
           {navItems.map((item) => (
             <Link
               key={item.name}
               href={item.href}
               onClick={() => setIsOpen(false)}
-              className={`sidebar-nav-item flex items-center gap-3 h-[42px] rounded-[10px] px-3 transition-all ${
+              className={`sidebar-nav-item flex items-center gap-3 h-[42px] rounded-[10px] px-3 transition-all shrink-0 ${
                 item.isActive
                   ? "bg-[#F3F4F6] text-[#111111]"
                   : "text-[#6B7280] hover:bg-gray-50 hover:text-[#374151]"
