@@ -2,6 +2,7 @@ import { Bodoni_Moda, Jost, Manrope } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "../components/auth/AuthProvider";
 import { getAuthUser } from "../lib/supabase/queries";
+import { headers } from "next/headers";
 
 const bodoni = Bodoni_Moda({
   variable: "--font-bodoni",
@@ -17,10 +18,55 @@ const manrope = Manrope({
   variable: "--font-manrope-var",
   subsets: ["latin"],
 });
-export const metadata = {
-  title: "Celestique | Timeless Jewelry",
-  description: "A celestial touch for timeless moments.",
-};
+
+export async function generateMetadata() {
+  const headersList = await headers();
+  const host = headersList.get("host") || "";
+  const isAdmin = host.includes("app.jewelindia.shop") || host.includes("admin");
+
+  if (isAdmin) {
+    return {
+      title: "Jewel India Admin",
+      description: "Retailer dashboard for managing your Jewel India store",
+      manifest: "/manifest.webmanifest",
+      appleWebApp: {
+        capable: true,
+        statusBarStyle: "default",
+        title: "Jewel India Admin",
+      },
+      icons: {
+        apple: [
+          { url: "/icons/admin-icon-72x72.png", sizes: "72x72" },
+          { url: "/icons/admin-icon-96x96.png", sizes: "96x96" },
+          { url: "/icons/admin-icon-128x128.png", sizes: "128x128" },
+          { url: "/icons/admin-icon-152x152.png", sizes: "152x152" },
+          { url: "/icons/admin-icon-192x192.png", sizes: "192x192" },
+        ],
+      },
+    };
+  }
+
+  // Storefront
+  return {
+    title: "Celestique | Timeless Jewelry",
+    description: "A celestial touch for timeless moments.",
+    manifest: "/manifest.webmanifest",
+    appleWebApp: {
+      capable: true,
+      statusBarStyle: "default",
+      title: "Jewel India",
+    },
+    icons: {
+      apple: [
+        { url: "/icons/icon-72x72.png", sizes: "72x72" },
+        { url: "/icons/icon-96x96.png", sizes: "96x96" },
+        { url: "/icons/icon-128x128.png", sizes: "128x128" },
+        { url: "/icons/icon-152x152.png", sizes: "152x152" },
+        { url: "/icons/icon-192x192.png", sizes: "192x192" },
+      ],
+    },
+  };
+}
 
 export default async function RootLayout({ children }) {
   // Fetched once here — React.cache() deduplicates any subsequent getAuthUser()
