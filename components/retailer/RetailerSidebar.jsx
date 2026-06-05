@@ -63,49 +63,6 @@ const NAV_ITEMS = [
 function RetailerSidebar({ retailer }) {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
-  const sidebarRef = useRef(null);
-
-  useEffect(() => {
-    const sidebar = sidebarRef.current;
-    if (!sidebar) return;
-
-    const handleWheel = (e) => {
-      const { scrollTop, scrollHeight, clientHeight } = sidebar;
-      const isScrollable = scrollHeight - clientHeight > 1;
-
-      if (!isScrollable) {
-        e.preventDefault();
-        return;
-      }
-
-      const deltaY = e.deltaY;
-      const isScrollingUp = deltaY < 0;
-      const isScrollingDown = deltaY > 0;
-
-      if (isScrollingUp && scrollTop <= 0) {
-        e.preventDefault();
-      } else if (isScrollingDown && scrollTop + clientHeight >= scrollHeight - 1) {
-        e.preventDefault();
-      }
-    };
-
-    const handleTouchMove = (e) => {
-      const { scrollHeight, clientHeight } = sidebar;
-      const isScrollable = scrollHeight - clientHeight > 1;
-
-      if (!isScrollable) {
-        e.preventDefault();
-      }
-    };
-
-    sidebar.addEventListener("wheel", handleWheel, { passive: false });
-    sidebar.addEventListener("touchmove", handleTouchMove, { passive: false });
-
-    return () => {
-      sidebar.removeEventListener("wheel", handleWheel);
-      sidebar.removeEventListener("touchmove", handleTouchMove);
-    };
-  }, []);
 
   const navItems = useMemo(
     () =>
@@ -167,10 +124,27 @@ function RetailerSidebar({ retailer }) {
         />
       )}
 
+      <style>{`
+        @media (max-height: 780px) {
+          .sidebar-illustration {
+            display: none !important;
+          }
+          .sidebar-profile {
+            margin-bottom: 12px !important;
+          }
+          .sidebar-new-emp {
+            margin-bottom: 12px !important;
+            height: 38px !important;
+          }
+          .sidebar-nav-item {
+            height: 36px !important;
+          }
+        }
+      `}</style>
+
       {/* Sidebar Drawer */}
       <aside
-        ref={sidebarRef}
-        className={`fixed top-0 left-0 h-screen z-50 flex flex-col w-[200px] bg-white border-r border-gray-100 transition-transform duration-300 lg:translate-x-0 overflow-y-auto overflow-x-hidden overscroll-contain ${
+        className={`fixed top-0 left-0 h-screen z-50 flex flex-col w-[200px] bg-white border-r border-gray-100 transition-transform duration-300 lg:translate-x-0 overflow-hidden ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
         style={{ padding: "20px 16px 24px 16px" }}
@@ -194,14 +168,14 @@ function RetailerSidebar({ retailer }) {
           href="?modal=add-employee"
           scroll={false}
           onClick={() => setIsOpen(false)}
-          className="w-full h-[44px] rounded-[10px] flex items-center justify-center text-[14px] font-semibold text-[#3B82F6] hover:opacity-90 transition-opacity mb-6 shrink-0 lg:flex hidden"
+          className="sidebar-new-emp w-full h-[44px] rounded-[10px] flex items-center justify-center text-[14px] font-semibold text-[#3B82F6] hover:opacity-90 transition-opacity mb-6 shrink-0 lg:flex hidden"
           style={{ backgroundColor: "#DBEAFE" }}
         >
           New Employee
         </Link>
 
         {/* User Profile */}
-        <div className="flex items-center gap-2.5 mb-7 px-1">
+        <div className="sidebar-profile flex items-center gap-2.5 mb-7 px-1">
           <div className="w-[36px] h-[36px] rounded-full overflow-hidden bg-gray-200 shrink-0 border-2 border-gray-100">
             <Image src={logoUrl} alt="Logo" width={36} height={36} className="object-cover w-full h-full" />
           </div>
@@ -218,7 +192,7 @@ function RetailerSidebar({ retailer }) {
               key={item.name}
               href={item.href}
               onClick={() => setIsOpen(false)}
-              className={`flex items-center gap-3 h-[42px] rounded-[10px] px-3 transition-all ${
+              className={`sidebar-nav-item flex items-center gap-3 h-[42px] rounded-[10px] px-3 transition-all ${
                 item.isActive
                   ? "bg-[#F3F4F6] text-[#111111]"
                   : "text-[#6B7280] hover:bg-gray-50 hover:text-[#374151]"
@@ -236,7 +210,7 @@ function RetailerSidebar({ retailer }) {
 
         {/* Bottom: Illustration + Logout */}
         <div className="shrink-0">
-          <div className="flex justify-center mb-5 pointer-events-none lg:block hidden">
+          <div className="sidebar-illustration flex justify-center mb-5 pointer-events-none lg:block hidden">
             <Image
               src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777301517/retailer_profile_gucmsl.svg"
               alt="3D Illustration"
