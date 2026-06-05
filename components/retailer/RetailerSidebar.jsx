@@ -126,7 +126,7 @@ function RetailerSidebar({ retailer }) {
 
       {/* Sidebar Drawer */}
       <aside
-        className={`fixed top-0 left-0 h-screen z-50 flex flex-col w-[200px] bg-white border-r border-gray-100 transition-transform duration-300 lg:translate-x-0 ${
+        className={`fixed top-0 left-0 h-screen z-50 flex flex-col w-[200px] bg-white border-r border-gray-100 transition-transform duration-300 lg:translate-x-0 overflow-y-auto overflow-x-hidden ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
         style={{ padding: "20px 16px 24px 16px" }}

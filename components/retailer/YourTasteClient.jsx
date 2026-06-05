@@ -190,14 +190,14 @@ export default function YourTasteClient({ products, selectedProductIds, category
       <div className="flex flex-col gap-8 relative mt-2">
         
         {/* Categories Row */}
-        <div className="flex items-center gap-8 md:gap-10 overflow-x-auto no-scrollbar pb-6 pt-4 px-2">
+        <div className="flex flex-wrap gap-3 md:gap-4 justify-start pb-6 pt-4 px-2">
           {categoryTabs.map((tab) => {
             const isActive = activeCategory === tab.slug;
             return (
               <button
                 key={tab.slug}
                 onClick={() => setActiveCategory(tab.slug === activeCategory ? "all" : tab.slug)}
-                className="flex flex-col items-center gap-3 group shrink-0 outline-none"
+                className="flex flex-col items-center gap-3 group outline-none w-[calc(33.33%-8px)] sm:w-auto"
               >
                 <div 
                   className={`w-[65px] h-[65px] md:w-[75px] md:h-[75px] rounded-[16px] overflow-hidden transition-all duration-300 bg-[#F9F9F9] relative shadow-sm ${isActive ? 'scale-110 ring-2 ring-black ring-offset-4 z-10' : 'hover:scale-105'}`}
@@ -209,7 +209,7 @@ export default function YourTasteClient({ products, selectedProductIds, category
                       alt={tab.name} 
                       width={75} 
                       height={75} 
-                      className="w-full h-full object-cover" 
+                      className="w-full h-full object-contain block" 
                     />
                   ) : (
                     <div className="w-full h-full bg-[#F9F9F9] flex items-center justify-center text-[#111827] text-xs font-bold">
@@ -217,7 +217,7 @@ export default function YourTasteClient({ products, selectedProductIds, category
                     </div>
                   )}
                 </div>
-                <span className={`text-[13px] transition-colors ${isActive ? 'text-[#111827] font-extrabold' : 'text-[#9CA3AF] font-bold group-hover:text-[#6B7280]'}`}>
+                <span className={`text-[13px] text-center transition-colors ${isActive ? 'text-[#111827] font-extrabold' : 'text-[#9CA3AF] font-bold group-hover:text-[#6B7280]'}`}>
                   {tab.name}
                 </span>
               </button>
@@ -226,7 +226,7 @@ export default function YourTasteClient({ products, selectedProductIds, category
           
           <button 
             onClick={() => setActiveCategory("all")}
-            className="flex items-center gap-2 ml-2 shrink-0 text-[#111827] font-bold text-[14px] hover:underline"
+            className="flex items-center gap-2 ml-2 text-[#111827] font-bold text-[14px] hover:underline w-[calc(33.33%-8px)] sm:w-auto justify-center sm:justify-start"
           >
             View All <span className="text-xl leading-none">→</span>
           </button>
