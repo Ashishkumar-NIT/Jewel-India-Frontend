@@ -47,17 +47,14 @@ export default function EmployeeHomeClient({ employee, businessName, designs }) 
             {/* No overlays as requested */}
 
             {/* Content — full height flex */}
-            <div className="relative z-10 flex flex-col h-full p-8 pb-8">
-              {/* Top: large serif text left-aligned */}
+            <div className="relative z-10 flex flex-col h-full p-8 pb-8 justify-between">
+              {/* Top: Select View Mode title */}
               <h3
                 className="font-serif text-white leading-[1.2] text-left uppercase tracking-wider"
                 style={{ fontSize: "clamp(20px, 5vw, 26px)", fontWeight: 400 }}
               >
-                explore the<br />design collection
+                select view mode
               </h3>
-
-              {/* Spacer */}
-              <div className="flex-1" />
 
               {/* Bottom: two CTAs with clear visual hierarchy */}
               <div className="flex flex-col gap-2.5 w-full">
@@ -65,7 +62,7 @@ export default function EmployeeHomeClient({ employee, businessName, designs }) 
                   onClick={() => router.push('/dashboard/employee/wholesaler-gallery')}
                   className="w-full py-3.5 bg-white text-black text-[13px] font-bold tracking-widest uppercase hover:bg-gray-100 hover:scale-[1.02] transition-all duration-300 shadow-md border-none outline-none cursor-pointer"
                 >
-                  Catalogue
+                  Catalog
                 </button>
                 <button
                   onClick={() => router.push('/dashboard/employee/playground')}

@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useEffect, useRef, memo } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import ProtectedImage from "../shared/ProtectedImage";
 import { ProductInfoModal } from "./ProductInfoModal";
+import useLongPress from "@/lib/hooks/useLongPress";
 
 const TagChip = memo(function TagChip({ type, label }) {
   if (!label) return null;
@@ -23,8 +24,9 @@ const TagChip = memo(function TagChip({ type, label }) {
   );
 });
 
-const DesignCard = memo(function DesignCard({ product, isSelected, onToggleSelect, onShowInfo }) {
+const DesignCard = memo(function DesignCard({ product, isSelected, onToggleSelect }) {
   const [imgError, setImgError] = useState(false);
+  const router = useRouter();
   const title = product.title || product.jewellery_type || "Jewellery Item";
   
   // Extract purity/metal_type and category
@@ -35,12 +37,18 @@ const DesignCard = memo(function DesignCard({ product, isSelected, onToggleSelec
 
   const imgUrl = product.generated_image_urls?.[0] || product.processed_image_url || product.raw_image_url;
 
+  const longPressProps = useLongPress({
+    onLongPress: () => onToggleSelect(product),
+    onClick: () => router.push(`/dashboard/employee/playground/review?productId=${product.id}`),
+    delay: 500,
+  });
+
   return (
     <div 
-      onClick={() => onShowInfo(product)}
+      {...longPressProps}
       className={`cursor-pointer rounded-[14px] bg-white overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] hover:scale-[1.01] transition-all duration-300 flex flex-col border-[2px] ${
         isSelected ? "border-[#007AFF] ring-1 ring-[#007AFF]" : "border-transparent"
-      }`}
+      } ${longPressProps.isPressing ? "scale-95 opacity-80" : ""}`}
     >
       <div className="relative aspect-square w-full bg-gray-50 overflow-hidden group">
         {!imgError && imgUrl ? (
@@ -186,7 +194,6 @@ export default function PlaygroundCatalogueGrid({
                   product={product}
                   isSelected={selectedItems.has(product.id)}
                   onToggleSelect={toggleSelection}
-                  onShowInfo={setViewingProductForModal}
                 />
               ))}
             </div>

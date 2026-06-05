@@ -1,16 +1,18 @@
 "use client";
 
 import { Suspense, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import InfinityCanvas from "./InfinityCanvas";
 import PlaygroundCatalogueGrid from "./PlaygroundCatalogueGrid";
 
 export default function PlaygroundClient({ products, employeeId, retailerName }) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const initialMode = searchParams ? searchParams.get("mode") : null;
   
   // Shared state between InfinityCanvas and PlaygroundCatalogueGrid
   const [selectedItems, setSelectedItems] = useState(new Set());
-  const [viewMode, setViewMode] = useState(null); // null (selection screen), "playground" (infinite canvas) or "catalogue" (grid)
+  const [viewMode, setViewMode] = useState(initialMode || "playground");
 
   const handleNext = () => {
     // Save to session storage and proceed

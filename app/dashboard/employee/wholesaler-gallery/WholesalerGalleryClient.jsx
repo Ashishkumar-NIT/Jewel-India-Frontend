@@ -4,6 +4,7 @@ import { useMemo, useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { ProductInfoModal } from "@/components/employee/ProductInfoModal";
 import EmployeeBottomNav from "@/components/employee/EmployeeTopNav";
+import useLongPress from "@/lib/hooks/useLongPress";
 
 function formatDate(dateStr) {
   if (!dateStr) return "";
@@ -14,7 +15,7 @@ function formatDate(dateStr) {
   });
 }
 
-function ProductCard({ product, onClick }) {
+function ProductCard({ product, onClick, onLongPress }) {
   const [imgError, setImgError] = useState(false);
   const title = product.title || product.jewellery_type || "Untitled";
   const imageUrl = product.processed_image_url || 
@@ -22,10 +23,18 @@ function ProductCard({ product, onClick }) {
                    product.raw_image_url || 
                    product.image_url;
 
+  const longPressProps = useLongPress({
+    onLongPress: () => onLongPress && onLongPress(product),
+    onClick: () => onClick && onClick(product),
+    delay: 500,
+  });
+
   return (
     <div
-      className="flex flex-col cursor-pointer group/card bg-white"
-      onClick={() => onClick && onClick(product)}
+      {...longPressProps}
+      className={`flex flex-col cursor-pointer group/card bg-white transition-all duration-300 ${
+        longPressProps.isPressing ? "scale-95 opacity-80" : ""
+      }`}
     >
       {/* Image container — Full bleed */}
       <div
@@ -111,6 +120,19 @@ export default function WholesalerGalleryClient({ products, categoryTabs, initia
   const [activeCategory, setActiveCategory] = useState(initialCategory);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const router = useRouter();
+
+  const handleLongPress = (product) => {
+    const stored = JSON.parse(sessionStorage.getItem('employee_selected_products') || "[]");
+    let nextStored;
+    if (stored.includes(product.id)) {
+      nextStored = stored.filter(id => id !== product.id);
+      alert(`${product.title || product.jewellery_type || "Product"} removed from selection.`);
+    } else {
+      nextStored = [...stored, product.id];
+      alert(`${product.title || product.jewellery_type || "Product"} added to selection.`);
+    }
+    sessionStorage.setItem('employee_selected_products', JSON.stringify(nextStored));
+  };
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
@@ -446,7 +468,8 @@ export default function WholesalerGalleryClient({ products, categoryTabs, initia
                 <ProductCard
                   key={product.id}
                   product={product}
-                  onClick={() => setSelectedProduct(product)}
+                  onClick={(p) => router.push(`/dashboard/employee/playground/review?productId=${p.id}`)}
+                  onLongPress={handleLongPress}
                 />
               ))}
             </div>

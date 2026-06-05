@@ -36,19 +36,35 @@ export default function SelectionReviewClient() {
 
   useEffect(() => {
     const fetchProducts = async () => {
+      let urlProductId = null;
+      if (typeof window !== "undefined") {
+        const params = new URLSearchParams(window.location.search);
+        urlProductId = params.get("productId");
+      }
+
       const stored = sessionStorage.getItem('employee_selected_products');
-      if (!stored) {
+      let ids = [];
+      if (stored) {
+        try {
+          ids = JSON.parse(stored);
+        } catch (e) {
+          console.error(e);
+        }
+      }
+
+      const originalStoredSet = new Set(ids);
+
+      // If productId is in URL and not in stored ids, fetch it too
+      if (urlProductId && !originalStoredSet.has(urlProductId)) {
+        ids.push(urlProductId);
+      }
+
+      if (ids.length === 0) {
         setIsLoading(false);
         return;
       }
       
       try {
-        const ids = JSON.parse(stored);
-        if (ids.length === 0) {
-          setIsLoading(false);
-          return;
-        }
-
         const res = await fetch('/api/products/batch', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -57,8 +73,17 @@ export default function SelectionReviewClient() {
         
         const json = await res.json();
         if (json.data) {
-          setProducts(json.data);
-          // Init form data
+          // Only show original stored products in the review grid
+          const gridProducts = json.data.filter(p => originalStoredSet.has(p.id));
+          setProducts(gridProducts);
+
+          // Find the product specified in the URL to show in detail view
+          const detailProduct = json.data.find(p => p.id === urlProductId);
+          if (detailProduct) {
+            handleViewProduct(detailProduct);
+          }
+
+          // Init form data for all fetched products
           const initialForm = {};
           json.data.forEach(p => {
             initialForm[p.id] = { quantity: 1, customization_notes: "" };
@@ -237,7 +262,16 @@ export default function SelectionReviewClient() {
 
           {/* Glassmorphic back button */}
           <button 
-            onClick={() => handleViewProduct(null)}
+            onClick={() => {
+              if (typeof window !== "undefined") {
+                const params = new URLSearchParams(window.location.search);
+                if (params.has("productId")) {
+                  router.back();
+                  return;
+                }
+              }
+              handleViewProduct(null);
+            }}
             className="absolute top-10 left-10 w-12 h-12 rounded-full border-[0.436px] border-[#696969] flex items-center justify-center text-black hover:opacity-80 active:scale-95 transition-all shadow-[0px_2.182px_3.382px_0px_rgba(0,0,0,0.25),inset_-1.091px_-1.091px_2.291px_0px_rgba(0,0,0,0.25),inset_2.182px_2.182px_4.691px_0px_rgba(255,255,255,0.25)] z-50"
             style={{
               backdropFilter: "blur(12.5px)",

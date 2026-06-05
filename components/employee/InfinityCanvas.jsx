@@ -1,11 +1,48 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useEffect, useRef, useState, memo } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 
 import gsap from "gsap";
 import { Observer } from "gsap/Observer";
 import { ProductInfoModal } from "./ProductInfoModal";
+import useLongPress from "@/lib/hooks/useLongPress";
+
+const CanvasTile = memo(function CanvasTile({ product, isSelected, toggleSelection, elRef, router }) {
+  const imgUrl = product.generated_image_urls?.[0] || product.processed_image_url || product.raw_image_url;
+
+  const longPressProps = useLongPress({
+    onLongPress: () => toggleSelection(product),
+    onClick: () => router.push(`/dashboard/employee/playground/review?productId=${product.id}`),
+    delay: 500,
+  });
+
+  return (
+    <div 
+      ref={elRef}
+      className={`absolute top-0 left-0 cursor-pointer will-change-transform group/tile`}
+      style={{ width: "260px", height: "360px" }}
+      {...longPressProps}
+    >
+      <div className={`w-full h-full bg-white flex flex-col transition-all duration-300 rounded-[2px] overflow-hidden ${
+        isSelected ? 'border-[3px] border-[#007AFF] shadow-lg scale-[0.97]' : 'border border-gray-100 shadow-sm hover:shadow-xl hover:scale-[1.02]'
+      } ${longPressProps.isPressing ? 'scale-[0.95] opacity-80' : ''}`}>
+        <div className="w-full bg-gray-50 flex items-center justify-center p-4 overflow-hidden relative" style={{ flex: "1 1 0", minHeight: 0 }}>
+          {imgUrl ? (
+            <img src={imgUrl} alt={product.title} className="w-full h-full object-cover mix-blend-multiply pointer-events-none rounded-sm" />
+          ) : (
+            <span className="text-gray-300">No Image</span>
+          )}
+        </div>
+        <div className="px-4 py-3 text-center bg-white border-t border-gray-100 shrink-0" style={{ minHeight: "52px" }}>
+          <h3 className="font-serif text-[15px] text-gray-800 leading-snug line-clamp-2">
+            {product.title || product.jewellery_type || "Jewellery"}
+          </h3>
+        </div>
+      </div>
+    </div>
+  );
+});
 
 export default function InfinityCanvas({ products, onBack, onNext, retailerName, selectedItems, setSelectedItems, onToggleLayout }) {
   const containerRef = useRef(null);
@@ -13,10 +50,7 @@ export default function InfinityCanvas({ products, onBack, onNext, retailerName,
   const [viewingProductForModal, setViewingProductForModal] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const searchParams = useSearchParams();
-
-  // Refs for tracking long-press events (Touch and Mouse)
-  const longPressTimer = useRef(null);
-  const isLongPressRef = useRef(false);
+  const router = useRouter();
 
 
   // Use refs for GSAP animation to avoid state re-renders
@@ -140,32 +174,7 @@ export default function InfinityCanvas({ products, onBack, onNext, retailerName,
     });
   };
 
-  const handleStart = (product, e) => {
-    isLongPressRef.current = false;
-    longPressTimer.current = setTimeout(() => {
-      toggleSelection(product);
-      isLongPressRef.current = true;
-      if (window.navigator?.vibrate) {
-        window.navigator.vibrate(50);
-      }
-    }, 550);
-  };
 
-  const handleEnd = (e) => {
-    if (longPressTimer.current) {
-      clearTimeout(longPressTimer.current);
-    }
-    if (isLongPressRef.current) {
-      if (e && typeof e.preventDefault === "function") e.preventDefault();
-      if (e && typeof e.stopPropagation === "function") e.stopPropagation();
-    }
-  };
-
-  const handleMove = () => {
-    if (longPressTimer.current) {
-      clearTimeout(longPressTimer.current);
-    }
-  };
 
   const handleNext = () => {
     // Save to session storage and proceed
@@ -193,60 +202,15 @@ export default function InfinityCanvas({ products, onBack, onNext, retailerName,
       >
         {repeatedProducts.map((product, idx) => {
           const isSelected = selectedItems.has(product.id);
-          const imgUrl = product.generated_image_urls?.[0] || product.processed_image_url || product.raw_image_url;
-
           return (
-            <div 
-              key={product.uniqueId} 
-              ref={el => itemRefs.current[idx] = el}
-              className={`absolute top-0 left-0 cursor-pointer will-change-transform group/tile`}
-              style={{ width: "260px", height: "360px" }}
-              onClick={(e) => {
-                if (isLongPressRef.current) {
-                  isLongPressRef.current = false;
-                  return;
-                }
-                setViewingProductForModal(product);
-              }}
-              onTouchStart={(e) => handleStart(product, e)}
-              onTouchEnd={(e) => handleEnd(e)}
-              onTouchMove={handleMove}
-              onMouseDown={(e) => handleStart(product, e)}
-              onMouseUp={(e) => handleEnd(e)}
-              onMouseMove={handleMove}
-              onMouseLeave={handleMove}
-            >
-              <div className={`w-full h-full bg-white flex flex-col transition-all duration-300 rounded-[2px] overflow-hidden ${isSelected ? 'border-[3px] border-[#007AFF] shadow-lg scale-[0.97]' : 'border border-gray-100 shadow-sm hover:shadow-xl hover:scale-[1.02]'}`}>
-                <div className="w-full bg-gray-50 flex items-center justify-center p-4 overflow-hidden relative" style={{ flex: "1 1 0", minHeight: 0 }}>
-                  {imgUrl ? (
-                    <img src={imgUrl} alt={product.title} className="w-full h-full object-cover mix-blend-multiply pointer-events-none rounded-sm" />
-                  ) : (
-                    <span className="text-gray-300">No Image</span>
-                  )}
-                  
-                  {/* Info Button Overlay */}
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setViewingProductForModal(product);
-                    }}
-                    className="absolute top-3 right-3 w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center text-gray-400 hover:text-black hover:scale-110 transition-all opacity-0 group-hover/tile:opacity-100 shadow-sm border border-gray-100"
-                    title="View Details"
-                  >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                      <circle cx="12" cy="12" r="10"></circle>
-                      <line x1="12" y1="16" x2="12" y2="12"></line>
-                      <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                    </svg>
-                  </button>
-                </div>
-                <div className="px-4 py-3 text-center bg-white border-t border-gray-100 shrink-0" style={{ minHeight: "52px" }}>
-                  <h3 className="font-serif text-[15px] text-gray-800 leading-snug line-clamp-2">
-                    {product.title || product.jewellery_type || "Jewellery"}
-                  </h3>
-                </div>
-              </div>
-            </div>
+            <CanvasTile
+              key={product.uniqueId}
+              product={product}
+              isSelected={isSelected}
+              toggleSelection={toggleSelection}
+              elRef={el => itemRefs.current[idx] = el}
+              router={router}
+            />
           );
         })}
       </div>
