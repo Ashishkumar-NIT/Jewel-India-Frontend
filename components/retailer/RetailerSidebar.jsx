@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { signOut } from "../../lib/actions/auth";
-import { memo, useMemo, useState } from "react";
+import { memo, useMemo, useState, useEffect, useRef } from "react";
 
 const NAV_ITEMS = [
   {
@@ -63,6 +63,49 @@ const NAV_ITEMS = [
 function RetailerSidebar({ retailer }) {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+  const sidebarRef = useRef(null);
+
+  useEffect(() => {
+    const sidebar = sidebarRef.current;
+    if (!sidebar) return;
+
+    const handleWheel = (e) => {
+      const { scrollTop, scrollHeight, clientHeight } = sidebar;
+      const isScrollable = scrollHeight - clientHeight > 1;
+
+      if (!isScrollable) {
+        e.preventDefault();
+        return;
+      }
+
+      const deltaY = e.deltaY;
+      const isScrollingUp = deltaY < 0;
+      const isScrollingDown = deltaY > 0;
+
+      if (isScrollingUp && scrollTop <= 0) {
+        e.preventDefault();
+      } else if (isScrollingDown && scrollTop + clientHeight >= scrollHeight - 1) {
+        e.preventDefault();
+      }
+    };
+
+    const handleTouchMove = (e) => {
+      const { scrollHeight, clientHeight } = sidebar;
+      const isScrollable = scrollHeight - clientHeight > 1;
+
+      if (!isScrollable) {
+        e.preventDefault();
+      }
+    };
+
+    sidebar.addEventListener("wheel", handleWheel, { passive: false });
+    sidebar.addEventListener("touchmove", handleTouchMove, { passive: false });
+
+    return () => {
+      sidebar.removeEventListener("wheel", handleWheel);
+      sidebar.removeEventListener("touchmove", handleTouchMove);
+    };
+  }, []);
 
   const navItems = useMemo(
     () =>
@@ -126,6 +169,7 @@ function RetailerSidebar({ retailer }) {
 
       {/* Sidebar Drawer */}
       <aside
+        ref={sidebarRef}
         className={`fixed top-0 left-0 h-screen z-50 flex flex-col w-[200px] bg-white border-r border-gray-100 transition-transform duration-300 lg:translate-x-0 overflow-y-auto overflow-x-hidden overscroll-contain ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
