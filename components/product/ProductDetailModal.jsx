@@ -63,7 +63,7 @@ export function ProductDetailModal({ product, onClose }) {
     if (Array.isArray(product.generated_image_urls) && product.generated_image_urls.length > 0)
       return product.generated_image_urls;
     const single =
-      product.processed_image_url;
+      product.processed_image_url || product.image_url;
     return single ? [single] : [];
   })();
 

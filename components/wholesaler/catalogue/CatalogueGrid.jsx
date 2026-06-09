@@ -14,7 +14,7 @@ function ProductDetailModal({ product, onClose, onUpdate }) {
 
   // TODO: replace with Supabase product/processed/{product.sku} fetch once SKU is available
   const images = Array.from(new Set([
-    product.processed_image_url,
+    product.processed_image_url || product.image_url,
     ...(product.generated_image_urls || []),
   ].filter(Boolean)));
 
@@ -376,7 +376,7 @@ const CatalogueProductCard = memo(function CatalogueProductCard({ product, onCli
   const [isUpdating, setIsUpdating] = useState(false);
 
   // Use the best available image URL (never raw)
-  const imgUrl = product.processed_image_url || product.generated_image_urls?.[0];
+  const imgUrl = product.processed_image_url || product.generated_image_urls?.[0] || product.image_url;
 
   const title = product.title || (product.jewellery_type ? product.jewellery_type.charAt(0).toUpperCase() + product.jewellery_type.slice(1) : "Jewelry Piece");
   const weight = product.net_weight ? `${product.net_weight}g` : "";
