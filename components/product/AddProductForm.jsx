@@ -241,7 +241,7 @@ export function AddProductForm() {
       <form onSubmit={handleSubmit} className="flex flex-col gap-6 md:gap-10">
 
         {/* ── Section 1 — Product Image ── */}
-        <div className="flex flex-col md:flex-row md:w-220 md:justify-between md:gap-1 md:items-start gap-4">
+        <div className="flex flex-col md:flex-row w-full md:justify-between md:gap-6 md:items-start gap-4">
           {/* Left / Top — Info */}
           <div className="flex flex-col gap-3 md:gap-4 md:max-w-[360px]">
             <div className="flex items-center gap-3 md:-ml-10">
@@ -300,7 +300,7 @@ export function AddProductForm() {
 
           {/* Description + Product Title */}
           {/* Desktop: side-by-side | Mobile: stacked */}
-          <div className="flex flex-col md:flex-row md:w-220 md:justify-between md:gap-1 md:items-start gap-4">
+          <div className="flex flex-col md:flex-row w-full md:justify-between md:gap-6 md:items-start gap-4">
             <div className="pl-[38px] md:pl-0">
               <p className="text-sm text-[#6B7280] leading-relaxed font-gilroy">
                 Add the key information that helps retailers <br className="hidden md:inline" />understand and find this peice.
@@ -321,7 +321,7 @@ export function AddProductForm() {
           </div>
 
           {/* Type + Material Category — 2 cols on desktop, stacked on mobile */}
-          <div className="flex flex-col md:flex-row md:gap-5 md:w-220 gap-4">
+          <div className="flex flex-col md:flex-row md:gap-5 w-full gap-4">
             <div className="w-full md:flex-1">
               <Select
                 id="jewellery_type"
@@ -349,7 +349,7 @@ export function AddProductForm() {
           </div>
 
           {/* Style, Size, Purity — 3 cols on desktop, stacked on mobile */}
-          <div className="flex flex-col md:flex-row md:gap-5 md:w-220 gap-4">
+          <div className="flex flex-col md:flex-row md:gap-5 w-full gap-4">
             <div className="w-full md:flex-1">
               <Select
                 id="style"
@@ -401,7 +401,7 @@ export function AddProductForm() {
           </p>
 
           {/* Weight inputs — mobile: 2+1 grid | desktop: 3-col flex row */}
-          <div className="grid grid-cols-2 md:flex md:flex-row gap-2 md:gap-5 md:w-80 mt-2">
+          <div className="grid grid-cols-2 md:flex md:flex-row gap-2 md:gap-5 w-full md:max-w-xl mt-2">
             <div className="col-span-1 md:flex-1">
               <InputWithSuffix
                 id="grossWeight"
@@ -447,7 +447,7 @@ export function AddProductForm() {
           </div>
 
           {/* Stock Toggle — full-width on both */}
-          <div className="flex justify-between items-center py-4 w-full md:w-174">
+          <div className="flex justify-between items-center py-4 w-full">
             <div className="flex flex-col gap-1">
               <span className="text-sm font-bold text-[#111827] font-gilroy">Available in Stock</span>
               <span className="text-sm text-[#6B7280] font-gilroy">Is this piece ready to shift right away?</span>
@@ -471,7 +471,7 @@ export function AddProductForm() {
 
           {/* Production time — full-width on mobile */}
           {!form.stockAvailable && (
-            <div className="animate-fade-in w-full md:w-110">
+            <div className="animate-fade-in w-full md:max-w-md">
               <InputWithSuffix
                 id="makeToOrderDays"
                 label="Production time"
@@ -505,7 +505,7 @@ export function AddProductForm() {
 
         {/* ── Submit Area ── */}
         {/* Desktop: disclaimer left-aligned, button right | Mobile: full-width button + centered disclaimer below */}
-        <div className="mt-0 md:w-220">
+        <div className="mt-0 w-full">
           {/* Mobile layout */}
           <div className="flex flex-col gap-3 md:hidden pb-10">
             <button

@@ -250,8 +250,8 @@ export default function CatalogueClient({
         </section>
 
         {/* ── Category Row ── */}
-        <div className="relative mb-[28px] flex items-center pr-24">
-          <div className="flex items-center gap-6 overflow-x-auto whitespace-nowrap scroll-smooth pb-8 pt-6 px-4 custom-scrollbar">
+        <div className="mb-[28px]">
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-6 pt-6 px-4">
             {dynamicCategories?.map((cat) => {
               const isActive = activeCategory === cat.slug;
               return (
@@ -279,7 +279,6 @@ export default function CatalogueClient({
                       </div>
                     )}
                   </div>
-                  {/* The label space is maintained, but visually pushed if scale applies. We handle spacing via gap. */}
                   <span 
                     className="text-[12px] text-[#666] text-center w-[90px] truncate"
                     style={isActive ? { marginTop: '8px', color: '#111', fontWeight: 600 } : {}}
@@ -289,14 +288,27 @@ export default function CatalogueClient({
                 </button>
               );
             })}
+
+            {/* View All Button rendered inline at the end */}
+            <button 
+              onClick={() => handleCategoryClick("all")}
+              className="flex flex-col items-center gap-2 group outline-none shrink-0"
+            >
+              <div 
+                className={`w-[90px] h-[90px] rounded-[12px] bg-[#111] hover:bg-[#222] flex flex-col items-center justify-center text-white text-[13px] font-bold transition-all duration-300 ease-out relative ${activeCategory === "all" ? "scale-110 ring-2 ring-[#111] ring-offset-1 shadow-lg z-10" : "hover:shadow-md"}`}
+                style={activeCategory === "all" ? { transform: 'scale(1.1)' } : {}}
+              >
+                <span>View All</span>
+                <span className="text-[16px] mt-0.5">&#8594;</span>
+              </div>
+              <span 
+                className="text-[12px] text-[#666] text-center w-[90px] truncate"
+                style={activeCategory === "all" ? { marginTop: '8px', color: '#111', fontWeight: 600 } : {}}
+              >
+                All Products
+              </span>
+            </button>
           </div>
-          {/* View All Button fixed at end visually */}
-          <button 
-            onClick={() => handleCategoryClick("all")}
-            className="absolute right-0 top-1/2 -translate-y-1/2 text-[14px] text-[#111] hover:text-[#000] underline underline-offset-4 decoration-[#111] bg-gradient-to-l from-[#f9f9f9] via-[#f9f9f9] to-transparent pl-8 py-8"
-          >
-            View All &#8594;
-          </button>
         </div>
 
         {/* ── Filter Bar ── */}

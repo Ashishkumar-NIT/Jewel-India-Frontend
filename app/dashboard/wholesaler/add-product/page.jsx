@@ -24,7 +24,7 @@ export default async function AddProductPage() {
         - Desktop (lg): lg:max-w-[880px] lg:mx-auto lg:px-10 lg:py-10
         (Change mx-auto to ml-0 for left-alignment, or adjust max-w as needed)
       */}
-      <main className="flex-1 flex flex-col gap-6 w-full px-4 py-6 md:gap-8 md:max-w-[768px] md:mx-auto md:px-8 md:py-8 lg:gap-10 lg:max-w-[880px] lg:mx-auto lg:px-10 lg:py-10">
+      <main className="flex-1 flex flex-col gap-6 w-full px-4 py-6 md:gap-8 md:max-w-[640px] md:mx-auto md:px-8 md:py-8 lg:gap-10 lg:max-w-[880px] lg:mx-auto lg:px-10 lg:py-10">
         <AddProductForm />
       </main>
 

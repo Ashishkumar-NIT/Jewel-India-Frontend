@@ -231,7 +231,7 @@ export function EditProductForm({ product }) {
             <h2 className="text-[20px] md:text-3xl font-semibold text-[#111827] font-gilroy">Essential details</h2>
           </div>
 
-          <div className="flex flex-col md:flex-row md:w-220 md:justify-between md:gap-1 md:items-start gap-4">
+          <div className="flex flex-col md:flex-row w-full md:justify-between md:gap-6 md:items-start gap-4">
             <div className="pl-[38px] md:pl-0">
               <p className="text-sm text-[#6B7280] leading-relaxed font-gilroy">
                 Update the key information that helps retailers <br className="hidden md:inline" />understand and find this piece.
@@ -251,7 +251,7 @@ export function EditProductForm({ product }) {
             </div>
           </div>
 
-          <div className="flex flex-col md:flex-row md:gap-5 md:w-220 gap-4">
+          <div className="flex flex-col md:flex-row md:gap-5 w-full gap-4">
             <div className="w-full md:flex-1">
               <Select
                 id="jewellery_type"
@@ -276,7 +276,7 @@ export function EditProductForm({ product }) {
             </div>
           </div>
 
-          <div className="flex flex-col md:flex-row md:gap-5 md:w-220 gap-4">
+          <div className="flex flex-col md:flex-row md:gap-5 w-full gap-4">
             <div className="w-full md:flex-1">
               <Select
                 id="style"
@@ -324,7 +324,7 @@ export function EditProductForm({ product }) {
             Update weight and stone details so retailers <br className="hidden md:inline" /> know exactly what they&apos;re getting.
           </p>
 
-          <div className="grid grid-cols-2 md:flex md:flex-row gap-2 md:gap-5 md:w-80 mt-2">
+          <div className="grid grid-cols-2 md:flex md:flex-row gap-2 md:gap-5 w-full md:max-w-xl mt-2">
             <div className="col-span-1 md:flex-1">
               <InputWithSuffix
                 id="grossWeight"
@@ -369,7 +369,7 @@ export function EditProductForm({ product }) {
             </div>
           </div>
 
-          <div className="flex justify-between items-center py-4 w-full md:w-174">
+          <div className="flex justify-between items-center py-4 w-full">
             <div className="flex flex-col gap-1">
               <span className="text-sm font-bold text-[#111827] font-gilroy">Available in Stock</span>
               <span className="text-sm text-[#6B7280] font-gilroy">Is this piece ready to shift right away?</span>
@@ -392,7 +392,7 @@ export function EditProductForm({ product }) {
           </div>
 
           {!form.stockAvailable && (
-            <div className="animate-fade-in w-full md:w-110">
+            <div className="animate-fade-in w-full md:max-w-md">
               <InputWithSuffix
                 id="makeToOrderDays"
                 label="Production time"
@@ -421,7 +421,7 @@ export function EditProductForm({ product }) {
           </div>
         )}
 
-        <div className="mt-0 md:w-220">
+        <div className="mt-0 w-full">
           <div className="flex flex-col gap-3 md:hidden pb-10">
             <button type="submit" className="w-full bg-black text-white py-3.5 rounded-full font-medium cursor-pointer hover:bg-black/90 transition-colors font-gilroy text-base">
               Save Changes
