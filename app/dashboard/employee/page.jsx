@@ -43,11 +43,12 @@ export default async function EmployeeDashboardPage() {
   // Fetch parent retailer
   const { data: retailer } = await supabase
     .from("retailers")
-    .select("id, business_name")
+    .select("id, business_name, business_logo_url")
     .eq("id", employee.retailer_id)
     .single();
 
   const businessName = retailer?.business_name || "Your Store";
+  const businessLogoUrl = retailer?.business_logo_url || null;
 
   // Fetch non-archived designs for the Designer Collection using Admin to bypass RLS
   const { data: designs } = await supabaseAdmin
@@ -68,6 +69,7 @@ export default async function EmployeeDashboardPage() {
     <EmployeeHomeClient
       employee={currentEmployee}
       businessName={businessName}
+      businessLogoUrl={businessLogoUrl}
       designs={shuffledDesigns}
     />
   );

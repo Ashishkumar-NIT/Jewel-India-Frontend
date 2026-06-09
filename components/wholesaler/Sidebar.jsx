@@ -282,6 +282,12 @@ export default function Sidebar() {
             gap: 32px;
           }
         }
+        @media (max-height: 680px) {
+          .sidebar-icon-stack {
+            margin-top: 32px !important;
+            gap: 16px !important;
+          }
+        }
         .sidebar-item:hover {
           opacity: 0.7 !important;
           background-color: rgba(0, 0, 0, 0.06) !important;
