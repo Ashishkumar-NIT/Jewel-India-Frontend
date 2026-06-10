@@ -13,7 +13,7 @@ const JEWELLERY_TYPES = [
   { value: "necklace", label: "Necklace" },
   { value: "rings", label: "Rings" },
   { value: "earrings", label: "Earrings" },
-  { value: "bracelet", label: "Bracelet" },
+  { value: "haram", label: "Haram" },
   { value: "pendant", label: "Pendant" },
   { value: "bangles", label: "Bangles" },
   { value: "nosepins", label: "Nosepins" },

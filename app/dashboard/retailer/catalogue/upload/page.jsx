@@ -329,7 +329,7 @@ export default function UploadDesignPage() {
                         <option value="Necklace">Necklace</option>
                         <option value="Earrings">Earrings</option>
                         <option value="Ring">Ring</option>
-                        <option value="Bracelet">Bracelet</option>
+                        <option value="Haram">Haram</option>
                         <option value="Pendants">Pendants</option>
                         <option value="Mangalsutras">Mangalsutras</option>
                         <option value="Chains">Chains</option>
