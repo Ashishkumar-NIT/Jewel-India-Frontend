@@ -25,7 +25,7 @@ export default function EmployeeHomeClient({ employee, businessName, businessLog
         />
 
         {/* Content */}
-        <div className="relative z-10 flex flex-col items-center text-center px-4 pt-32 md:pt-40 animate-fade-in">
+        <div className="relative z-10 flex flex-col items-center text-center px-4 pt-[240px] md:pt-[280px] animate-fade-in">
           {/* Business Logo above Business Name */}
           <div className="w-[80px] h-[80px] md:w-[96px] md:h-[96px] rounded-full overflow-hidden bg-white shadow-md border border-gray-100 mb-5 flex items-center justify-center shrink-0">
             <img

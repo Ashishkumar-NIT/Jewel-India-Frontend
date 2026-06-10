@@ -179,7 +179,7 @@ export function ProductInfoModal({ isOpen, onClose, product, onStartChat, isFull
           </button>
 
           {/* Main content wrapper centered inside the arch */}
-          <div className="relative w-full max-w-[800px] flex flex-col items-center pt-28 pb-16 px-6 md:px-8">
+          <div className="relative w-full max-w-[600px] flex flex-col items-center pt-28 pb-16 px-6 md:px-8">
             
             {/* Header section — centered, sits inside the white arch opening visually */}
             <div className="flex flex-col items-center text-center mb-10">
@@ -259,7 +259,7 @@ export function ProductInfoModal({ isOpen, onClose, product, onStartChat, isFull
             </div>
 
             {/* Specifications section */}
-            <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-8 mt-4">
+            <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-8 mt-4">
               
               {/* Left Column: MATERIAL & WEIGHT */}
               <div className="flex flex-col gap-6">

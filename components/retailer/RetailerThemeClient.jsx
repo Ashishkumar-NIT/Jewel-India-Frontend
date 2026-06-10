@@ -15,7 +15,7 @@ const THEMES = [
     name: "Maharaja",
     subtext: "Discover designs selected with precision, blending craftsmanship and ethnic style",
     image: "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1778837496/locked1_sc4thy.svg",
-    locked: true,
+    locked: false, // Maharaja is no longer locked initially; it is in "CLAIM" state by default
   },
   {
     id: "utsav",
@@ -45,7 +45,7 @@ function LockIcon() {
 function LockedModal({ theme, onClose }) {
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-fade-in"
       style={{ background: "rgba(0,0,0,0.55)", backdropFilter: "blur(6px)" }}
       onClick={onClose}
     >
@@ -86,12 +86,12 @@ function LockedModal({ theme, onClose }) {
           </span>
 
           <p className="text-white/50 text-[12px] leading-relaxed mb-8 max-w-[240px]">
-            We're crafting this experience with care. Stay tuned — it will be worth the wait.
+            We&apos;re crafting this experience with care. Stay tuned — it will be worth the wait.
           </p>
 
           <button
             onClick={onClose}
-            className="w-full py-3 rounded-full bg-white text-[#111] text-[13px] font-bold tracking-wide hover:bg-white/90 transition-all shadow-lg"
+            className="w-full py-3 rounded-full bg-white text-[#111] text-[13px] font-bold tracking-wide hover:bg-white/90 transition-all shadow-lg cursor-pointer"
           >
             Got it
           </button>
@@ -101,9 +101,119 @@ function LockedModal({ theme, onClose }) {
   );
 }
 
+function ClaimModal({ theme, onClose, onClaimSuccess }) {
+  const [isClaiming, setIsClaiming] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+
+  const handleClaim = () => {
+    setIsClaiming(true);
+    setTimeout(() => {
+      setIsClaiming(false);
+      setIsSuccess(true);
+      setTimeout(() => {
+        onClaimSuccess();
+      }, 1500);
+    }, 1000);
+  };
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 transition-opacity duration-300"
+      style={{ background: "rgba(0,0,0,0.65)", backdropFilter: "blur(8px)" }}
+      onClick={onClose}
+    >
+      <div
+        className="relative w-full max-w-[340px] rounded-[24px] overflow-hidden shadow-2xl bg-black border border-white/10"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Background image */}
+        <div className="absolute inset-0">
+          <img
+            src={theme.image}
+            alt={theme.name}
+            className="w-full h-full object-cover opacity-80"
+          />
+          {/* Dark overlay */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                "linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.5) 60%, rgba(0,0,0,0.2) 100%)",
+            }}
+          />
+        </div>
+
+        {/* Content */}
+        <div className="relative z-10 flex flex-col items-center text-center px-8 pt-16 pb-10 min-h-[380px] justify-between">
+          {/* Top Deco */}
+          <div className="flex justify-center mb-2">
+            <span className="text-amber-400 text-sm tracking-[0.3em] font-light">✦ ✦ ✦</span>
+          </div>
+
+          {!isSuccess ? (
+            <div className="flex-1 flex flex-col items-center justify-center w-full">
+              <h2 className="font-serif text-white text-[24px] leading-tight mb-4 max-w-[280px]">
+                Claim your palatial theme experience
+              </h2>
+
+              <div className="w-8 h-[1px] bg-amber-400/50 mx-auto mb-6" />
+
+              <p className="text-white/60 text-[12.5px] leading-relaxed mb-8 max-w-[240px]">
+                Unlock premium components, custom layouts, and a royal theme tailored for your store.
+              </p>
+
+              <button
+                onClick={handleClaim}
+                disabled={isClaiming}
+                className="w-full py-3.5 rounded-full bg-gradient-to-r from-amber-500 via-amber-600 to-yellow-500 text-white text-[13px] font-bold tracking-wide hover:from-amber-600 hover:to-yellow-600 transition-all duration-300 shadow-lg shadow-amber-500/20 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 cursor-pointer"
+              >
+                {isClaiming ? (
+                  <>
+                    <svg className="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                    </svg>
+                    Applying Theme...
+                  </>
+                ) : (
+                  "CLAIM"
+                )}
+              </button>
+            </div>
+          ) : (
+            <div className="flex-1 flex flex-col items-center justify-center w-full">
+              {/* Success Checkmark Circle */}
+              <div className="w-16 h-16 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center mb-6 shadow-lg shadow-emerald-500/10">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#10B981" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+              </div>
+
+              <h3 className="text-emerald-400 font-semibold text-lg mb-2">Success!</h3>
+              <p className="text-white text-[15px] font-medium leading-relaxed max-w-[260px]">
+                {theme.name} theme applied successfully
+              </p>
+            </div>
+          )}
+
+          {!isSuccess && (
+            <button
+              onClick={onClose}
+              className="mt-6 text-white/40 hover:text-white/70 text-[11px] font-medium tracking-wider uppercase transition-colors cursor-pointer"
+            >
+              Cancel
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function RetailerThemeClient() {
   const [selectedTheme, setSelectedTheme] = useState("indian");
   const [lockedModal, setLockedModal] = useState(null); // theme object
+  const [claimModal, setClaimModal] = useState(null); // theme object to claim
 
   return (
     <div className="min-h-screen bg-[#F0F2F5] px-6 md:px-10 py-10">
@@ -126,11 +236,11 @@ export default function RetailerThemeClient() {
               onClick={() => {
                 if (theme.locked) {
                   setLockedModal(theme);
-                } else {
-                  setSelectedTheme(theme.id);
+                } else if (!isSelected) {
+                  setClaimModal(theme);
                 }
               }}
-              className="relative rounded-[18px] overflow-hidden text-left group transition-all duration-300 focus:outline-none"
+              className="relative rounded-[18px] overflow-hidden text-left group transition-all duration-300 focus:outline-none cursor-pointer"
               style={{
                 aspectRatio: "4/5",
                 boxShadow: isSelected
@@ -150,8 +260,7 @@ export default function RetailerThemeClient() {
                 style={{ background: "linear-gradient(to top, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.08) 50%, transparent 75%)" }}
               />
 
-
-              {/* Top badge: SELECTED or LOCKED */}
+              {/* Top badge: SELECTED, CLAIM, or LOCKED */}
               <div className="absolute top-4 left-4 z-10">
                 {theme.locked ? (
                   <span className="inline-flex items-center gap-1.5 bg-white/20 backdrop-blur-md border border-white/30 text-white text-[10px] font-bold tracking-widest uppercase rounded-full px-3 py-1.5">
@@ -159,10 +268,14 @@ export default function RetailerThemeClient() {
                     Locked
                   </span>
                 ) : isSelected ? (
-                  <span className="inline-flex items-center gap-1.5 bg-white/90 text-[#111] text-[10px] font-bold tracking-widest uppercase rounded-full px-3 py-1.5">
+                  <span className="inline-flex items-center gap-1.5 bg-white text-[#111] text-[10px] font-bold tracking-widest uppercase rounded-full px-3 py-1.5 shadow-sm">
                     ✓ Selected
                   </span>
-                ) : null}
+                ) : (
+                  <span className="inline-flex items-center gap-1.5 bg-gradient-to-r from-amber-500 to-yellow-500 text-white text-[10px] font-extrabold tracking-widest uppercase rounded-full px-3.5 py-1.5 shadow-md shadow-amber-950/40 border border-amber-400/20 hover:scale-105 transition-transform duration-300">
+                    ✦ Claim
+                  </span>
+                )}
               </div>
 
               {/* Bottom text */}
@@ -182,6 +295,18 @@ export default function RetailerThemeClient() {
       {/* Locked Modal */}
       {lockedModal && (
         <LockedModal theme={lockedModal} onClose={() => setLockedModal(null)} />
+      )}
+
+      {/* Claim Modal */}
+      {claimModal && (
+        <ClaimModal
+          theme={claimModal}
+          onClose={() => setClaimModal(null)}
+          onClaimSuccess={() => {
+            setSelectedTheme(claimModal.id);
+            setClaimModal(null);
+          }}
+        />
       )}
     </div>
   );
