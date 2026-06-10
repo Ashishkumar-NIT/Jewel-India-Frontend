@@ -38,9 +38,6 @@ function SectionBlock({ title, children }) {
 export function ProductInfoModal({ isOpen, onClose, product, onStartChat, isFullScreen = false }) {
   const { theme } = useTheme();
   const isMaharaja = theme === "maharaja";
-  const archBg = isMaharaja
-    ? "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1781085326/Maharaja_theme_infoPage_zslwde.svg"
-    : "/image/figma-arch-bg.png";
 
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [mainImgError, setMainImgError] = useState(false);
@@ -170,11 +167,22 @@ export function ProductInfoModal({ isOpen, onClose, product, onStartChat, isFull
           style={{ position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh", overflow: "hidden" }} 
           className="z-[59] pointer-events-none"
         >
-          <img 
-            src={archBg} 
-            alt="Arch Background" 
-            style={{ width: "100%", height: "100%", objectFit: "cover" }} 
-          />
+          {isMaharaja ? (
+            <img 
+              src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1781085326/Maharaja_theme_infoPage_zslwde.svg" 
+              alt="Arch Background" 
+              style={{ width: "100%", height: "100%", objectFit: "cover" }} 
+            />
+          ) : (
+            <picture>
+              <source srcSet="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1781118947/theme1_horizontal_hog6yy.svg" media="(orientation: landscape)" />
+              <img 
+                src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1781118947/theme1_vertical_sclwlj.svg" 
+                alt="Arch Background" 
+                className="w-full h-full object-cover landscape:scale-[0.85] origin-center"
+              />
+            </picture>
+          )}
         </div>
 
         {/* Immersive Tablet-First Full Screen Details Container */}
