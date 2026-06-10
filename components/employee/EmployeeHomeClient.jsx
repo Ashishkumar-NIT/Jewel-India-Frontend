@@ -32,9 +32,12 @@ export default function EmployeeHomeClient({ employee, businessName, businessLog
         />
 
         {/* Content */}
-        <div className="relative z-10 flex flex-col items-center text-center px-4 pt-[240px] md:pt-[280px] animate-fade-in">
+        <div 
+          className="relative z-10 flex flex-col items-center text-center px-4 animate-fade-in"
+          style={{ paddingTop: "clamp(100px, 15vh, 220px)" }}
+        >
           {/* Business Logo above Business Name */}
-          <div className="w-[80px] h-[80px] md:w-[96px] md:h-[96px] rounded-full overflow-hidden bg-white shadow-md border border-gray-100 mb-5 flex items-center justify-center shrink-0">
+          <div className="w-[80px] h-[80px] md:w-[96px] md:h-[96px] rounded-full overflow-hidden bg-white shadow-md border border-gray-100 mb-4 flex items-center justify-center shrink-0">
             <img
               src={businessLogoUrl || "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777013959/jewel_logo_rhgin9.svg"}
               alt={`${businessName} Logo`}
@@ -45,10 +48,10 @@ export default function EmployeeHomeClient({ employee, businessName, businessLog
             />
           </div>
 
-          <h1 className="font-serif text-[42px] md:text-[54px] text-[#2c1f18] mb-3 leading-tight">
+          <h1 className="font-serif text-[42px] md:text-[54px] text-[#2c1f18] mb-2 leading-tight">
             {businessName}
           </h1>
-          <p className="text-[13px] md:text-[15px] text-[#4a3b32] max-w-[320px] md:max-w-md mx-auto mb-8 leading-relaxed">
+          <p className="text-[13px] md:text-[15px] text-[#4a3b32] max-w-[320px] md:max-w-md mx-auto mb-6 leading-relaxed">
             Discover designs selected with precision, blending craftsmanship and ethnic style
           </p>
 
