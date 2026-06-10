@@ -3,11 +3,14 @@
 import { usePathname } from "next/navigation";
 import EmployeeBottomNav from "./EmployeeTopNav";
 
-export default function EmployeeLayout({ children, hasUnreadQueries = false, latestOrderUpdate = null, isRetailer = false }) {
+import { ThemeProvider } from "@/context/ThemeContext";
+
+export default function EmployeeLayout({ children, hasUnreadQueries = false, latestOrderUpdate = null, isRetailer = false, selectedTheme = "indian" }) {
   const pathname = usePathname();
   const hideNavbar = pathname?.includes("/dashboard/employee/playground") || pathname?.includes("/dashboard/employee/questionnaire");
   return (
-    <div className="theme-employee" style={{ minHeight: "100vh", background: "#FAFAFA", display: "flex", flexDirection: "column" }}>
+    <ThemeProvider initialTheme={selectedTheme}>
+      <div className="theme-employee" style={{ minHeight: "100vh", background: "#FAFAFA", display: "flex", flexDirection: "column" }}>
       {isRetailer && (
         <>
           <style>{`
@@ -71,6 +74,7 @@ export default function EmployeeLayout({ children, hasUnreadQueries = false, lat
       {!hideNavbar && (
         <EmployeeBottomNav hasUnreadQueries={hasUnreadQueries} latestOrderUpdate={latestOrderUpdate} isRetailer={isRetailer} />
       )}
-    </div>
+      </div>
+    </ThemeProvider>
   );
 }

@@ -1,10 +1,17 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useTheme } from "@/context/ThemeContext";
 import DesignerCollectionSection from "./DesignerCollectionSection";
 
 export default function EmployeeHomeClient({ employee, businessName, businessLogoUrl, designs }) {
   const router = useRouter();
+  const { theme } = useTheme();
+
+  const isMaharaja = theme === "maharaja";
+  const bgImage = isMaharaja
+    ? "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1781085325/Maharaja_Theme_ymaqjt.svg"
+    : "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1778318369/home_bg_ryyopk.svg";
 
   return (
     <div className="w-full flex flex-col bg-white">
@@ -17,7 +24,7 @@ export default function EmployeeHomeClient({ employee, businessName, businessLog
         <div
           className="absolute inset-0 z-0"
           style={{
-            backgroundImage: "url('https://res.cloudinary.com/dcs0vuzwg/image/upload/v1778318369/home_bg_ryyopk.svg')",
+            backgroundImage: `url('${bgImage}')`,
             backgroundSize: "cover",
             backgroundRepeat: "no-repeat",
             backgroundPosition: "center"

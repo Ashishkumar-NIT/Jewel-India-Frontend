@@ -5,13 +5,20 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import ProtectedImage from "../shared/ProtectedImage";
 import FullImageViewer from "../shared/FullImageViewer";
+import { useTheme } from "@/context/ThemeContext";
 
 export default function SelectionReviewClient() {
+  const { theme } = useTheme();
   const router = useRouter();
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
+
+  const isMaharaja = theme === "maharaja";
+  const archBg = isMaharaja
+    ? "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1781085326/Maharaja_theme_infoPage_zslwde.svg"
+    : "/image/figma-arch-bg.png";
 
   const [formData, setFormData] = useState({});
   const [viewingProduct, setViewingProduct] = useState(null);
@@ -246,11 +253,14 @@ export default function SelectionReviewClient() {
         </div>
       ) : viewingProduct ? (
         <div className="fixed inset-0 overflow-y-auto z-50 flex flex-col items-center pb-24 font-sans select-none">
+          {/* White Background layer behind pillars */}
+          <div className="fixed inset-0 bg-white -z-20 pointer-events-none" />
+
           {/* Arch Background image */}
           <img 
-            src="/image/figma-arch-bg.png" 
+            src={archBg} 
             alt="Arch Background" 
-            className="absolute inset-0 w-full h-full object-cover object-center pointer-events-none -z-10" 
+            className="fixed inset-0 w-full h-full object-fill pointer-events-none -z-10" 
           />
 
           {/* Glassmorphic back button */}
@@ -279,7 +289,7 @@ export default function SelectionReviewClient() {
           </button>
 
           {/* Main content wrapper centered inside the arch */}
-          <div className="relative w-full max-w-[800px] flex flex-col items-center pt-28 pb-16 px-6 md:px-8">
+          <div className="relative w-full max-w-[550px] flex flex-col items-center pt-28 pb-16 px-8 md:px-16">
             
             {/* Header section — centered, sits inside the white arch opening visually */}
             <div className="flex flex-col items-center text-center mb-10">

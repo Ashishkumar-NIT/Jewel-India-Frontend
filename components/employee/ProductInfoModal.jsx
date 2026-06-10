@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import FullImageViewer from "../shared/FullImageViewer";
 import ProtectedImage from "../shared/ProtectedImage";
+import { useTheme } from "@/context/ThemeContext";
 
 function formatWeight(val) {
   if (val === null || val === undefined || val === "") return null;
@@ -35,9 +36,15 @@ function SectionBlock({ title, children }) {
 }
 
 export function ProductInfoModal({ isOpen, onClose, product, onStartChat, isFullScreen = false }) {
+  const { theme } = useTheme();
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [mainImgError, setMainImgError] = useState(false);
   const [isFullViewOpen, setIsFullViewOpen] = useState(false);
+
+  const isMaharaja = theme === "maharaja";
+  const archBg = isMaharaja
+    ? "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1781085326/Maharaja_theme_infoPage_zslwde.svg"
+    : "/image/figma-arch-bg.png";
 
   // Request sidebar state
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -153,12 +160,15 @@ export function ProductInfoModal({ isOpen, onClose, product, onStartChat, isFull
     return (
       <>
         {/* Immersive Tablet-First Full Screen Details Container */}
-        <div className="fixed inset-0 overflow-y-auto bg-white z-[60] flex flex-col items-center pb-24 font-sans select-none">
+        <div className="fixed inset-0 overflow-y-auto z-[60] flex flex-col items-center pb-24 font-sans select-none">
+          {/* White Background layer behind pillars */}
+          <div className="fixed inset-0 bg-white -z-20 pointer-events-none" />
+
           {/* Arch Background image */}
           <img 
-            src="/image/figma-arch-bg.png" 
+            src={archBg} 
             alt="Arch Background" 
-            className="absolute inset-0 w-full h-full object-cover object-center pointer-events-none -z-10" 
+            className="fixed inset-0 w-full h-full object-fill pointer-events-none -z-10" 
           />
 
           {/* Glassmorphic back button */}
@@ -179,7 +189,7 @@ export function ProductInfoModal({ isOpen, onClose, product, onStartChat, isFull
           </button>
 
           {/* Main content wrapper centered inside the arch */}
-          <div className="relative w-full max-w-[600px] flex flex-col items-center pt-28 pb-16 px-6 md:px-8">
+          <div className="relative w-full max-w-[520px] flex flex-col items-center pt-28 pb-16 px-8 md:px-12">
             
             {/* Header section — centered, sits inside the white arch opening visually */}
             <div className="flex flex-col items-center text-center mb-10">

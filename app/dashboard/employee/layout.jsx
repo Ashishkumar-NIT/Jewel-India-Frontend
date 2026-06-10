@@ -26,14 +26,31 @@ export default async function EmployeeDashboardLayout({ children }) {
     redirect("/entry_page/signin");
   }
 
-  // Fetch the parent retailer's business name
-  const { data: retailer } = await supabase
+  // Fetch the parent retailer's business name and selected theme
+  let selectedTheme = "indian";
+  let businessName = "Your Store";
+
+  const { data: retailer, error: retailerError } = await supabase
     .from("retailers")
-    .select("id, business_name")
+    .select("id, business_name, selected_theme")
     .eq("id", employee.retailer_id)
     .single();
 
-  const businessName = retailer?.business_name || "Your Store";
+  if (retailerError) {
+    // Fallback to querying without selected_theme
+    const { data: fallbackRetailer } = await supabase
+      .from("retailers")
+      .select("id, business_name")
+      .eq("id", employee.retailer_id)
+      .single();
+    if (fallbackRetailer) {
+      businessName = fallbackRetailer.business_name || "Your Store";
+    }
+  } else if (retailer) {
+    businessName = retailer.business_name || "Your Store";
+    selectedTheme = retailer.selected_theme || "indian";
+  }
+
 
   // Check for unread queries
   const { data: unreadConversations } = await supabase
@@ -67,6 +84,7 @@ export default async function EmployeeDashboardLayout({ children }) {
       hasUnreadQueries={hasUnreadQueries}
       latestOrderUpdate={latestOrderUpdate}
       isRetailer={isRetailer}
+      selectedTheme={selectedTheme}
     >
       {children}
     </EmployeeLayout>

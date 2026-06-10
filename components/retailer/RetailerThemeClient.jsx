@@ -210,8 +210,8 @@ function ClaimModal({ theme, onClose, onClaimSuccess }) {
   );
 }
 
-export default function RetailerThemeClient() {
-  const [selectedTheme, setSelectedTheme] = useState("indian");
+export default function RetailerThemeClient({ initialTheme = "indian" }) {
+  const [selectedTheme, setSelectedTheme] = useState(initialTheme);
   const [lockedModal, setLockedModal] = useState(null); // theme object
   const [claimModal, setClaimModal] = useState(null); // theme object to claim
 
@@ -302,9 +302,28 @@ export default function RetailerThemeClient() {
         <ClaimModal
           theme={claimModal}
           onClose={() => setClaimModal(null)}
-          onClaimSuccess={() => {
-            setSelectedTheme(claimModal.id);
+          onClaimSuccess={async () => {
+            const themeId = claimModal.id;
+            setSelectedTheme(themeId);
             setClaimModal(null);
+            
+            // Persist theme to database
+            try {
+              const { createClient } = await import("@/lib/supabase/client");
+              const supabase = createClient();
+              const { data: { user } } = await supabase.auth.getUser();
+              if (user) {
+                const { error } = await supabase
+                  .from("retailers")
+                  .update({ selected_theme: themeId })
+                  .eq("user_id", user.id);
+                if (error) {
+                  console.error("Failed to update selected_theme column:", error.message);
+                }
+              }
+            } catch (err) {
+              console.error("Failed to persist theme choice:", err);
+            }
           }}
         />
       )}
