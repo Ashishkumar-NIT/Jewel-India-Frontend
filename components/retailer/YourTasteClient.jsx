@@ -1,9 +1,13 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useMemo, useState } from "react";
 import Image from "next/image";
 
-import { ProductInfoModal } from "../employee/ProductInfoModal";
+const ProductInfoModal = dynamic(
+  () => import("../employee/ProductInfoModal").then((mod) => mod.ProductInfoModal),
+  { loading: () => null }
+);
 
 function formatWeight(val) {
   if (!val && val !== 0) return null;

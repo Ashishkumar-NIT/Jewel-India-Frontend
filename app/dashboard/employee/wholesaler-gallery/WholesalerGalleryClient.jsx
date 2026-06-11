@@ -1,10 +1,15 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useMemo, useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { ProductInfoModal } from "@/components/employee/ProductInfoModal";
 import EmployeeBottomNav from "@/components/employee/EmployeeTopNav";
 import useLongPress from "@/lib/hooks/useLongPress";
+
+const ProductInfoModal = dynamic(
+  () => import("@/components/employee/ProductInfoModal").then((mod) => mod.ProductInfoModal),
+  { loading: () => null }
+);
 
 function formatDate(dateStr) {
   if (!dateStr) return "";

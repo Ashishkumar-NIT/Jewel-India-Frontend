@@ -1,12 +1,17 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useEffect, useRef, useState, memo } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 
 import gsap from "gsap";
 import { Observer } from "gsap/Observer";
-import { ProductInfoModal } from "./ProductInfoModal";
 import useLongPress from "@/lib/hooks/useLongPress";
+
+const ProductInfoModal = dynamic(
+  () => import("./ProductInfoModal").then((mod) => mod.ProductInfoModal),
+  { loading: () => null }
+);
 
 const CanvasTile = memo(function CanvasTile({ product, isSelected, toggleSelection, elRef, router }) {
   const imgUrl = product.generated_image_urls?.[0] || product.processed_image_url || product.raw_image_url;

@@ -1,10 +1,15 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useState, useEffect, useRef, memo } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import ProtectedImage from "../shared/ProtectedImage";
-import { ProductInfoModal } from "./ProductInfoModal";
 import useLongPress from "@/lib/hooks/useLongPress";
+
+const ProductInfoModal = dynamic(
+  () => import("./ProductInfoModal").then((mod) => mod.ProductInfoModal),
+  { loading: () => null }
+);
 
 const TagChip = memo(function TagChip({ type, label }) {
   if (!label) return null;

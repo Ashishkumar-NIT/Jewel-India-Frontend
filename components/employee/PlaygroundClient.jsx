@@ -1,9 +1,17 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import dynamic from "next/dynamic";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import InfinityCanvas from "./InfinityCanvas";
-import PlaygroundCatalogueGrid from "./PlaygroundCatalogueGrid";
+
+const InfinityCanvas = dynamic(() => import("./InfinityCanvas"), {
+  ssr: false,
+  loading: () => <div className="fixed inset-0 flex items-center justify-center bg-[#FAFAFA] text-gray-500 font-medium">Loading layout...</div>,
+});
+
+const PlaygroundCatalogueGrid = dynamic(() => import("./PlaygroundCatalogueGrid"), {
+  loading: () => <div className="fixed inset-0 flex items-center justify-center bg-[#FAFAFA] text-gray-500 font-medium">Loading layout...</div>,
+});
 
 export default function PlaygroundClient({ products, employeeId, retailerName }) {
   const router = useRouter();
@@ -13,6 +21,12 @@ export default function PlaygroundClient({ products, employeeId, retailerName })
   // Shared state between InfinityCanvas and PlaygroundCatalogueGrid
   const [selectedItems, setSelectedItems] = useState(new Set());
   const [viewMode, setViewMode] = useState(initialMode || "playground");
+
+  useEffect(() => {
+    router.prefetch("/dashboard/employee");
+    router.prefetch("/dashboard/employee/playground/review");
+    router.prefetch("/dashboard/employee/questionnaire");
+  }, [router]);
 
   const handleNext = () => {
     // Save to session storage and proceed

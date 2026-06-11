@@ -1,8 +1,8 @@
 import { createClient } from "../../../lib/supabase/server";
-import { supabaseAdmin } from "../../../lib/supabase/admin";
 import { redirect } from "next/navigation";
 import EmployeeHomeClient from "../../../components/employee/EmployeeHomeClient";
 import { ensureVirtualEmployee } from "../../../lib/supabase/queries";
+import { getEmployeeHomeData } from "../../../lib/cache/retailerEmployee";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -40,22 +40,10 @@ export default async function EmployeeDashboardPage() {
   
   currentEmployee.assigned_bg_image = images[seed % images.length];
 
-  // Fetch parent retailer
-  const { data: retailer } = await supabase
-    .from("retailers")
-    .select("id, business_name, business_logo_url")
-    .eq("id", employee.retailer_id)
-    .single();
+  const { retailer, designs } = await getEmployeeHomeData(employee.retailer_id);
 
   const businessName = retailer?.business_name || "Your Store";
   const businessLogoUrl = retailer?.business_logo_url || null;
-
-  // Fetch non-archived designs for the Designer Collection using Admin to bypass RLS
-  const { data: designs } = await supabaseAdmin
-    .from("retailer_designs")
-    .select("id, image_url, title, category, tags, is_archived, created_at, size, purity, net_weight, gross_weight, stone_weight, type, style_aesthetic, is_in_stock, production_time_days")
-    .eq("retailer_id", employee.retailer_id)
-    .eq("is_archived", false);
 
   // Shuffle designs server-side to avoid hydration mismatch
   let shuffledDesigns = [...(designs || [])];

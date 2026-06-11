@@ -139,6 +139,7 @@ export default function EmployeeBottomNav({ hasUnreadQueries = false, latestOrde
           <Link
             key={item.name}
             href={item.href}
+            prefetch={true}
             className={`relative flex items-center gap-1.5 lg:gap-2 px-2.5 py-1.5 md:px-4 md:py-2 lg:px-5 lg:py-2.5 text-[11px] md:text-[12px] lg:text-[13px]`}
             style={{
               borderRadius: "100px",

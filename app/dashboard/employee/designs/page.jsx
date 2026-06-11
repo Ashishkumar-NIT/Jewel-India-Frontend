@@ -1,8 +1,8 @@
 import { createClient } from "../../../../lib/supabase/server";
-import { supabaseAdmin } from "../../../../lib/supabase/admin";
 import { redirect } from "next/navigation";
 import { categories as baseCategories } from "../../../../lib/config/catalogueCategories";
 import EmployeeDesignsClient from "./EmployeeDesignsClient";
+import { getEmployeeDesignsData } from "../../../../lib/cache/retailerEmployee";
 
 export const metadata = {
   title: "Our Designs — Employee Dashboard",
@@ -27,20 +27,7 @@ export default async function EmployeeDesignsPage() {
 
   if (!employee) redirect("/entry_page/signin");
 
-  // Get the parent retailer's name
-  const { data: retailer } = await supabase
-    .from("retailers")
-    .select("business_name")
-    .eq("id", employee.retailer_id)
-    .single();
-
-  // Fetch non-archived designs from the parent retailer
-  const { data: designs } = await supabaseAdmin
-    .from("retailer_designs")
-    .select("id, image_url, title, category, tags, created_at, size, purity, net_weight, gross_weight, stone_weight, type, style_aesthetic, is_in_stock, production_time_days")
-    .eq("retailer_id", employee.retailer_id)
-    .eq("is_archived", false)
-    .order("created_at", { ascending: false });
+  const { retailer, designs } = await getEmployeeDesignsData(employee.retailer_id);
 
   // Build the category list from base categories + any custom ones in designs
   const designCategories = (designs || [])

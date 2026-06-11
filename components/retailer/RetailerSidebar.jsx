@@ -232,6 +232,7 @@ function RetailerSidebar({ retailer }) {
             <Link
               key={item.name}
               href={item.href}
+              prefetch={true}
               onClick={() => setIsOpen(false)}
               className={`sidebar-nav-item flex items-center gap-3 h-[42px] rounded-[10px] px-3 transition-all shrink-0 ${
                 item.isActive
@@ -310,4 +311,3 @@ function RetailerSidebar({ retailer }) {
 }
 
 export default memo(RetailerSidebar, (prev, next) => prev.retailer === next.retailer);
-

@@ -1,7 +1,10 @@
 import { createClient } from "../../../../lib/supabase/server";
-import { supabaseAdmin } from "../../../../lib/supabase/admin";
 import { redirect } from "next/navigation";
 import PlaygroundClient from "../../../../components/employee/PlaygroundClient";
+import {
+  getEmployeeRetailerShell,
+  getEmployeeSelectedProducts,
+} from "../../../../lib/cache/retailerEmployee";
 
 export const metadata = {
   title: "Playground — Employee Dashboard",
@@ -33,49 +36,16 @@ export default async function PlaygroundPage({ searchParams }) {
     return <PlaygroundClient products={[]} retailerName="Dashboard" />;
   }
 
-  // Fetch Retailer Name
-  const { data: retailer } = await supabase
-    .from("retailers")
-    .select("business_name")
-    .eq("id", retailerId)
-    .single();
+  const [retailerShell, selectedProducts] = await Promise.all([
+    getEmployeeRetailerShell(retailerId),
+    getEmployeeSelectedProducts(retailerId),
+  ]);
   
-  const retailerName = retailer?.business_name || "Jewellers";
+  const retailerName = retailerShell.businessName || "Jewellers";
 
-  // Fetch retailer-approved products from retailer_selections using supabaseAdmin
-  const { data: selections, error: selErr } = await supabaseAdmin
-    .from("retailer_selections")
-    .select("product_id")
-    .eq("retailer_id", retailerId);
-
-  if (selErr) {
-    console.error("[employee/playground] retailer_selections fetch error:", selErr.message);
-  }
-
-  const selectedIds = (selections || []).map((s) => s.product_id);
-
-  let products = [];
-  if (selectedIds.length > 0) {
-    // 1. Fetch all published products from the platform matching the selected IDs
-    const { data, error: prodErr } = await supabase
-      .from("products")
-      .select(`
-        id, title, jewellery_type, category, style, size, stock_available,
-        make_to_order_days, metal_purity, net_weight, gross_weight, stone_weight,
-        raw_image_url, processed_image_url, generated_image_urls, wholesaler_email, created_at
-      `)
-      .eq("is_published", true)
-      .in("id", selectedIds)
-      .order("created_at", { ascending: false });
-
-    if (prodErr) {
-      console.error("[employee/playground] products fetch error:", prodErr.message);
-    }
-
-    products = (data || []).filter(
-      (p) => (p.generated_image_urls && p.generated_image_urls.length > 0) || (p.processed_image_url && p.processed_image_url.trim() !== "") || (p.raw_image_url && p.raw_image_url.trim() !== "")
-    );
-  }
+  let products = selectedProducts.filter(
+    (p) => (p.generated_image_urls && p.generated_image_urls.length > 0) || (p.processed_image_url && p.processed_image_url.trim() !== "") || (p.raw_image_url && p.raw_image_url.trim() !== "")
+  );
 
   // 3. Apply Filters from Search Params
   const resolvedParams = await searchParams;

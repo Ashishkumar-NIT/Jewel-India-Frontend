@@ -1,5 +1,5 @@
-import { createClient } from "../../../lib/supabase/server";
 import { getAuthUser } from "../../../lib/supabase/queries";
+import { getRetailerSidebarProfile } from "../../../lib/cache/retailerEmployee";
 import RetailerSidebar from "../../../components/retailer/RetailerSidebar";
 import { Suspense } from "react";
 import dynamic from "next/dynamic";
@@ -19,15 +19,9 @@ export const metadata = {
 export default async function RetailerLayout({ children }) {
   const user = await getAuthUser();
 
-  const supabase = await createClient();
   let retailerData = null;
   if (user) {
-    const { data } = await supabase
-      .from("retailers")
-      .select("full_name, business_name, business_logo_url")
-      .eq("user_id", user.id)
-      .single();
-    retailerData = data;
+    retailerData = await getRetailerSidebarProfile(user.id);
   }
 
   return (

@@ -1,9 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import dynamic from "next/dynamic";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ProductInfoModal } from "./ProductInfoModal";
 import ProtectedImage from "../shared/ProtectedImage";
+
+const ProductInfoModal = dynamic(
+  () => import("./ProductInfoModal").then((mod) => mod.ProductInfoModal),
+  { loading: () => null }
+);
 
 const VERTICAL_IMAGES = [
   "https://res.cloudinary.com/dcs0vuzwg/image/upload/v1778318369/emp_static1_ywv9ro.svg",
@@ -15,6 +20,10 @@ const VERTICAL_IMAGES = [
 export default function DesignerCollectionSection({ employee, businessName, designs }) {
   const router = useRouter();
   const [selectedProduct, setSelectedProduct] = useState(null);
+
+  useEffect(() => {
+    router.prefetch("/dashboard/employee/designs");
+  }, [router]);
 
   // Use the randomly assigned image from the server, or fallback to the first one
   const verticalImage = employee?.assigned_bg_image || VERTICAL_IMAGES[0];

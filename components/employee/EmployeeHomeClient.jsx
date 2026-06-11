@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useTheme } from "@/context/ThemeContext";
 import DesignerCollectionSection from "./DesignerCollectionSection";
@@ -7,6 +8,11 @@ import DesignerCollectionSection from "./DesignerCollectionSection";
 export default function EmployeeHomeClient({ employee, businessName, businessLogoUrl, designs }) {
   const router = useRouter();
   const { theme } = useTheme();
+
+  useEffect(() => {
+    router.prefetch("/dashboard/employee/wholesaler-gallery");
+    router.prefetch("/dashboard/employee/playground");
+  }, [router]);
 
   const isMaharaja = theme === "maharaja";
   const bgImage = isMaharaja

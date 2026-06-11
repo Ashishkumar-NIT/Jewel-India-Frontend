@@ -1,6 +1,7 @@
 import { createClient } from "../../../../lib/supabase/server";
 import { redirect } from "next/navigation";
 import QuestionnaireFlow from "../../../../components/employee/QuestionnaireFlow";
+import { getEmployeeQuestionnaireRetailer } from "../../../../lib/cache/retailerEmployee";
 
 export const dynamic = "force-dynamic";
 
@@ -22,12 +23,7 @@ export default async function QuestionnairePage() {
 
   let businessName = "Your Store";
   if (employee) {
-    const { data: retailer } = await supabase
-      .from("retailers")
-      .select("business_name")
-      .eq("id", employee.retailer_id)
-      .single();
-    if (retailer) businessName = retailer.business_name;
+    businessName = await getEmployeeQuestionnaireRetailer(employee.retailer_id);
   }
 
   return <QuestionnaireFlow businessName={businessName} />;

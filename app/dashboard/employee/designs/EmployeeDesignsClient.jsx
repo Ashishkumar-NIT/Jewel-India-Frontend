@@ -1,8 +1,13 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useMemo, useState, useEffect } from "react";
-import { ProductInfoModal } from "@/components/employee/ProductInfoModal";
 import EmployeeBottomNav from "@/components/employee/EmployeeTopNav";
+
+const ProductInfoModal = dynamic(
+  () => import("@/components/employee/ProductInfoModal").then((mod) => mod.ProductInfoModal),
+  { loading: () => null }
+);
 
 function formatDate(dateStr) {
   if (!dateStr) return "";

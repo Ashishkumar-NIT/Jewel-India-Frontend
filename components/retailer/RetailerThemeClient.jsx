@@ -1,6 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import {
+  normalizeThemeId,
+  THEME_COOKIE_MAX_AGE,
+  THEME_STORAGE_KEY,
+} from "@/lib/config/themePreference";
 
 const THEMES = [
   {
@@ -211,9 +216,21 @@ function ClaimModal({ theme, onClose, onClaimSuccess }) {
 }
 
 export default function RetailerThemeClient({ initialTheme = "indian" }) {
-  const [selectedTheme, setSelectedTheme] = useState(initialTheme);
+  const [selectedTheme, setSelectedTheme] = useState(() => {
+    const safeInitialTheme = normalizeThemeId(initialTheme);
+    if (typeof window === "undefined") return safeInitialTheme;
+    return normalizeThemeId(localStorage.getItem(THEME_STORAGE_KEY), safeInitialTheme);
+  });
   const [lockedModal, setLockedModal] = useState(null); // theme object
   const [claimModal, setClaimModal] = useState(null); // theme object to claim
+
+  const writeThemePreference = (themeId) => {
+    const safeTheme = normalizeThemeId(themeId);
+    setSelectedTheme(safeTheme);
+    localStorage.setItem(THEME_STORAGE_KEY, safeTheme);
+    document.cookie = `${THEME_STORAGE_KEY}=${safeTheme}; path=/; max-age=${THEME_COOKIE_MAX_AGE}; SameSite=Lax`;
+    return safeTheme;
+  };
 
   return (
     <div className="min-h-screen bg-[#F0F2F5] px-6 md:px-10 py-10">
@@ -303,8 +320,7 @@ export default function RetailerThemeClient({ initialTheme = "indian" }) {
           theme={claimModal}
           onClose={() => setClaimModal(null)}
           onClaimSuccess={async () => {
-            const themeId = claimModal.id;
-            setSelectedTheme(themeId);
+            const themeId = writeThemePreference(claimModal.id);
             setClaimModal(null);
             
             // Persist theme to database

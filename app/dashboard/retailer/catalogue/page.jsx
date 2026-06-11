@@ -9,6 +9,7 @@ const designsCache = {
   data: [],
   timestamp: 0
 };
+const CACHE_TTL_MS = 30_000;
 export default function RetailerCataloguePage() {
   const [designs, setDesigns] = useState(() => designsCache.data || []);
   const [isLoading, setIsLoading] = useState(designsCache.data.length === 0);
@@ -25,8 +26,8 @@ export default function RetailerCataloguePage() {
     const controller = new AbortController();
     abortRef.current = controller;
 
-    // Skip if we have cached data and this isn't a forced refresh
-    if (!force && designsCache.data.length > 0) {
+    // Skip if recent cached data is already available.
+    if (!force && designsCache.data.length > 0 && Date.now() - designsCache.timestamp < CACHE_TTL_MS) {
       setDesigns(designsCache.data);
       setIsLoading(false);
       return;
@@ -73,6 +74,7 @@ export default function RetailerCataloguePage() {
     designsCache.data = designsCache.data.map((item) =>
       item.id === design.id ? { ...item, is_archived: nextValue } : item
     );
+    designsCache.timestamp = Date.now();
     setDesigns(designsCache.data);
 
     const response = await fetch(`/api/designs/${design.id}`, {
@@ -86,6 +88,7 @@ export default function RetailerCataloguePage() {
       designsCache.data = designsCache.data.map((item) =>
         item.id === design.id ? { ...item, is_archived: design.is_archived } : item
       );
+      designsCache.timestamp = Date.now();
       setDesigns(designsCache.data);
     }
   };

@@ -1,5 +1,5 @@
-import { createClient } from "../../../lib/supabase/server";
 import { getAuthUser } from "../../../lib/supabase/queries";
+import { getRetailerDashboardData } from "../../../lib/cache/retailerEmployee";
 import DashboardStats from "../../../components/retailer/DashboardStats";
 import EmployeePortalCard from "../../../components/retailer/EmployeePortalCard";
 import DashboardDirectory from "../../../components/retailer/DashboardDirectory";
@@ -8,7 +8,6 @@ import Image from "next/image";
 
 export default async function RetailerDashboardPage() {
   const user = await getAuthUser();
-  const supabase = await createClient();
 
   let employeesCount = 0;
   let activeEmployeesCount = 0;
@@ -18,47 +17,13 @@ export default async function RetailerDashboardPage() {
   let recentEmployees = [];
 
   if (user) {
-    const { data: retailer } = await supabase
-      .from("retailers")
-      .select("id, business_name")
-      .eq("user_id", user.id)
-      .single();
-
-    if (retailer) {
-      const [empCountResult, activeEmpResult, totalDesignResult, activeDesignResult, recentEmpData] = await Promise.all([
-        supabase
-          .from("employees")
-          .select("*", { count: "exact", head: true })
-          .eq("retailer_id", retailer.id),
-        supabase
-          .from("employees")
-          .select("*", { count: "exact", head: true })
-          .eq("retailer_id", retailer.id)
-          .eq("status", "active"),
-        supabase
-          .from("retailer_designs")
-          .select("*", { count: "exact", head: true })
-          .eq("retailer_id", retailer.id),
-        supabase
-          .from("retailer_designs")
-          .select("*", { count: "exact", head: true })
-          .eq("retailer_id", retailer.id)
-          .eq("is_archived", false),
-        supabase
-          .from("employees")
-          .select("id, full_name, designation, status, email, created_at")
-          .eq("retailer_id", retailer.id)
-          .order("created_at", { ascending: false })
-          .limit(5),
-      ]);
-
-      employeesCount = empCountResult.count || 0;
-      activeEmployeesCount = activeEmpResult.count || 0;
-      totalDesigns = totalDesignResult.count || 0;
-      activeDesigns = activeDesignResult.count || 0;
-      archivedDesigns = totalDesigns - activeDesigns;
-      recentEmployees = recentEmpData.data || [];
-    }
+    const dashboardData = await getRetailerDashboardData(user.id);
+    employeesCount = dashboardData.employeesCount;
+    activeEmployeesCount = dashboardData.activeEmployeesCount;
+    totalDesigns = dashboardData.totalDesigns;
+    activeDesigns = dashboardData.activeDesigns;
+    archivedDesigns = dashboardData.archivedDesigns;
+    recentEmployees = dashboardData.recentEmployees;
   }
 
   return (

@@ -1,11 +1,20 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import ProtectedImage from "../shared/ProtectedImage";
-import { BusinessProfileModal } from "../shared/BusinessProfileModal";
-import { ConfirmationModal } from "../shared/ConfirmationModal";
+
+const BusinessProfileModal = dynamic(
+  () => import("../shared/BusinessProfileModal").then((mod) => mod.BusinessProfileModal),
+  { loading: () => null }
+);
+
+const ConfirmationModal = dynamic(
+  () => import("../shared/ConfirmationModal").then((mod) => mod.ConfirmationModal),
+  { loading: () => null }
+);
 
 function HourglassIcon({ className }) {
   return (

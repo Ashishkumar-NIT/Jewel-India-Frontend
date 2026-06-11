@@ -6,14 +6,16 @@ import { ChatWindow } from "../../../../components/chat/ChatWindow";
 // Module-level cache that persists across navigation
 const messagesCache = {
   activeConversationId: null,
-  conversations: []
+  conversations: [],
+  timestamp: 0,
 };
+const CACHE_TTL_MS = 30_000;
 
 export default function MessagesClient({ initialConversations, currentUserType, openProductId }) {
   const [conversations, setConversations] = useState(() => {
-    return (initialConversations && initialConversations.length > 0) 
-      ? initialConversations 
-      : (messagesCache.conversations || []);
+    const hasFreshCache =
+      messagesCache.conversations.length > 0 && Date.now() - messagesCache.timestamp < CACHE_TTL_MS;
+    return hasFreshCache ? messagesCache.conversations : (initialConversations || []);
   });
   const [activeConversation, setActiveConversation] = useState(() => {
     return messagesCache.activeConversationId ? { id: messagesCache.activeConversationId } : null;
@@ -23,6 +25,7 @@ export default function MessagesClient({ initialConversations, currentUserType, 
 
   useEffect(() => {
     messagesCache.conversations = conversations;
+    messagesCache.timestamp = Date.now();
   }, [conversations]);
 
   useEffect(() => {

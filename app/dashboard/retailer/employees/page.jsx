@@ -8,6 +8,7 @@ const employeesCache = {
   data: [],
   timestamp: 0
 };
+const CACHE_TTL_MS = 30_000;
 
 export default function RetailerEmployeesPage() {
   const [employees, setEmployees] = useState(() => employeesCache.data || []);
@@ -24,8 +25,8 @@ export default function RetailerEmployeesPage() {
     const controller = new AbortController();
     abortRef.current = controller;
 
-    // Skip if we have cached data and this isn't a forced refresh
-    if (!force && employeesCache.data.length > 0) {
+    // Skip if recent cached data is already available.
+    if (!force && employeesCache.data.length > 0 && Date.now() - employeesCache.timestamp < CACHE_TTL_MS) {
       setEmployees(employeesCache.data);
       setIsLoading(false);
       return;
@@ -69,6 +70,7 @@ export default function RetailerEmployeesPage() {
       employeesCache.data = employeesCache.data.map(e =>
         e.id === id ? { ...e, status: isActive ? "active" : "inactive" } : e
       );
+      employeesCache.timestamp = Date.now();
       setEmployees([...employeesCache.data]);
     } catch (err) {
       alert(err.message);
@@ -83,6 +85,7 @@ export default function RetailerEmployeesPage() {
       if (!res.ok) throw new Error("Failed to delete employee");
 
       employeesCache.data = employeesCache.data.filter(e => e.id !== id);
+      employeesCache.timestamp = Date.now();
       setEmployees(employeesCache.data);
     } catch (err) {
       alert(err.message);

@@ -26,6 +26,11 @@ export default function SelectionReviewClient() {
   const [isFullViewOpen, setIsFullViewOpen] = useState(false);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
 
+  useEffect(() => {
+    router.prefetch("/dashboard/employee");
+    router.prefetch("/dashboard/employee/orders");
+  }, [router]);
+
   const handleViewProduct = (product) => {
     setViewingProduct(product);
     if (product) {
