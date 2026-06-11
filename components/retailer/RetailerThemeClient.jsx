@@ -334,11 +334,11 @@ export default function RetailerThemeClient({ initialTheme = "indian" }) {
                   .update({ selected_theme: themeId })
                   .eq("user_id", user.id);
                 if (error) {
-                  console.error("Failed to update selected_theme column:", error.message);
+                  // TODO: add proper error handling
                 }
               }
             } catch (err) {
-              console.error("Failed to persist theme choice:", err);
+              // TODO: add proper error handling
             }
           }}
         />

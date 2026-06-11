@@ -14,7 +14,10 @@ export default function EmployeePortalCard() {
   useEffect(() => {
     // Build the employee login URL from current origin
     const origin = window.location.origin;
-    setPortalUrl(`${origin}/employee-login`);
+    const timer = setTimeout(() => {
+      setPortalUrl(`${origin}/employee-login`);
+    }, 0);
+    return () => clearTimeout(timer);
   }, []);
 
   // Display-friendly URL (strip protocol)

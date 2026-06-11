@@ -72,24 +72,27 @@ export default function EmployeeBottomNav({ hasUnreadQueries = false, latestOrde
 
   // Check if we need to show the unread orders dot
   useEffect(() => {
-    if (!latestOrderUpdate) {
-      setHasUnreadOrders(false);
-      return;
-    }
-
-    if (pathname === "/dashboard/employee/orders") {
-      // If we're on the orders page, clear the dot and save the timestamp
-      localStorage.setItem("employee_orders_last_checked", new Date().toISOString());
-      setHasUnreadOrders(false);
-    } else {
-      // Check local storage against latest order update
-      const lastChecked = localStorage.getItem("employee_orders_last_checked");
-      if (!lastChecked || new Date(latestOrderUpdate) > new Date(lastChecked)) {
-        setHasUnreadOrders(true);
-      } else {
+    const timer = setTimeout(() => {
+      if (!latestOrderUpdate) {
         setHasUnreadOrders(false);
+        return;
       }
-    }
+
+      if (pathname === "/dashboard/employee/orders") {
+        // If we're on the orders page, clear the dot and save the timestamp
+        localStorage.setItem("employee_orders_last_checked", new Date().toISOString());
+        setHasUnreadOrders(false);
+      } else {
+        // Check local storage against latest order update
+        const lastChecked = localStorage.getItem("employee_orders_last_checked");
+        if (!lastChecked || new Date(latestOrderUpdate) > new Date(lastChecked)) {
+          setHasUnreadOrders(true);
+        } else {
+          setHasUnreadOrders(false);
+        }
+      }
+    }, 0);
+    return () => clearTimeout(timer);
   }, [pathname, latestOrderUpdate]);
 
   const handleSwitchToAdmin = async () => {
@@ -102,10 +105,10 @@ export default function EmployeeBottomNav({ hasUnreadQueries = false, latestOrde
       if (res.ok) {
         window.location.href = "/dashboard/retailer";
       } else {
-        console.error("Failed to switch view context");
+        // TODO: add proper error handling
       }
     } catch (err) {
-      console.error("Error switching view context:", err);
+      // TODO: add proper error handling
     }
   };
 

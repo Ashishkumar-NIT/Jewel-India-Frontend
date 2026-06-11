@@ -147,6 +147,15 @@ export default function EmployeeDesignsClient({ designs, categoryTabs, businessN
     purity: [],
   });
 
+  const [prevCategory, setPrevCategory] = useState("all");
+  const [prevFilters, setPrevFilters] = useState(filters);
+
+  if (activeCategory !== prevCategory || filters !== prevFilters) {
+    setPrevCategory(activeCategory);
+    setPrevFilters(filters);
+    setCurrentPage(1);
+  }
+
   const FILTER_OPTIONS = {
     size: ["small", "medium", "large", "adjustable"],
     weight: ["0-2g", "3-5g", "5-10g", "11-20g", "20-30g", "30g+"],
@@ -270,11 +279,6 @@ export default function EmployeeDesignsClient({ designs, categoryTabs, businessN
   const updateFilter = (filterKey, selectedList) => {
     setFilters((prev) => ({ ...prev, [filterKey]: selectedList }));
   };
-
-  // Reset to first page when filters or category change
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [activeCategory, filters]);
 
   // Calculate pagination
   const totalPages = Math.ceil(filteredDesigns.length / itemsPerPage);

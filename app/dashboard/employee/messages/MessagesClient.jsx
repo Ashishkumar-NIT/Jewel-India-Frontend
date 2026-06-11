@@ -78,7 +78,6 @@ export default function MessagesClient({ initialConversations, currentUserType, 
         if (created) setActiveConversation(created);
         
       } catch (err) {
-        console.error("[MessagesClient] Failed to open conversation:", err.message);
         alert("Could not open chat: " + err.message);
       } finally {
         setIsCreating(false);

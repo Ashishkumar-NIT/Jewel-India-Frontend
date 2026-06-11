@@ -57,7 +57,7 @@ export default function SelectionReviewClient() {
         try {
           ids = JSON.parse(stored);
         } catch (e) {
-          console.error(e);
+          // TODO: add proper error handling
         }
       }
 
@@ -100,7 +100,7 @@ export default function SelectionReviewClient() {
           setFormData(initialForm);
         }
       } catch (err) {
-        console.error("Failed to load products", err);
+        // TODO: add proper error handling
       } finally {
         setIsLoading(false);
       }

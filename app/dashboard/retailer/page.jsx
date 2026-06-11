@@ -34,7 +34,7 @@ export default async function RetailerDashboardPage() {
           {/* Header */}
           <div>
             <h1 className="text-[28px] font-bold text-[#111111] tracking-tight mb-0.5">Dashboard</h1>
-            <p className="text-[14px] text-[#6B7280]">Welcome back! Here's your store overview</p>
+            <p className="text-[14px] text-[#6B7280]">Welcome back! Here&apos;s your store overview</p>
           </div>
 
           {/* Row 1: 3 stat cards */}

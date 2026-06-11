@@ -45,10 +45,18 @@ export default async function EmployeeDashboardPage() {
   const businessName = retailer?.business_name || "Your Store";
   const businessLogoUrl = retailer?.business_logo_url || null;
 
-  // Shuffle designs server-side to avoid hydration mismatch
+  // Deterministically shuffle designs based on a seed derived from employee ID to satisfy render purity requirements.
+  const seedString = employee.id || "";
+  let seedVal = 0;
+  for (let i = 0; i < seedString.length; i++) {
+    seedVal = (seedVal * 31 + seedString.charCodeAt(i)) | 0;
+  }
+
   let shuffledDesigns = [...(designs || [])];
   for (let i = shuffledDesigns.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
+    // Simple LCG PRNG: seedVal = (a * seedVal + c) % m
+    seedVal = (1103515245 * seedVal + 12345) & 0x7fffffff;
+    const j = seedVal % (i + 1);
     [shuffledDesigns[i], shuffledDesigns[j]] = [shuffledDesigns[j], shuffledDesigns[i]];
   }
   shuffledDesigns = shuffledDesigns.slice(0, 6);

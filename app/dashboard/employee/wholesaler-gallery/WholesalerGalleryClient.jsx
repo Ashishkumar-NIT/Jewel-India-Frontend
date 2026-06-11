@@ -347,7 +347,6 @@ export default function WholesalerGalleryClient({ products, categoryTabs, initia
       if (!res.ok) throw new Error("Failed to start chat");
       router.push("/dashboard/employee/messages");
     } catch (err) {
-      console.error(err);
       alert("Could not start chat. Please try again.");
     } finally {
       setIsStartingChat(false);

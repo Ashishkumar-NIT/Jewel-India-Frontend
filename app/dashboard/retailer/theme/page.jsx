@@ -15,7 +15,7 @@ export default async function RetailerThemePage() {
     try {
       initialTheme = await getRetailerTheme(user.id);
     } catch (err) {
-      console.warn("Failed to fetch retailer theme server-side:", err);
+      // TODO: add proper error handling
     }
   }
 

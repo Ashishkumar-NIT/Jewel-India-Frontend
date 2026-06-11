@@ -186,7 +186,7 @@ export default function YourTasteClient({ products, selectedProductIds, category
           Your Taste
         </h1>
         <p className="text-[14px] text-[#6B7280]">
-          Let's curate the product which justifies your store and your taste
+          Let&apos;s curate the product which justifies your store and your taste
         </p>
       </div>
 

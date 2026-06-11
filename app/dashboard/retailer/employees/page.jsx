@@ -100,7 +100,7 @@ export default function RetailerEmployeesPage() {
             Employees
           </h1>
           <p className="text-[14px] text-[#6B7280]">
-            Welcome back! Here's an overview of your employees
+            Welcome back! Here&apos;s an overview of your employees
           </p>
         </div>
 

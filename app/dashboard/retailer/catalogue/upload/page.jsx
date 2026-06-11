@@ -222,7 +222,7 @@ export default function UploadDesignPage() {
                   <h2 className="text-[22px] font-extrabold text-[#111827]">Product image</h2>
                 </div>
                 <p className="text-[14px] text-[#6B7280] mb-6 leading-relaxed">
-                  Upload a clear image. We'll remove the background first, then enhance it.
+                  Upload a clear image. We&apos;ll remove the background first, then enhance it.
                 </p>
                 
                 <h3 className="text-[13px] font-bold text-[#111827] mb-3">Get the best result from your photo</h3>
@@ -470,7 +470,7 @@ export default function UploadDesignPage() {
                 <h2 className="text-[22px] font-extrabold text-[#111827]">Specifications</h2>
               </div>
               <p className="text-[14px] text-[#6B7280] mb-8 leading-relaxed">
-                Add weight and stone details so retailers know exactly what they're getting.
+                Add weight and stone details so retailers know exactly what they&apos;re getting.
               </p>
 
               <div className="flex flex-col gap-8">

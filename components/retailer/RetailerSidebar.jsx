@@ -275,11 +275,10 @@ function RetailerSidebar({ retailer }) {
                 if (res.ok) {
                   window.location.href = "/dashboard/employee";
                 } else {
-                  const errData = await res.json().catch(() => ({}));
-                  console.error("Failed to switch context:", errData.error || res.statusText);
+                  // TODO: add proper error handling
                 }
               } catch (err) {
-                console.error("Error switching view context:", err);
+                // TODO: add proper error handling
               }
             }}
             className="flex items-center gap-2.5 w-full px-1 py-2 text-[#6B7280] hover:text-[#3B82F6] transition-colors group mb-2 border-none bg-transparent cursor-pointer outline-none text-left"
