@@ -179,7 +179,7 @@ export function ProductInfoModal({ isOpen, onClose, product, onStartChat, isFull
               <img 
                 src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1781118947/theme1_vertical_sclwlj.svg" 
                 alt="Arch Background" 
-                className="w-full h-full object-cover landscape:scale-[0.85] origin-center"
+                className="w-full h-full object-cover"
               />
             </picture>
           )}
@@ -209,15 +209,15 @@ export function ProductInfoModal({ isOpen, onClose, product, onStartChat, isFull
           <div 
             className="relative w-full max-w-[400px] sm:max-w-[500px] md:max-w-[600px] lg:max-w-[700px] flex flex-col items-center"
             style={{ 
-              paddingTop: "clamp(90px, 10vw, 115px)", 
-              paddingBottom: "clamp(20px, 5vw, 40px)", 
+              paddingTop: "clamp(70px, 8vh, 115px)", 
+              paddingBottom: "clamp(15px, 3vh, 40px)", 
               paddingLeft: "clamp(20px, 5vw, 40px)", 
               paddingRight: "clamp(20px, 5vw, 40px)" 
             }}
           >
 
             {/* Header section — centered, sits inside the white arch opening visually */}
-            <div className="flex flex-col items-center text-center mb-10 w-full">
+            <div className="flex flex-col items-center text-center mb-6 landscape:mb-4 w-full">
               <div className="flex items-center justify-center gap-3 mb-3">
                 <span 
                   className="font-bold uppercase tracking-[0.2em] text-[#6e6e6e] font-sans"
@@ -245,12 +245,12 @@ export function ProductInfoModal({ isOpen, onClose, product, onStartChat, isFull
             </div>
 
             {/* Image section — main image and thumbnails side by side */}
-            <div className="flex items-start justify-center gap-4 sm:gap-6 mb-12 relative w-full">
+            <div className="flex items-start justify-center gap-4 sm:gap-6 mb-8 landscape:mb-4 relative w-full">
 
               {/* Main image container */}
               <div
                 onClick={() => setIsFullViewOpen(true)}
-                className="w-full max-w-[240px] sm:max-w-[280px] md:max-w-[320px] aspect-[3/4] bg-[#f5f5f5] rounded-sm overflow-hidden relative cursor-pointer shadow-sm flex items-center justify-center border border-gray-100/60"
+                className="w-full max-w-[240px] sm:max-w-[280px] md:max-w-[320px] landscape:max-w-[260px] aspect-square bg-[#f5f5f5] rounded-sm overflow-hidden relative cursor-pointer shadow-sm flex items-center justify-center border border-gray-100/60"
               >
                 {!mainImgError && activeImageUrl ? (
                   <ProtectedImage src={activeImageUrl} alt={title} className="w-full h-full object-contain mix-blend-multiply" onError={() => setMainImgError(true)} />
@@ -302,10 +302,10 @@ export function ProductInfoModal({ isOpen, onClose, product, onStartChat, isFull
             </div>
 
             {/* Specifications section */}
-            <div className="w-full grid grid-cols-1 sm:grid-cols-[210px_210px] md:grid-cols-[250px_250px] lg:grid-cols-[290px_290px] justify-between gap-y-8 mt-4">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-[210px_210px] md:grid-cols-[250px_250px] lg:grid-cols-[290px_290px] justify-between gap-y-6 landscape:gap-y-3 mt-4">
 
               {/* Left Column: MATERIAL & WEIGHT */}
-              <div className="flex flex-col gap-6">
+              <div className="flex flex-col gap-5 landscape:gap-3">
                 {/* MATERIAL */}
                 {purity && (
                   <div>
@@ -352,7 +352,7 @@ export function ProductInfoModal({ isOpen, onClose, product, onStartChat, isFull
               </div>
 
               {/* Right Column: AVAILABILITY & CTAs */}
-              <div className="flex flex-col gap-6">
+              <div className="flex flex-col gap-5 landscape:gap-3">
                 {/* AVAILABILITY */}
                 {stockAvailable !== null && stockAvailable !== undefined && (
                   <div>
