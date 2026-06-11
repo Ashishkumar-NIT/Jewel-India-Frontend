@@ -2,6 +2,7 @@ import { createClient } from "../../../../lib/supabase/server";
 import { supabaseAdmin } from "../../../../lib/supabase/admin";
 import { redirect } from "next/navigation";
 import WholesalerGalleryClient from "./WholesalerGalleryClient";
+import { categories as configCategories } from "../../../../lib/config/catalogueCategories";
 
 export const metadata = {
   title: "Wholesaler Gallery — Employee Dashboard",
@@ -100,7 +101,18 @@ export default async function WholesalerGalleryPage({ searchParams }) {
         if (p.category) categorySet.add(p.category);
         if (p.jewellery_type) categorySet.add(p.jewellery_type);
       });
-      categoryTabs = ["All", ...Array.from(categorySet).sort()];
+      // Sort categories using the config order (Necklace, Haram, Pendants, ...)
+      const configOrder = configCategories.map(c => c.name.toLowerCase());
+      const sortedCategories = Array.from(categorySet).sort((a, b) => {
+        const idxA = configOrder.indexOf(a.toLowerCase());
+        const idxB = configOrder.indexOf(b.toLowerCase());
+        // Known categories come first in config order, unknown ones go to the end alphabetically
+        if (idxA === -1 && idxB === -1) return a.localeCompare(b);
+        if (idxA === -1) return 1;
+        if (idxB === -1) return -1;
+        return idxA - idxB;
+      });
+      categoryTabs = ["All", ...sortedCategories];
     }
   }
 

@@ -220,11 +220,11 @@ export default function WholesalerGalleryClient({ products, categoryTabs, initia
 
   const STATIC_CATEGORIES = [
     "Necklace",
+    "Haram",
     "Pendants",
     "Mangalsutras",
     "Chains",
     "Bangles",
-    "Haram",
     "Rings",
     "Earrings",
     "Nosepin"
