@@ -354,7 +354,7 @@ export default function WholesalerGalleryClient({ products, categoryTabs, initia
   };
 
   return (
-    <div className="flex flex-col w-full min-h-screen bg-white pb-24">
+    <div className={`flex flex-col w-full min-h-screen pb-24 ${selectedProduct ? "bg-transparent" : "bg-white"}`}>
 
       {/* Smart Sticky Header */}
       <div

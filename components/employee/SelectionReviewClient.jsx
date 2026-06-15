@@ -227,7 +227,7 @@ export default function SelectionReviewClient() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className={`min-h-screen ${viewingProduct ? "bg-transparent" : "bg-white"}`}>
 
       {/* Header */}
       <div className="flex items-center justify-between px-6 md:px-12 py-8 relative max-w-[1400px] mx-auto">
@@ -258,13 +258,13 @@ export default function SelectionReviewClient() {
           {/* White Background layer behind pillars */}
           <div 
             style={{ position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh", overflow: "hidden" }} 
-            className="bg-white z-[48] pointer-events-none" 
+            className="bg-white z-[58] pointer-events-none" 
           />
 
           {/* Arch Background image container */}
           <div 
             style={{ position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh", overflow: "hidden" }} 
-            className="z-[49] pointer-events-none"
+            className="z-[59] pointer-events-none"
           >
             {isMaharaja ? (
               <img 
@@ -273,18 +273,41 @@ export default function SelectionReviewClient() {
                 style={{ width: "100%", height: "100%", objectFit: "cover" }} 
               />
             ) : (
-              <picture>
-                <source srcSet="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1781118947/theme1_horizontal_hog6yy.svg" media="(orientation: landscape)" />
-                <img 
-                  src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1781118947/theme1_vertical_sclwlj.svg" 
-                  alt="Arch Background" 
-                  className="w-full h-full portrait:object-fill landscape:object-cover"
+              <>
+                {/* Landscape: use landscape SVG with cover — already perfect */}
+                <div
+                  role="img"
+                  aria-label="Arch Background"
+                  className="hidden landscape:block"
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    backgroundImage: "url('https://res.cloudinary.com/dcs0vuzwg/image/upload/v1781118947/theme1_horizontal_hog6yy.svg')",
+                    backgroundSize: "cover",
+                    backgroundPosition: "center top",
+                    backgroundRepeat: "no-repeat",
+                  }}
                 />
-              </picture>
+                {/* Portrait: use portrait SVG stretched to fill entire viewport — 
+                    pillars edge-to-edge, arch top-to-bottom, zero white gaps */}
+                <div
+                  role="img"
+                  aria-label="Arch Background"
+                  className="block landscape:hidden"
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    backgroundImage: "url('https://res.cloudinary.com/dcs0vuzwg/image/upload/v1781118947/theme1_vertical_sclwlj.svg')",
+                    backgroundSize: "100% 100%",
+                    backgroundPosition: "center top",
+                    backgroundRepeat: "no-repeat",
+                  }}
+                />
+              </>
             )}
           </div>
 
-          <div className="fixed inset-0 overflow-y-auto z-50 flex flex-col items-center pb-24 font-sans select-none">
+          <div className="fixed inset-0 overflow-y-auto z-[60] flex flex-col items-center pb-24 font-sans select-none bg-transparent">
 
           {/* Glassmorphic back button */}
           <button

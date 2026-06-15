@@ -34,7 +34,7 @@ export default function DesignerCollectionSection({ employee, businessName, desi
   if (!shuffledDesigns || shuffledDesigns.length === 0) return null;
 
   return (
-    <section className="w-full bg-white pt-16 pb-40">
+    <section className={`w-full pt-16 pb-40 ${selectedProduct ? "bg-transparent" : "bg-white"}`}>
       <div className="w-full max-w-7xl mx-auto px-4 md:px-8">
         {/* Section Header */}
         <div className="mb-12 pl-4 md:pl-8 lg:pl-12">

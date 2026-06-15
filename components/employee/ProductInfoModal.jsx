@@ -174,14 +174,37 @@ export function ProductInfoModal({ isOpen, onClose, product, onStartChat, isFull
               style={{ width: "100%", height: "100%", objectFit: "cover" }} 
             />
           ) : (
-            <picture>
-              <source srcSet="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1781118947/theme1_horizontal_hog6yy.svg" media="(orientation: landscape)" />
-              <img 
-                src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1781118947/theme1_vertical_sclwlj.svg" 
-                alt="Arch Background" 
-                className="w-full h-full portrait:object-fill landscape:object-cover"
+            <>
+              {/* Landscape: use landscape SVG with cover — already perfect */}
+              <div
+                role="img"
+                aria-label="Arch Background"
+                className="hidden landscape:block"
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  backgroundImage: "url('https://res.cloudinary.com/dcs0vuzwg/image/upload/v1781118947/theme1_horizontal_hog6yy.svg')",
+                  backgroundSize: "cover",
+                  backgroundPosition: "center top",
+                  backgroundRepeat: "no-repeat",
+                }}
               />
-            </picture>
+              {/* Portrait: use portrait SVG stretched to fill entire viewport — 
+                  pillars edge-to-edge, arch top-to-bottom, zero white gaps */}
+              <div
+                role="img"
+                aria-label="Arch Background"
+                className="block landscape:hidden"
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  backgroundImage: "url('https://res.cloudinary.com/dcs0vuzwg/image/upload/v1781118947/theme1_vertical_sclwlj.svg')",
+                  backgroundSize: "100% 100%",
+                  backgroundPosition: "center top",
+                  backgroundRepeat: "no-repeat",
+                }}
+              />
+            </>
           )}
         </div>
 
