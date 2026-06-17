@@ -25,11 +25,15 @@ const ToggleSwitch = memo(function ToggleSwitch({ isOn, onToggle }) {
   return (
     <div 
       onClick={(e) => { e.stopPropagation(); onToggle(); }}
-      className={`w-11 h-6 flex items-center rounded-full p-1 cursor-pointer transition-colors duration-300 ${isOn ? "bg-black" : "bg-gray-200"}`}
+      className="group -my-2.5 -mx-1.5 md:my-0 md:mx-0 w-11 h-11 md:w-11 md:h-6 flex items-center justify-center cursor-pointer"
     >
-      <div
-        className={`bg-white w-4 h-4 rounded-full shadow-sm transform transition-transform duration-300 ${isOn ? "translate-x-5" : "translate-x-0"}`}
-      />
+      <div 
+        className={`w-11 h-6 flex items-center rounded-full p-1 transition-colors duration-300 ${isOn ? "bg-black" : "bg-gray-200"}`}
+      >
+        <div
+          className={`bg-white w-4 h-4 rounded-full shadow-sm transform transition-transform duration-300 ${isOn ? "translate-x-5" : "translate-x-0"}`}
+        />
+      </div>
     </div>
   );
 });

@@ -38,7 +38,7 @@ export default async function RetailerDashboardPage() {
           </div>
 
           {/* Row 1: 3 stat cards */}
-          <div className="grid grid-cols-3 gap-4 w-full">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
             <DashboardStats
               employeesCount={employeesCount}
               activeEmployeesCount={activeEmployeesCount}
@@ -51,7 +51,7 @@ export default async function RetailerDashboardPage() {
           </div>
 
           {/* Row 2: Quick Action Cards */}
-          <div className="grid grid-cols-2 gap-4 w-full max-w-[66%]">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full md:max-w-[66%]">
             <Link
               href="?modal=add-employee"
               scroll={false}

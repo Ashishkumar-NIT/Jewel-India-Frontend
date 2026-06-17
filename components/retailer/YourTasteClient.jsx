@@ -64,13 +64,19 @@ function ProductCard({ product, isSelected, onToggle, onClick }) {
           </span>
           
           {/* Toggle */}
-          <button
+          <div 
             onClick={handleToggle}
-            disabled={isUpdating}
-            className={`relative w-9 h-5 rounded-full transition-colors duration-300 ease-in-out focus:outline-none disabled:opacity-50 border-none cursor-pointer ${isSelected ? 'bg-[#22C55E]' : 'bg-[#E5E5EA]'}`}
+            className="w-11 h-11 flex items-center justify-end cursor-pointer -my-3 md:my-0 md:w-auto md:h-auto"
           >
-            <span className={`absolute top-[2px] left-[2px] bg-white w-4 h-4 rounded-full shadow-[0_2px_4px_rgba(0,0,0,0.2)] transition-transform duration-300 ease-in-out ${isSelected ? 'translate-x-[16px]' : 'translate-x-0'}`} />
-          </button>
+            <button
+              disabled={isUpdating}
+              tabIndex={-1}
+              className="pointer-events-none relative w-9 h-5 rounded-full transition-colors duration-300 ease-in-out focus:outline-none disabled:opacity-50 border-none cursor-pointer bg-[#E5E5EA] data-[selected=true]:bg-[#22C55E]"
+              data-selected={isSelected}
+            >
+              <span className={`absolute top-[2px] left-[2px] bg-white w-4 h-4 rounded-full shadow-[0_2px_4px_rgba(0,0,0,0.2)] transition-transform duration-300 ease-in-out ${isSelected ? 'translate-x-[16px]' : 'translate-x-0'}`} />
+            </button>
+          </div>
         </div>
       </div>
     </article>
@@ -242,14 +248,14 @@ export default function YourTasteClient({ products, selectedProductIds, category
           <div className="flex flex-wrap gap-2 items-center">
             <button
               onClick={() => setFilterState(filterState === "selected" ? "all" : "selected")}
-              className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-[12px] font-bold tracking-wide transition-colors ${filterState === "selected" ? 'bg-black text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+              className={`flex items-center gap-1.5 px-4 h-11 md:h-auto py-0 md:py-2 rounded-full text-[12px] font-bold tracking-wide transition-colors ${filterState === "selected" ? 'bg-black text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
             >
               Already selected
               {filterState === "selected" && <span className="text-[14px] ml-1 leading-none font-normal">×</span>}
             </button>
             <button
               onClick={() => setFilterState(filterState === "unselected" ? "all" : "unselected")}
-              className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-[12px] font-bold tracking-wide transition-colors ${filterState === "unselected" ? 'bg-black text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+              className={`flex items-center gap-1.5 px-4 h-11 md:h-auto py-0 md:py-2 rounded-full text-[12px] font-bold tracking-wide transition-colors ${filterState === "unselected" ? 'bg-black text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
             >
               Show Unselected
               {filterState === "unselected" && <span className="text-[14px] ml-1 leading-none font-normal">×</span>}
@@ -261,7 +267,7 @@ export default function YourTasteClient({ products, selectedProductIds, category
             <button
               onClick={() => handleBulkToggle(true)}
               disabled={isBulkUpdating || filteredProducts.length === 0}
-              className="flex items-center gap-2 px-4 py-2 rounded-full text-[12px] font-bold tracking-wide bg-[#22C55E] text-white hover:bg-[#16a34a] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="flex items-center gap-2 px-4 h-11 md:h-auto py-0 md:py-2 rounded-full text-[12px] font-bold tracking-wide bg-[#22C55E] text-white hover:bg-[#16a34a] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               {isBulkUpdating ? (
                 <span className="w-3 h-3 border-2 border-white/40 border-t-white rounded-full animate-spin" />
@@ -273,7 +279,7 @@ export default function YourTasteClient({ products, selectedProductIds, category
             <button
               onClick={() => handleBulkToggle(false)}
               disabled={isBulkUpdating || filteredProducts.length === 0}
-              className="flex items-center gap-2 px-4 py-2 rounded-full text-[12px] font-bold tracking-wide bg-gray-800 text-white hover:bg-black disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="flex items-center gap-2 px-4 h-11 md:h-auto py-0 md:py-2 rounded-full text-[12px] font-bold tracking-wide bg-gray-800 text-white hover:bg-black disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               {isBulkUpdating ? (
                 <span className="w-3 h-3 border-2 border-white/40 border-t-white rounded-full animate-spin" />

@@ -106,8 +106,8 @@ export function EmployeeTable({ employees, onToggleStatus, onDelete, onUpdate })
         />
       </div>
 
-      {/* Employee Table */}
-      <div className="bg-white border border-gray-100 rounded-[16px] shadow-[0_2px_10px_rgba(0,0,0,0.03)] overflow-hidden">
+      {/* Employee Table - Desktop/Tablet */}
+      <div className="bg-white border border-gray-100 rounded-[16px] shadow-[0_2px_10px_rgba(0,0,0,0.03)] overflow-hidden hidden md:block">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[800px] text-left border-collapse">
             <thead>
@@ -204,10 +204,86 @@ export function EmployeeTable({ employees, onToggleStatus, onDelete, onUpdate })
         </div>
       </div>
 
+      {/* Employee List - Mobile Cards */}
+      <div className="flex flex-col gap-4 block md:hidden">
+        {filteredEmployees.map((emp) => {
+          const isActive = getStatus(emp) === "Active";
+          return (
+            <div key={emp.id} className="bg-white rounded-[16px] border border-gray-100 p-4 shadow-[0_2px_10px_rgba(0,0,0,0.03)] flex flex-col gap-4">
+              {/* Header */}
+              <div className="flex items-start justify-between gap-2">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div 
+                    className="w-10 h-10 rounded-full flex items-center justify-center text-[15px] font-bold text-[#4B5563] shrink-0 border border-black/5"
+                    style={{ backgroundColor: getPastelColor(emp.full_name) }}
+                  >
+                    {emp.full_name?.charAt(0)?.toUpperCase() || "?"}
+                  </div>
+                  <div className="flex flex-col min-w-0">
+                    <span className="text-[14px] font-bold text-[#111827] truncate leading-tight">{emp.full_name}</span>
+                    <span className="text-[12px] text-[#6B7280] leading-tight mt-0.5 truncate">{emp.designation || "Staff"}</span>
+                  </div>
+                </div>
+                <div className={`inline-flex items-center px-2.5 py-1 rounded-[6px] text-[12px] font-semibold shrink-0 ${
+                  isActive ? "bg-[#DCFCE7] text-[#166534]" : "bg-[#FEF3C7] text-[#B45309]"
+                }`}>
+                  {isActive ? "Active" : "Inactive"}
+                </div>
+              </div>
+
+              {/* Details Box */}
+              <div className="flex flex-col gap-2.5 text-[13px] text-[#374151] bg-[#FCFCFC] rounded-[10px] p-3 border border-[#F5F5F5]">
+                <div className="flex justify-between items-center gap-2">
+                  <span className="text-[#6B7280] font-medium shrink-0">Email:</span>
+                  <span className="font-semibold truncate text-[#111827]">{emp.email}</span>
+                </div>
+                {emp.phone && (
+                  <div className="flex justify-between items-center gap-2">
+                    <span className="text-[#6B7280] font-medium shrink-0">Phone:</span>
+                    <span className="font-semibold text-[#6366F1]">{emp.phone}</span>
+                  </div>
+                )}
+                <div className="flex justify-between items-center gap-2">
+                  <span className="text-[#6B7280] font-medium shrink-0">Last Active:</span>
+                  <span className="text-[#6B7280]">{emp.last_active_at || "---"}</span>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-gray-50">
+                <button 
+                  onClick={() => handleToggle(emp)}
+                  disabled={togglingId === emp.id}
+                  className="h-11 px-4 border border-gray-200 rounded-[10px] text-[13px] font-bold text-[#4B5563] hover:border-gray-300 hover:bg-gray-50 transition-colors disabled:opacity-50 flex items-center justify-center"
+                >
+                  {isActive ? "Deactivate" : "Activate"}
+                </button>
+                <button 
+                  onClick={() => openActions(emp)}
+                  className="w-11 h-11 border border-gray-200 rounded-[10px] flex items-center justify-center text-[#9CA3AF] hover:text-[#111827] hover:border-gray-300 transition-colors"
+                  aria-label="More actions"
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 14C13.1046 14 14 13.1046 14 12C14 10.8954 13.1046 10 12 10C10.8954 10 10 10.8954 10 12C10 13.1046 10.8954 14 12 14Z" />
+                    <path d="M19 14C20.1046 14 21 13.1046 21 12C21 10.8954 20.1046 10 19 10C17.8954 10 17 10.8954 17 12C17 13.1046 17.8954 14 19 14Z" />
+                    <path d="M5 14C6.10457 14 7 13.1046 7 12C7 10.8954 6.10457 10 5 10C3.89543 10 3 10.8954 3 12C3 13.1046 3.89543 14 5 14Z" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          );
+        })}
+        {filteredEmployees.length === 0 && (
+          <div className="bg-white rounded-[16px] border border-dashed border-gray-200 p-8 text-center text-[#9CA3AF] text-[14px]">
+            No employees found matching your search.
+          </div>
+        )}
+      </div>
+
       {/* Actions Modal Overlay */}
       {actionsEmployee && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
-          <div className="bg-white w-full max-w-[480px] rounded-[16px] border border-white shadow-[0_10px_40px_rgba(0,0,0,0.1)] relative flex flex-col p-6 sm:p-8">
+          <div className="bg-white w-full max-w-[480px] rounded-[16px] border border-white shadow-[0_10px_40px_rgba(0,0,0,0.1)] relative flex flex-col p-6 sm:p-8 max-h-[90vh] overflow-y-auto overscroll-contain">
             
             <button onClick={closeActions} className="absolute top-6 right-6 text-black hover:opacity-70 transition-opacity">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">

@@ -63,6 +63,7 @@ const NAV_ITEMS = [
 function RetailerSidebar({ retailer }) {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+  const [isMoreOpen, setIsMoreOpen] = useState(false);
   const sidebarRef = useRef(null);
 
   useEffect(() => {
@@ -128,7 +129,7 @@ function RetailerSidebar({ retailer }) {
   return (
     <>
       {/* Top Header Bar for Mobile/Tablet */}
-      <header className="fixed top-0 left-0 right-0 h-[60px] bg-white border-b border-gray-100 z-40 flex items-center justify-between px-4 lg:hidden">
+      <header className="fixed top-0 left-0 right-0 h-[60px] bg-white border-b border-gray-100 z-40 flex items-center justify-between px-4 hidden md:flex lg:hidden">
         <div className="flex items-center gap-3">
           <button
             onClick={() => setIsOpen(true)}
@@ -162,9 +163,120 @@ function RetailerSidebar({ retailer }) {
       {/* Backdrop for open drawer on mobile/tablet */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-50 lg:hidden animate-fade-in"
+          className="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-50 hidden md:block lg:hidden animate-fade-in"
           onClick={() => setIsOpen(false)}
         />
+      )}
+
+      {/* Floating Bottom Nav for Mobile */}
+      <nav className="retailer-bottom-nav">
+        {[
+          navItems[0], // Dashboard
+          navItems[2], // Catalogue
+          navItems[1], // Employees
+          navItems[3], // Your Taste
+        ].map((item) => (
+          <Link
+            key={item.name}
+            href={item.href}
+            className={`bottom-nav-item ${item.isActive ? "active" : ""}`}
+            title={item.name}
+            style={{
+              opacity: item.isActive ? 1 : 0.45,
+            }}
+          >
+            <span className={item.isActive ? "text-[#111111]" : "text-[#9CA3AF]"}>
+              {item.icon}
+            </span>
+          </Link>
+        ))}
+
+        {/* More Menu Trigger (using Business Logo) */}
+        <button
+          onClick={() => setIsMoreOpen(!isMoreOpen)}
+          className={`bottom-nav-item ${isMoreOpen ? "active" : ""}`}
+          style={{
+            border: "none",
+            outline: "none",
+            cursor: "pointer",
+            padding: 0,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            position: "relative"
+          }}
+          title="More Options"
+        >
+          <div className={`w-[28px] h-[28px] rounded-full overflow-hidden bg-gray-200 border-2 transition-all duration-300 ${isMoreOpen ? 'border-black' : 'border-gray-100'}`}>
+            <Image
+              src={logoUrl}
+              alt="More options logo"
+              width={28}
+              height={28}
+              className="object-cover w-full h-full"
+            />
+          </div>
+        </button>
+      </nav>
+
+      {/* More Popover Options Menu */}
+      {isMoreOpen && (
+        <div className="bottom-nav-popover" onClick={() => setIsMoreOpen(false)}>
+          <div className="bottom-nav-popover-content" onClick={(e) => e.stopPropagation()}>
+            {/* Store Theme */}
+            <Link 
+              href="/dashboard/retailer/theme" 
+              onClick={() => setIsMoreOpen(false)}
+              className="popover-item"
+            >
+              <span className="text-[#9CA3AF]">
+                {navItems[4].icon}
+              </span>
+              <span>Store Theme</span>
+            </Link>
+
+            {/* Toggle Context (Employee View) */}
+            <button
+              onClick={async () => {
+                setIsMoreOpen(false);
+                try {
+                  const res = await fetch("/api/auth/toggle-view", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ mode: "employee" }),
+                  });
+                  if (res.ok) {
+                    window.location.href = "/dashboard/employee";
+                  }
+                } catch (err) {
+                  // silent
+                }
+              }}
+              className="popover-item"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#9CA3AF]">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+              </svg>
+              <span>Employee View</span>
+            </button>
+
+            {/* Logout */}
+            <form action={signOut} onSubmit={() => setIsMoreOpen(false)} className="w-full">
+              <button 
+                type="submit"
+                className="popover-item popover-logout"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                  <polyline points="16 17 21 12 16 7" />
+                  <line x1="21" y1="12" x2="9" y2="12" />
+                </svg>
+                <span>Logout</span>
+              </button>
+            </form>
+          </div>
+        </div>
       )}
 
       <style>{`
@@ -180,12 +292,119 @@ function RetailerSidebar({ retailer }) {
             height: 36px !important;
           }
         }
+
+        .retailer-bottom-nav {
+          display: none;
+        }
+
+        /* Responsive Nav & Sidebar Styles */
+        @media (max-width: 767px) {
+          .retailer-bottom-nav {
+            display: flex;
+            position: fixed;
+            bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90vw;
+            max-width: 400px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 100px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1), 0 1.5px 4px rgba(0,0,0,0.06);
+            align-items: center;
+            justify-content: space-around;
+            padding: 0 12px;
+            z-index: 100;
+          }
+          .bottom-nav-item {
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+            position: relative;
+          }
+          .bottom-nav-item.active {
+            background: rgba(0, 0, 0, 0.05);
+          }
+          .bottom-nav-item svg {
+            color: #111111;
+          }
+          .bottom-nav-popover {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(2px);
+            -webkit-backdrop-filter: blur(2px);
+            z-index: 99;
+          }
+          .bottom-nav-popover-content {
+            position: fixed;
+            bottom: calc(90px + env(safe-area-inset-bottom, 0px));
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            background: #ffffff;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            border-radius: 16px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            animation: popoverFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+          }
+          .popover-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            color: #374151;
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            text-align: left;
+            transition: background-color 0.15s ease;
+          }
+          .popover-item:hover {
+            background: #f3f4f6;
+          }
+          .popover-logout {
+            color: #ef4444;
+          }
+          .popover-logout:hover {
+            background: #fef2f2;
+          }
+        }
+        @keyframes popoverFadeIn {
+          from {
+            opacity: 0;
+            transform: translate(-50%, 10px);
+          }
+          to {
+            opacity: 1;
+            transform: translate(-50%, 0);
+          }
+        }
       `}</style>
 
       {/* Sidebar Drawer */}
       <aside
         ref={sidebarRef}
-        className={`fixed top-0 left-0 h-dvh z-50 flex flex-col w-[200px] bg-white border-r border-gray-100 transition-transform duration-300 lg:translate-x-0 overflow-y-auto overflow-x-hidden overscroll-contain ${
+        className={`fixed top-0 left-0 h-dvh z-50 flex flex-col w-[200px] bg-white border-r border-gray-100 transition-transform duration-300 lg:translate-x-0 overflow-y-auto overflow-x-hidden overscroll-contain hidden md:flex ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
         style={{ padding: "20px 16px 24px 16px" }}
