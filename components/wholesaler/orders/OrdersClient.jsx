@@ -70,7 +70,7 @@ function WholesalerOrderCard({ order, onUpdateStatus, onReject, onDeleteOrder, o
     <div className="flex flex-col md:flex-row gap-8 py-10 border-b border-gray-200 w-full relative">
       
       {/* Left Image */}
-      <div className="w-[240px] h-[240px] bg-gray-50 rounded-sm overflow-hidden shrink-0 border border-gray-100">
+      <div className="w-full md:w-[240px] aspect-square bg-gray-50 rounded-sm overflow-hidden shrink-0 border border-gray-100">
         {imgUrl ? (
           <ProtectedImage src={imgUrl} alt={p.title} className="w-full h-full object-cover" />
         ) : (
@@ -122,7 +122,7 @@ function WholesalerOrderCard({ order, onUpdateStatus, onReject, onDeleteOrder, o
         </p>
 
         {/* Bottom Right Actions */}
-        <div className="absolute bottom-0 right-0 flex items-center gap-3">
+        <div className="relative mt-6 md:mt-0 md:absolute md:bottom-0 md:right-0 flex flex-wrap md:flex-nowrap items-center gap-3">
           {order.status === "pending" && (
             <>
               <button 
@@ -343,7 +343,8 @@ export default function OrdersClient({ initialOrders }) {
 
       <div className="w-full max-w-5xl mx-auto px-6">
         {/* Segmented Tabs */}
-        <div className="inline-flex items-center bg-[#f4f5f7] rounded-full p-1 mb-8">
+        <div className="w-full overflow-x-auto scrollbar-hide mb-8">
+          <div className="inline-flex items-center bg-[#f4f5f7] rounded-full p-1 min-w-max">
           {tabs.map(tab => {
             const isActive = activeTab === tab.id;
             return (
@@ -366,6 +367,7 @@ export default function OrdersClient({ initialOrders }) {
             );
           })}
         </div>
+      </div>
 
         {/* List */}
         {filteredOrders.length === 0 ? (

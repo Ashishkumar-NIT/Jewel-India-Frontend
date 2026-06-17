@@ -324,8 +324,8 @@ export function EditProductForm({ product }) {
             Update weight and stone details so retailers <br className="hidden md:inline" /> know exactly what they&apos;re getting.
           </p>
 
-          <div className="grid grid-cols-2 md:flex md:flex-row gap-2 md:gap-5 w-full md:max-w-xl mt-2">
-            <div className="col-span-1 md:flex-1">
+          <div className="flex flex-col sm:grid sm:grid-cols-3 md:flex md:flex-row gap-4 md:gap-5 w-full md:max-w-xl mt-2">
+            <div className="w-full sm:col-span-1 md:flex-1">
               <InputWithSuffix
                 id="grossWeight"
                 label="Gross Weight"
@@ -339,7 +339,7 @@ export function EditProductForm({ product }) {
                 error={errors.grossWeight}
               />
             </div>
-            <div className="col-span-1 md:flex-1">
+            <div className="w-full sm:col-span-1 md:flex-1">
               <InputWithSuffix
                 id="stoneWeight"
                 label="Stone Weight"
@@ -353,7 +353,7 @@ export function EditProductForm({ product }) {
                 error={errors.stoneWeight}
               />
             </div>
-            <div className="col-span-1 md:flex-1">
+            <div className="w-full sm:col-span-1 md:flex-1">
               <InputWithSuffix
                 id="netWeight"
                 label="Net Weight"

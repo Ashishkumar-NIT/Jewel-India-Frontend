@@ -9,7 +9,7 @@ export default async function WholesalerLayout({ children }) {
   return (
     <div className="theme-wholesaler" style={{ display: "flex", minHeight: "100vh" }}>
       <Sidebar />
-      <main style={{ flex: 1, marginLeft: "70px", minHeight: "100vh", minWidth: 0 }}>
+      <main className="wholesaler-main-content">
         {children}
       </main>
     </div>

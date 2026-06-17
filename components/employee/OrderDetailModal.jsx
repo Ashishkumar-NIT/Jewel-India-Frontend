@@ -61,6 +61,18 @@ export function OrderDetailModal({ order, onClose }) {
       {/* Modal Content */}
       <div className="bg-white w-full max-w-5xl rounded-[16px] shadow-2xl relative z-10 animate-fade-in-up max-h-[95vh] overflow-y-auto flex flex-col no-scrollbar pb-10">
         
+        {/* Close Button at Modal Level */}
+        <button 
+          onClick={onClose} 
+          className="absolute top-4 right-4 z-50 w-9 h-9 flex items-center justify-center bg-gray-50/80 hover:bg-gray-100 rounded-[10px] text-gray-400 hover:text-gray-700 transition-colors backdrop-blur-xs"
+          aria-label="Close modal"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+        
         {/* Top Section */}
         <div className="flex flex-col md:flex-row p-8 md:p-10 gap-10">
           
@@ -96,12 +108,8 @@ export function OrderDetailModal({ order, onClose }) {
           {/* Right Column (Details) */}
           <div className="w-full md:w-1/2 flex flex-col pt-2 relative">
             
-            {/* Top Right Action Buttons */}
-            <div className="absolute top-0 right-0 flex gap-2">
-              <button onClick={onClose} className="w-9 h-9 flex items-center justify-center bg-gray-50 hover:bg-gray-100 rounded-[10px] text-gray-400 transition-colors">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-              </button>
-            </div>
+            {/* Spacer for title area spacing */}
+            <div className="h-6 md:h-0" />
 
             {/* Title & SKU */}
             <div className="mt-2 mb-4">

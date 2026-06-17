@@ -134,7 +134,7 @@ function ProductDetailModal({ product, onClose, onUpdate }) {
         onClick={(e) => e.stopPropagation()}
       >
         {/* Left Column - Image Viewer (~58%) */}
-        <div className="w-full md:w-[58%] p-6 flex flex-col gap-4 border-r border-[#f0f0f0]">
+        <div className="w-full md:w-[58%] p-6 flex flex-col gap-4 border-b md:border-b-0 md:border-r border-[#f0f0f0]">
           {/* Main Image */}
           <div 
             onClick={() => {
@@ -232,7 +232,7 @@ function ProductDetailModal({ product, onClose, onUpdate }) {
             </button>
           </div>
 
-          <div className="pr-[100px] mb-6">
+          <div className="pr-[60px] md:pr-[100px] mb-6">
             <h2 className="text-[20px] font-bold text-[#1A1A1A] leading-tight break-all sm:break-normal">{title}</h2>
             <p className="text-[14px] text-[#888] mt-1">{category} • {skuStr}</p>
           </div>

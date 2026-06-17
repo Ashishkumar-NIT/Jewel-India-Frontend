@@ -251,7 +251,7 @@ export default function CatalogueClient({
 
         {/* ── Category Row ── */}
         <div className="mb-[28px]">
-          <div className="flex flex-wrap items-center gap-x-6 gap-y-6 pt-6 px-4">
+          <div className="flex flex-nowrap md:flex-wrap items-center gap-x-4 gap-y-4 md:gap-x-6 md:gap-y-6 pt-6 px-4 overflow-x-auto scrollbar-hide w-full pb-3">
             {dynamicCategories?.map((cat) => {
               const isActive = activeCategory === cat.slug;
               return (
@@ -261,7 +261,7 @@ export default function CatalogueClient({
                   className="flex flex-col items-center gap-2 group outline-none shrink-0"
                 >
                   <div 
-                    className={`w-[90px] h-[90px] rounded-[12px] overflow-hidden transition-all duration-300 ease-out relative ${isActive ? "scale-110 ring-2 ring-[#111] ring-offset-1 shadow-lg z-10" : "hover:shadow-md"}`}
+                    className={`w-[72px] h-[72px] sm:w-[90px] sm:h-[90px] rounded-[12px] overflow-hidden transition-all duration-300 ease-out relative ${isActive ? "scale-110 ring-2 ring-[#111] ring-offset-1 shadow-lg z-10" : "hover:shadow-md"}`}
                     style={isActive ? { transform: 'scale(1.1)' } : {}}
                   >
                     {cat.image ? (
@@ -280,7 +280,7 @@ export default function CatalogueClient({
                     )}
                   </div>
                   <span 
-                    className="text-[12px] text-[#666] text-center w-[90px] truncate"
+                    className="text-xs sm:text-[12px] text-[#666] text-center w-[72px] sm:w-[90px] truncate"
                     style={isActive ? { marginTop: '8px', color: '#111', fontWeight: 600 } : {}}
                   >
                     {cat.name}
@@ -295,14 +295,14 @@ export default function CatalogueClient({
               className="flex flex-col items-center gap-2 group outline-none shrink-0"
             >
               <div 
-                className={`w-[90px] h-[90px] rounded-[12px] bg-[#111] hover:bg-[#222] flex flex-col items-center justify-center text-white text-[13px] font-bold transition-all duration-300 ease-out relative ${activeCategory === "all" ? "scale-110 ring-2 ring-[#111] ring-offset-1 shadow-lg z-10" : "hover:shadow-md"}`}
+                className={`w-[72px] h-[72px] sm:w-[90px] sm:h-[90px] rounded-[12px] bg-[#111] hover:bg-[#222] flex flex-col items-center justify-center text-white text-[13px] font-bold transition-all duration-300 ease-out relative ${activeCategory === "all" ? "scale-110 ring-2 ring-[#111] ring-offset-1 shadow-lg z-10" : "hover:shadow-md"}`}
                 style={activeCategory === "all" ? { transform: 'scale(1.1)' } : {}}
               >
                 <span>View All</span>
                 <span className="text-[16px] mt-0.5">&#8594;</span>
               </div>
               <span 
-                className="text-[12px] text-[#666] text-center w-[90px] truncate"
+                className="text-xs sm:text-[12px] text-[#666] text-center w-[72px] sm:w-[90px] truncate"
                 style={activeCategory === "all" ? { marginTop: '8px', color: '#111', fontWeight: 600 } : {}}
               >
                 All Products
@@ -314,7 +314,7 @@ export default function CatalogueClient({
         {/* ── Filter Bar ── */}
         <div 
           id="product-grid" 
-          className={`sticky z-40 bg-[#f9f9f9] flex flex-wrap items-center gap-3 pb-4 pt-4 mb-2 transition-transform duration-300 ease-in-out ${
+          className={`sticky z-40 bg-[#f9f9f9] flex flex-nowrap md:flex-wrap items-center gap-3 pb-4 pt-4 mb-2 overflow-x-auto scrollbar-hide w-full px-4 -mx-4 md:px-0 md:mx-0 transition-transform duration-300 ease-in-out ${
             showFilters ? "translate-y-0 top-0" : "-translate-y-full top-0"
           }`} 
           ref={dropdownRef}
@@ -334,7 +334,7 @@ export default function CatalogueClient({
             }
 
             return (
-              <div key={fc.id} className="relative inline-block">
+              <div key={fc.id} className="relative inline-block shrink-0">
                 <button
                   onClick={() => setOpenDropdown(isOpen ? null : fc.id)}
                   className={`flex items-center justify-between gap-2 px-[18px] py-[10px] rounded-full border text-[14px] font-medium transition-colors ${
@@ -359,11 +359,23 @@ export default function CatalogueClient({
                   )}
                 </button>
 
+                {/* Mobile Backdrop for Dropdown */}
+                {isOpen && (
+                  <div className="md:hidden fixed inset-0 bg-black/45 backdrop-blur-xs z-40" onClick={() => setOpenDropdown(null)} />
+                )}
+
                 {/* Dropdown panel */}
                 {isOpen && (
-                  <div className="absolute top-[calc(100%+8px)] left-0 min-w-[260px] bg-white rounded-[14px] shadow-[0_4px_20px_rgba(0,0,0,0.1)] border border-[#eee] z-50 overflow-hidden flex flex-col">
-                    <div className="px-5 py-4 border-b border-[#eee]">
+                  <div className="fixed bottom-0 left-0 right-0 md:absolute md:top-[calc(100%+8px)] md:left-0 md:right-auto w-full md:w-auto md:min-w-[260px] bg-white rounded-t-[20px] md:rounded-[14px] shadow-[0_-4px_20px_rgba(0,0,0,0.15)] md:shadow-[0_4px_20px_rgba(0,0,0,0.1)] border border-[#eee] z-50 overflow-hidden flex flex-col max-h-[80vh] md:max-h-[300px]">
+                    <div className="px-5 py-4 border-b border-[#eee] flex items-center justify-between">
                       <span className="text-[14px] text-[#999]">{fc.label}</span>
+                      <button 
+                        onClick={() => setOpenDropdown(null)} 
+                        className="md:hidden text-gray-400 hover:text-black text-[22px] font-bold p-1 leading-none"
+                        aria-label="Close"
+                      >
+                        &times;
+                      </button>
                     </div>
                     <div className="max-h-[300px] overflow-y-auto">
                       {fc.options.map(opt => {

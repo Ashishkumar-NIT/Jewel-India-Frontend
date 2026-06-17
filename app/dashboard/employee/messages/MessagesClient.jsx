@@ -116,19 +116,24 @@ export default function MessagesClient({ initialConversations, currentUserType, 
       {/* Chat Panel */}
       <div className="flex-1 min-h-0 flex w-full max-w-6xl mx-auto px-2 md:px-8 py-4 md:py-6 overflow-hidden">
         <div className="flex w-full h-full bg-white rounded-[16px] shadow-sm border border-gray-200 overflow-hidden">
-          {/* Left Sidebar */}
-          <ConversationList
-            conversations={conversations}
-            activeId={activeConversation?.id}
-            onSelect={setActiveConversation}
-            currentUserType={currentUserType}
-          />
+          {/* Left Sidebar wrapper */}
+          <div className={`${activeConversation ? "hidden md:flex" : "flex"} w-full md:w-[320px] shrink-0 border-r border-gray-200 bg-white flex-col h-full`}>
+            <ConversationList
+              conversations={conversations}
+              activeId={activeConversation?.id}
+              onSelect={setActiveConversation}
+              currentUserType={currentUserType}
+            />
+          </div>
 
-          {/* Right Chat Area */}
-          <ChatWindow
-            conversation={activeConversation}
-            currentUserType={currentUserType}
-          />
+          {/* Right Chat Area wrapper */}
+          <div className={`${activeConversation ? "flex" : "hidden md:flex"} flex-1 flex-col bg-[#FAFAFA] rounded-r-[16px] overflow-hidden md:border-l border-gray-200`}>
+            <ChatWindow
+              conversation={activeConversation}
+              currentUserType={currentUserType}
+              onBackToList={() => setActiveConversation(null)}
+            />
+          </div>
         </div>
       </div>
     </div>

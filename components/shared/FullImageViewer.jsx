@@ -387,7 +387,7 @@ export default function FullImageViewer({
 
       {/* ── ZOOM SLIDER OVERLAY (Bottom Right for Tablet UX) ── */}
       <div 
-        className="absolute bottom-4 right-6 md:right-12 bg-black/40 border border-white/10 backdrop-blur-md px-4 py-3 rounded-full flex items-center gap-3 shadow-2xl z-[330] pointer-events-auto"
+        className="hidden md:flex absolute bottom-4 right-12 bg-black/40 border border-white/10 backdrop-blur-md px-4 py-3 rounded-full flex items-center gap-3 shadow-2xl z-[330] pointer-events-auto"
         onClick={(e) => e.stopPropagation()}
         onTouchStart={(e) => e.stopPropagation()}
         onTouchMove={(e) => e.stopPropagation()}

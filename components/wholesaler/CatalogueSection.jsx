@@ -4,7 +4,7 @@ import CategoryCard from "./CategoryCard";
 
 export default function CatalogueSection() {
   return (
-    <section className="px-6 py-12">
+    <section className="px-4 md:px-6 py-8 md:py-12">
       <div className="mx-auto max-w-7xl">
         {/* Header */}
         <div className="mb-8 text-left">

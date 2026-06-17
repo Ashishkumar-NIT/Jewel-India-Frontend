@@ -3,7 +3,7 @@ import { useState, useRef, useEffect } from "react";
 import { useRealtimeMessages } from "../../lib/hooks/useRealtimeMessages";
 import { MessageBubble } from "./MessageBubble";
 
-export function ChatWindow({ conversation, currentUserType }) {
+export function ChatWindow({ conversation, currentUserType, onBackToList }) {
   const { messages, isLoading, error } = useRealtimeMessages(conversation?.id);
   const [inputValue, setInputValue] = useState("");
   const [isSending, setIsSending] = useState(false);
@@ -103,8 +103,20 @@ export function ChatWindow({ conversation, currentUserType }) {
   return (
     <div className="flex-1 flex flex-col bg-[#FAFAFA] rounded-r-[16px] overflow-hidden border-l border-gray-200">
       {/* Header */}
-      <div className="h-[72px] shrink-0 border-b border-gray-200 bg-white px-6 flex items-center justify-between">
-        <div className="flex items-center gap-4">
+      <div className="h-[72px] shrink-0 border-b border-gray-200 bg-white px-4 md:px-6 flex items-center justify-between">
+        <div className="flex items-center gap-2 md:gap-4">
+          {onBackToList && (
+            <button
+              onClick={onBackToList}
+              className="md:hidden p-1 mr-1 text-gray-500 hover:text-black transition-colors"
+              aria-label="Back to conversation list"
+            >
+              <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+              </svg>
+            </button>
+          )}
           <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center text-[14px] font-bold text-blue-600 shrink-0">
             {partnerName.charAt(0).toUpperCase()}
           </div>
@@ -194,7 +206,7 @@ export function ChatWindow({ conversation, currentUserType }) {
 
       {/* Input Area */}
       {currentUserType !== "retailer" && (
-        <div className="shrink-0 p-4 bg-white border-t border-gray-200">
+        <div className="shrink-0 p-4 pb-[calc(16px+env(safe-area-inset-bottom,0px))] bg-white border-t border-gray-200">
           <form 
             onSubmit={handleSendMessage}
             className="flex items-end gap-3"

@@ -9,6 +9,7 @@ import { signOut } from "../../lib/actions/auth";
 export default function Sidebar() {
   const pathname = usePathname();
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+  const [isMoreOpen, setIsMoreOpen] = useState(false);
 
   const handleLogoClick = () => {
     setIsLogoutModalOpen(true);
@@ -48,27 +49,104 @@ export default function Sidebar() {
   ];
 
   return (
-    <aside
-      style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        height: "100vh",
-        width: "70px",
-        backgroundColor: "#f5f5f3",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "space-between",
-        padding: "24px 0",
-        overflow: "hidden",
-        boxSizing: "border-box",
-        zIndex: 50,
-      }}
-    >
-      <div className="sidebar-icon-stack" style={{ display: "flex", flexDirection: "column", marginTop: "96px", marginBottom: "auto" }}>
-        {navItems.map((item) => {
-          // Exact match for home to prevent it from being active on all sub-routes
+    <>
+      <aside
+        className="wholesaler-sidebar"
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          height: "100vh",
+          width: "70px",
+          backgroundColor: "#f5f5f3",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "space-between",
+          padding: "24px 0",
+          overflow: "hidden",
+          boxSizing: "border-box",
+          zIndex: 50,
+        }}
+      >
+        <div className="sidebar-icon-stack" style={{ display: "flex", flexDirection: "column", marginTop: "96px", marginBottom: "auto" }}>
+          {navItems.map((item) => {
+            // Exact match for home to prevent it from being active on all sub-routes
+            const isActive =
+              item.href === "/dashboard/wholesaler"
+                ? pathname === item.href
+                : pathname.startsWith(item.href);
+
+            return (
+              <Link
+                key={item.name}
+                href={item.href}
+                title={item.name}
+                style={{
+                  width: "44px",
+                  height: "44px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  borderRadius: "8px",
+                  transition: "all 0.15s ease",
+                  backgroundColor: "transparent",
+                  opacity: isActive ? 1 : 0.35,
+                  filter: isActive ? "brightness(0)" : "grayscale(1)",
+                }}
+                className="sidebar-item"
+              >
+                <Image
+                  src={item.icon}
+                  alt={item.name}
+                  width={28}
+                  height={28}
+                  style={{ objectFit: "contain" }}
+                />
+              </Link>
+            );
+          })}
+        </div>
+
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginBottom: "8px" }}>
+          <button
+            onClick={handleLogoClick}
+            style={{
+              width: "44px",
+              height: "44px",
+              backgroundColor: "#2e2833",
+              borderRadius: "12px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              border: "none",
+              cursor: "pointer",
+              padding: 0,
+              outline: "none",
+              transition: "transform 0.15s ease, opacity 0.15s ease",
+            }}
+            className="logo-logout-btn"
+            title="Logout"
+          >
+            <Image
+              src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777013959/jewel_logo_rhgin9.svg"
+              alt="Product Logo"
+              width={28}
+              height={28}
+            />
+          </button>
+        </div>
+      </aside>
+
+      {/* Floating Bottom Nav for Mobile */}
+      <nav className="wholesaler-bottom-nav">
+        {[
+          navItems[0], // Home
+          navItems[3], // Catalogue
+          navItems[1], // Add/Upload
+          navItems[4], // Orders
+          navItems[5], // Chat
+        ].map((item) => {
           const isActive =
             item.href === "/dashboard/wholesaler"
               ? pathname === item.href
@@ -78,61 +156,87 @@ export default function Sidebar() {
             <Link
               key={item.name}
               href={item.href}
+              className={`bottom-nav-item ${isActive ? "active" : ""}`}
               title={item.name}
               style={{
-                width: "44px",
-                height: "44px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                borderRadius: "8px",
-                transition: "all 0.15s ease",
-                backgroundColor: "transparent",
-                opacity: isActive ? 1 : 0.35,
+                opacity: isActive ? 1 : 0.45,
                 filter: isActive ? "brightness(0)" : "grayscale(1)",
               }}
-              className="sidebar-item"
             >
               <Image
                 src={item.icon}
                 alt={item.name}
-                width={28}
-                height={28}
+                width={24}
+                height={24}
                 style={{ objectFit: "contain" }}
               />
             </Link>
           );
         })}
-      </div>
 
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginBottom: "8px" }}>
+        {/* More Menu Trigger (using Jewel Logo) */}
         <button
-          onClick={handleLogoClick}
+          onClick={() => setIsMoreOpen(!isMoreOpen)}
+          className={`bottom-nav-item ${isMoreOpen ? "active" : ""}`}
           style={{
-            width: "44px",
-            height: "44px",
             backgroundColor: "#2e2833",
-            borderRadius: "12px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
+            borderRadius: "50%",
+            width: "36px",
+            height: "36px",
             border: "none",
+            outline: "none",
             cursor: "pointer",
             padding: 0,
-            outline: "none",
-            transition: "transform 0.15s ease, opacity 0.15s ease",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center"
           }}
-          className="logo-logout-btn"
-          title="Logout"
+          title="More Options"
         >
           <Image
             src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777013959/jewel_logo_rhgin9.svg"
-            alt="Product Logo"
-            width={28}
-            height={28}
+            alt="More options logo"
+            width={22}
+            height={22}
           />
         </button>
-      </div>
+      </nav>
+
+      {/* More Popover Options Menu */}
+      {isMoreOpen && (
+        <div className="bottom-nav-popover" onClick={() => setIsMoreOpen(false)}>
+          <div className="bottom-nav-popover-content" onClick={(e) => e.stopPropagation()}>
+            <Link 
+              href="/dashboard/wholesaler/add-retailer" 
+              onClick={() => setIsMoreOpen(false)}
+              className="popover-item"
+            >
+              <Image 
+                src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777013959/add_retailer_logo_aonkud.svg" 
+                alt="Add Retailer" 
+                width={20} 
+                height={20} 
+                style={{ filter: "brightness(0)" }}
+              />
+              <span>Invite Retailer</span>
+            </Link>
+            <button 
+              onClick={() => {
+                setIsMoreOpen(false);
+                setIsLogoutModalOpen(true);
+              }}
+              className="popover-item popover-logout"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                <polyline points="16 17 21 12 16 7" />
+                <line x1="21" y1="12" x2="9" y2="12" />
+              </svg>
+              <span>Logout</span>
+            </button>
+          </div>
+        </div>
+      )}
 
       {isLogoutModalOpen && (
         <div
@@ -304,7 +408,111 @@ export default function Sidebar() {
           from { transform: scale(0.95); opacity: 0; }
           to { transform: scale(1); opacity: 1; }
         }
+
+        /* Responsive Nav & Sidebar Styles */
+        @media (max-width: 767px) {
+          .wholesaler-sidebar {
+            display: none !important;
+          }
+          .wholesaler-bottom-nav {
+            display: flex;
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90vw;
+            max-width: 400px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 100px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1), 0 1.5px 4px rgba(0,0,0,0.06);
+            align-items: center;
+            justify-content: space-around;
+            padding: 0 12px;
+            z-index: 100;
+          }
+          .bottom-nav-item {
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+            position: relative;
+          }
+          .bottom-nav-item.active {
+            background: rgba(0, 0, 0, 0.05);
+            filter: brightness(0) !important;
+          }
+          .bottom-nav-popover {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(2px);
+            -webkit-backdrop-filter: blur(2px);
+            z-index: 99;
+          }
+          .bottom-nav-popover-content {
+            position: fixed;
+            bottom: 90px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            background: #ffffff;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            border-radius: 16px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            animation: popoverFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+          }
+          .popover-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            color: #374151;
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            text-align: left;
+            transition: background-color 0.15s ease;
+          }
+          .popover-item:hover {
+            background: #f3f4f6;
+          }
+          .popover-logout {
+            color: #ef4444;
+          }
+          .popover-logout:hover {
+            background: #fef2f2;
+          }
+        }
+        @keyframes popoverFadeIn {
+          from {
+            opacity: 0;
+            transform: translate(-50%, 10px);
+          }
+          to {
+            opacity: 1;
+            transform: translate(-50%, 0);
+          }
+        }
       `}</style>
-    </aside>
+    </>
   );
 }

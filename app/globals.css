@@ -507,3 +507,19 @@ html, body {
   overflow-x: hidden;
 }
 
+/* ── Wholesaler Responsive Content Layout ── */
+.wholesaler-main-content {
+  flex: 1;
+  min-height: 100vh;
+  min-width: 0;
+  margin-left: 0;
+  padding-bottom: 72px; /* space offset for floating bottom nav */
+}
+@media (min-width: 768px) {
+  .wholesaler-main-content {
+    margin-left: 70px;
+    padding-bottom: 0;
+  }
+}
+
+

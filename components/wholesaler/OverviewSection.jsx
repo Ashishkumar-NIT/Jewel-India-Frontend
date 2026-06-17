@@ -3,7 +3,7 @@ import { BottomStatCard } from "./StatCard";
 
 export default function OverviewSection({ productCount = 0, pendingCount = 0, hasNewOrders = false, chatsCount = 0, hasNewChats = false }) {
   return (
-    <section className="px-6 py-10">
+    <section className="px-4 md:px-6 py-6 md:py-10">
       <div className="mx-auto max-w-7xl">
         <h2 className="font-cirka text-4xl text-celestique-dark mb-6">Insights</h2>
 
