@@ -50,7 +50,7 @@ function HistoryCard({ product }) {
     <div className="bg-white border border-[#e5e5e5] rounded-[20px] overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)] hover:-translate-y-0.5 transition-all duration-300 flex flex-col md:flex-row">
       
       {/* Visual Sandbox: Image Viewer Area */}
-      <div className="w-full md:w-[45%] bg-[#F9F9F9] p-5 flex flex-col gap-3 justify-between border-b md:border-b-0 md:border-r border-[#f0f0f0] relative min-h-[300px]">
+      <div className="w-full md:w-[45%] bg-[#F9F9F9] p-5 flex flex-col gap-3 border-b md:border-b-0 md:border-r border-[#f0f0f0] relative">
         {/* Toggle TABS */}
         {!isProcessing && !isReuploaded && (
           <div className="flex justify-center bg-gray-100 p-1 rounded-full w-fit mx-auto self-start z-10">
@@ -106,26 +106,6 @@ function HistoryCard({ product }) {
             )
           )}
         </div>
-
-        {/* Variant Selectors */}
-        {!isProcessing && viewMode === "enhanced" && hasVariants && (
-          <div className="flex flex-col gap-1.5 mt-2">
-            <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider text-center">AI Variations</span>
-            <div className="flex justify-center gap-2 overflow-x-auto py-1">
-              {variants.map((vUrl, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setActiveVariantIndex(idx)}
-                  className={`w-10 h-10 rounded-md overflow-hidden bg-white border-2 relative shrink-0 transition-all ${
-                    activeVariantIndex === idx ? "border-black scale-105 shadow-sm" : "border-gray-200 hover:border-gray-400"
-                  }`}
-                >
-                  <ProtectedImage src={vUrl} alt={`Variant ${idx + 1}`} className="w-full h-full object-cover" />
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
 
       {/* Info and Metadata Area */}
@@ -195,6 +175,26 @@ function HistoryCard({ product }) {
               </span>
             </div>
           </div>
+
+          {/* AI Variations */}
+          {!isProcessing && viewMode === "enhanced" && hasVariants && (
+            <div className="flex flex-col gap-1.5 mt-5">
+              <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider text-left">AI Variations</span>
+              <div className="flex justify-start gap-2 overflow-x-auto py-1">
+                {variants.map((vUrl, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setActiveVariantIndex(idx)}
+                    className={`w-10 h-10 rounded-md overflow-hidden bg-white border-2 relative shrink-0 transition-all ${
+                      activeVariantIndex === idx ? "border-black scale-105 shadow-sm" : "border-gray-200 hover:border-gray-400"
+                    }`}
+                  >
+                    <ProtectedImage src={vUrl} alt={`Variant ${idx + 1}`} className="w-full h-full object-cover" />
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Action Panel */}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, memo } from "react";
+import { useState, useEffect, useRef, memo } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import FullImageViewer from "../../shared/FullImageViewer";
@@ -32,6 +32,72 @@ function ProductDetailModal({ product, onClose, onUpdate, wholesalerId, isLimitR
   const [isReprocessing, setIsReprocessing] = useState(false);
   const [reprocessStatus, setReprocessStatus] = useState("");
   const [reprocessError, setReprocessError] = useState(null);
+  const [newImageFile, setNewImageFile] = useState(null);
+  const [newImagePreview, setNewImagePreview] = useState(null);
+  const [dragOver, setDragOver] = useState(false);
+  const fileInputRef = useRef(null);
+
+  // Cleanup preview URL on unmount
+  useEffect(() => {
+    return () => {
+      if (newImagePreview) {
+        URL.revokeObjectURL(newImagePreview);
+      }
+    };
+  }, [newImagePreview]);
+
+  const handleFileSelect = (file) => {
+    if (!file) return;
+    if (newImagePreview) {
+      URL.revokeObjectURL(newImagePreview);
+    }
+    const url = URL.createObjectURL(file);
+    setNewImageFile(file);
+    setNewImagePreview(url);
+  };
+
+  const handleRemoveFile = () => {
+    if (newImagePreview) {
+      URL.revokeObjectURL(newImagePreview);
+    }
+    setNewImageFile(null);
+    setNewImagePreview(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  const handleCancelConfirm = () => {
+    setShowConfirm(false);
+    handleRemoveFile();
+  };
+
+  const handleCloseModal = () => {
+    if (newImagePreview) {
+      URL.revokeObjectURL(newImagePreview);
+    }
+    setNewImageFile(null);
+    setNewImagePreview(null);
+    setShowConfirm(false);
+    onClose();
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    setDragOver(true);
+  };
+
+  const handleDragLeave = () => {
+    setDragOver(false);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setDragOver(false);
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      handleFileSelect(e.dataTransfer.files[0]);
+    }
+  };
 
   // Data fallbacks/parsing
   const title = product.title || (product.jewellery_type ? product.jewellery_type.charAt(0).toUpperCase() + product.jewellery_type.slice(1) : "Jewelry Piece");
@@ -97,7 +163,7 @@ function ProductDetailModal({ product, onClose, onUpdate, wholesalerId, isLimitR
 
       // 2. Call backend reprocessing endpoint
       setReprocessStatus("Queueing AI pipeline...");
-      await reprocessProduct(product.id, wholesalerId);
+      await reprocessProduct(product.id, wholesalerId, newImageFile);
 
       // 3. Poll for results
       setReprocessStatus("AI processing in progress...");
@@ -114,6 +180,13 @@ function ProductDetailModal({ product, onClose, onUpdate, wholesalerId, isLimitR
 
       setReprocessStatus("Processing complete!");
       onUpdate?.(updatedProduct);
+
+      // Clean up local preview/file state on successful processing
+      if (newImagePreview) {
+        URL.revokeObjectURL(newImagePreview);
+      }
+      setNewImageFile(null);
+      setNewImagePreview(null);
       
       setTimeout(() => {
         setIsReprocessing(false);
@@ -130,7 +203,7 @@ function ProductDetailModal({ product, onClose, onUpdate, wholesalerId, isLimitR
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[rgba(0,0,0,0.4)] backdrop-blur-sm p-4 overflow-hidden" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[rgba(0,0,0,0.4)] backdrop-blur-sm p-4 overflow-hidden" onClick={handleCloseModal}>
       <div 
         className="relative bg-white rounded-[24px] shadow-[0_16px_40px_rgba(0,0,0,0.12)] w-full max-w-[1000px] max-h-[90vh] overflow-y-auto custom-scrollbar flex flex-col md:flex-row"
         onClick={(e) => e.stopPropagation()}
@@ -229,7 +302,7 @@ function ProductDetailModal({ product, onClose, onUpdate, wholesalerId, isLimitR
             <button onClick={handleEdit} className="text-[#999] hover:text-[#111] transition-colors bg-transparent border-none p-0 outline-none cursor-pointer" aria-label="Edit">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
             </button>
-            <button onClick={onClose} className="text-[#999] hover:text-[#111] transition-colors ml-2 bg-transparent border-none p-0 outline-none cursor-pointer" aria-label="Close">
+            <button onClick={handleCloseModal} className="text-[#999] hover:text-[#111] transition-colors ml-2 bg-transparent border-none p-0 outline-none cursor-pointer" aria-label="Close">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
             </button>
           </div>
@@ -315,8 +388,17 @@ function ProductDetailModal({ product, onClose, onUpdate, wholesalerId, isLimitR
 
       {/* Re-upload Confirmation Dialog */}
       {showConfirm && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-xs p-4">
-          <div className="bg-white rounded-[24px] p-6 max-w-sm w-full shadow-[0_20px_50px_rgba(0,0,0,0.3)] flex flex-col gap-4 text-center animate-fade-in">
+        <div 
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-xs p-4"
+          onClick={(e) => {
+            e.stopPropagation();
+            handleCancelConfirm();
+          }}
+        >
+          <div 
+            className="bg-white rounded-[24px] p-6 max-w-md w-full shadow-[0_20px_50px_rgba(0,0,0,0.3)] flex flex-col gap-5 text-center animate-fade-in"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="w-12 h-12 rounded-full bg-amber-50 text-amber-500 flex items-center justify-center mx-auto">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
@@ -324,24 +406,88 @@ function ProductDetailModal({ product, onClose, onUpdate, wholesalerId, isLimitR
                 <line x1="12" y1="17" x2="12.01" y2="17"/>
               </svg>
             </div>
-            <div>
+            
+            <div className="flex flex-col gap-1">
               <h4 className="text-[18px] font-bold text-[#1A1A1A] font-sans">Re-upload to AI?</h4>
-              <p className="text-[14px] text-[#666] mt-2 leading-relaxed">
-                Are you sure you want to re-upload this image to AI? This will clear the current results and trigger the processing pipeline again.
+              <p className="text-[13px] text-[#666] leading-relaxed">
+                This will clear the current processed results. You can optionally replace the base image below.
               </p>
             </div>
-            <div className="flex gap-3 mt-2">
+
+            {/* Drag & Drop Zone */}
+            <div className="w-full flex flex-col gap-2 text-left">
+              <span className="text-[12px] font-semibold text-[#1A1A1A] font-sans">Base Photo Selection</span>
+              
+              {!newImagePreview ? (
+                <div
+                  onDragOver={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                  onDrop={handleDrop}
+                  onClick={() => fileInputRef.current?.click()}
+                  className={`w-full h-[140px] border-2 border-dashed rounded-[16px] flex flex-col items-center justify-center gap-2 cursor-pointer transition-all ${
+                    dragOver
+                      ? "border-[#1a1a1a] bg-[#f5f5f5]"
+                      : "border-[#ddd] hover:border-[#1a1a1a] bg-[#F9F9F9] hover:bg-[#f5f5f5]"
+                  }`}
+                >
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#666]">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                    <circle cx="8.5" cy="8.5" r="1.5"/>
+                    <polyline points="21 15 16 10 5 21"/>
+                  </svg>
+                  <div className="text-center px-4">
+                    <p className="text-[12px] font-semibold text-[#333]">Drag new image here, or browse</p>
+                    <p className="text-[11px] text-[#888] mt-0.5">JPEG, PNG, or WebP. Leave blank to keep current photo.</p>
+                  </div>
+                </div>
+              ) : (
+                <div className="w-full h-[140px] bg-[#F9F9F9] border border-[#eee] rounded-[16px] flex items-center justify-center relative overflow-hidden">
+                  <img
+                    src={newImagePreview}
+                    alt="New preview"
+                    className="max-h-[120px] max-w-[90%] object-contain mix-blend-multiply"
+                  />
+                  <div className="absolute top-2 left-2 bg-[#1A1A1A] text-white text-[10px] px-2 py-0.5 rounded-full font-semibold font-sans">
+                    New Base Photo
+                  </div>
+                  <button
+                    onClick={handleRemoveFile}
+                    className="absolute top-2 right-2 bg-white/95 hover:bg-white text-red-500 w-8 h-8 rounded-full flex items-center justify-center shadow-sm border border-[#eee] cursor-pointer transition-colors"
+                    title="Remove file"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="3 6 5 6 21 6"/>
+                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                    </svg>
+                  </button>
+                </div>
+              )}
+              
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                className="hidden"
+                onChange={(e) => {
+                  if (e.target.files && e.target.files[0]) {
+                    handleFileSelect(e.target.files[0]);
+                  }
+                }}
+              />
+            </div>
+
+            <div className="flex gap-3 mt-1">
               <button
-                onClick={() => setShowConfirm(false)}
+                onClick={handleCancelConfirm}
                 className="flex-1 py-3 rounded-full border border-[#ddd] text-[#333] hover:bg-[#f9f9f9] text-[14px] font-semibold cursor-pointer transition-colors"
               >
-                No
+                Cancel
               </button>
               <button
                 onClick={handleReprocess}
                 className="flex-1 py-3 rounded-full bg-[#1A1A1A] text-white hover:bg-black text-[14px] font-semibold cursor-pointer transition-colors"
               >
-                Yes
+                {newImageFile ? "Upload & Process" : "Re-upload"}
               </button>
             </div>
           </div>
