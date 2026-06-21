@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
 import CatalogueGrid from "./CatalogueGrid";
+import { useUploadUsage } from "../../../lib/hooks/useUploadUsage";
 
 
 const LIMIT = 20;
@@ -41,6 +42,7 @@ export default function CatalogueClient({
   dynamicCategories,
   userId
 }) {
+  const { isLimitReached } = useUploadUsage(userId);
 
 
   const [activeCategory, setActiveCategory] = useState(() => {
@@ -418,6 +420,7 @@ export default function CatalogueClient({
           activeCategory={getActiveCatName()}
           onUpdateProduct={handleUpdateProduct}
           wholesalerId={userId}
+          isLimitReached={isLimitReached}
         />
 
         {/* ── Pagination ── */}

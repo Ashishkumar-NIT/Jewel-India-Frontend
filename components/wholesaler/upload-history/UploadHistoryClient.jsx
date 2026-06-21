@@ -30,6 +30,7 @@ const formatResetTime = (isoString) => {
 };
 
 function HistoryCard({ product }) {
+  const isReuploaded = !!product.is_reuploaded;
   const [viewMode, setViewMode] = useState("enhanced"); // 'raw' | 'enhanced'
   const variants = product.generated_image_urls || [];
   const [activeVariantIndex, setActiveVariantIndex] = useState(0);
@@ -42,7 +43,8 @@ function HistoryCard({ product }) {
 
   // Formatting values
   const title = product.title || (product.jewellery_type ? product.jewellery_type.charAt(0).toUpperCase() + product.jewellery_type.slice(1) : "Jewelry Piece");
-  const timeStr = formatTime(product.created_at);
+  const uploadTime = isReuploaded ? (product.triggered_at || product.created_at) : product.created_at;
+  const timeStr = formatTime(uploadTime);
 
   return (
     <div className="bg-white border border-[#e5e5e5] rounded-[20px] overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)] hover:-translate-y-0.5 transition-all duration-300 flex flex-col md:flex-row">
@@ -50,7 +52,7 @@ function HistoryCard({ product }) {
       {/* Visual Sandbox: Image Viewer Area */}
       <div className="w-full md:w-[45%] bg-[#F9F9F9] p-5 flex flex-col gap-3 justify-between border-b md:border-b-0 md:border-r border-[#f0f0f0] relative min-h-[300px]">
         {/* Toggle TABS */}
-        {!isProcessing && (
+        {!isProcessing && !isReuploaded && (
           <div className="flex justify-center bg-gray-100 p-1 rounded-full w-fit mx-auto self-start z-10">
             <button
               onClick={() => setViewMode("enhanced")}
@@ -82,7 +84,7 @@ function HistoryCard({ product }) {
               <div className="w-10 h-10 border-[1.5px] border-gray-300 border-t-black rounded-full animate-spin" />
               <p className="text-sm font-semibold text-gray-500 font-gilroy">Processing in background...</p>
             </div>
-          ) : viewMode === "enhanced" ? (
+          ) : (viewMode === "enhanced" || isReuploaded) ? (
             activeEnhancedImage ? (
               <ProtectedImage
                 src={activeEnhancedImage}
@@ -135,16 +137,23 @@ function HistoryCard({ product }) {
               <h3 className="text-xl font-bold text-gray-900 font-gilroy leading-snug">{title}</h3>
               <p className="text-xs text-gray-400 mt-1 font-medium">Uploaded today at {timeStr}</p>
             </div>
-            {/* Status Badge */}
-            {isProcessing ? (
-              <span className="text-[11px] font-bold text-amber-800 bg-amber-50 border border-amber-200 px-3 py-1 rounded-full shrink-0">
-                Processing
-              </span>
-            ) : (
-              <span className="text-[11px] font-bold text-green-800 bg-green-50 border border-green-200 px-3 py-1 rounded-full shrink-0">
-                Enhancement Completed
-              </span>
-            )}
+            {/* Status & Re-uploaded Badges */}
+            <div className="flex flex-col sm:flex-row gap-2 items-end sm:items-center shrink-0">
+              {isReuploaded && (
+                <span className="text-[11px] font-bold text-blue-800 bg-blue-50 border border-blue-200 px-3 py-1 rounded-full shrink-0">
+                  Re-uploaded
+                </span>
+              )}
+              {isProcessing ? (
+                <span className="text-[11px] font-bold text-amber-800 bg-amber-50 border border-amber-200 px-3 py-1 rounded-full shrink-0">
+                  Processing
+                </span>
+              ) : (
+                <span className="text-[11px] font-bold text-green-800 bg-green-50 border border-green-200 px-3 py-1 rounded-full shrink-0">
+                  Enhancement Completed
+                </span>
+              )}
+            </div>
           </div>
 
           {/* Details / Spec Badge list */}

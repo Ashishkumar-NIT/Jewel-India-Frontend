@@ -66,17 +66,21 @@ export default async function UploadHistoryPage() {
     endOfTodayStr = end.toISOString();
   }
 
-  // Query products created in this cycle
-  const { data: products, error } = await supabase
-    .from("products")
-    .select("*")
-    .eq("wholesaler_id", user.id)
-    .gte("created_at", startOfTodayStr)
-    .lt("created_at", endOfTodayStr)
-    .order("created_at", { ascending: false });
-
-  if (error) {
-    console.error("[UploadHistoryPage] Supabase error:", error.message);
+  // Query products via the execution logs API endpoint
+  let products = [];
+  try {
+    const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+    const historyRes = await fetch(
+      `${API_BASE}/api/upload-history?wholesaler_id=${encodeURIComponent(user.id)}&start_date=${encodeURIComponent(startOfTodayStr)}&limit=100`,
+      { cache: "no-store" }
+    );
+    if (historyRes.ok) {
+      products = await historyRes.json();
+    } else {
+      console.error("[UploadHistoryPage] API returned error status:", historyRes.status);
+    }
+  } catch (err) {
+    console.error("[UploadHistoryPage] Failed to fetch history:", err);
   }
 
   return (
