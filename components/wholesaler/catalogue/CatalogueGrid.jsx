@@ -9,7 +9,7 @@ import { clearProductImages } from "../../../lib/actions/products";
 import { reprocessProduct, pollForResult } from "../../../lib/api/products";
 
 // ── Product Detail Modal ──────────────────────────────────────────────────────
-function ProductDetailModal({ product, onClose, onUpdate }) {
+function ProductDetailModal({ product, onClose, onUpdate, wholesalerId }) {
   if (!product) return null;
 
   // TODO: replace with Supabase product/processed/{product.sku} fetch once SKU is available
@@ -97,7 +97,7 @@ function ProductDetailModal({ product, onClose, onUpdate }) {
 
       // 2. Call backend reprocessing endpoint
       setReprocessStatus("Queueing AI pipeline...");
-      await reprocessProduct(product.id);
+      await reprocessProduct(product.id, wholesalerId);
 
       // 3. Poll for results
       setReprocessStatus("AI processing in progress...");
@@ -121,7 +121,9 @@ function ProductDetailModal({ product, onClose, onUpdate }) {
       }, 1500);
 
     } catch (err) {
-      alert(err.message);
+      if (err.status !== 429) {
+        alert(err.message);
+      }
       setReprocessError(err.message || "Failed to reprocess product");
       setReprocessStatus("error");
     }
@@ -485,6 +487,7 @@ export default function CatalogueGrid({
   onRetry,
   activeCategory = "All",
   onUpdateProduct,
+  wholesalerId,
 }) {
   const router = useRouter();
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -562,6 +565,7 @@ export default function CatalogueGrid({
             setSelectedProduct(updatedProduct);
             onUpdateProduct?.(updatedProduct);
           }}
+          wholesalerId={wholesalerId}
         />
       )}
     </>

@@ -38,7 +38,8 @@ export default function CatalogueClient({
   initialProducts,
   initialCount,
   initialCategory,
-  dynamicCategories
+  dynamicCategories,
+  userId
 }) {
 
 
@@ -416,6 +417,7 @@ export default function CatalogueClient({
           onRetry={() => fetchProducts(activeCategory, page, filters)}
           activeCategory={getActiveCatName()}
           onUpdateProduct={handleUpdateProduct}
+          wholesalerId={userId}
         />
 
         {/* ── Pagination ── */}

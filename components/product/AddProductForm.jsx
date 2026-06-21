@@ -9,6 +9,7 @@ import { ImageUpload } from "./ImageUpload";
 import { uploadProduct } from "../../lib/api/products";
 import { saveProduct } from "../../lib/actions/products";
 import { useRouter } from "next/navigation";
+import { useUploadUsage } from "../../lib/hooks/useUploadUsage";
 
 const JEWELLERY_TYPES = [
   { value: "necklace", label: "Necklace" },
@@ -78,13 +79,28 @@ function NumberIndicator({ number }) {
   );
 }
 
-export function AddProductForm() {
+const formatResetTime = (isoString) => {
+  if (!isoString) return "";
+  try {
+    const cleanStr = typeof isoString === "string"
+      ? isoString.replace(/\+00:00Z$/, "Z").replace(/\+00:00$/, "Z")
+      : isoString;
+    const date = new Date(cleanStr);
+    if (isNaN(date.getTime())) return "";
+    return date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+  } catch {
+    return "";
+  }
+};
+
+export function AddProductForm({ userId }) {
   const router = useRouter();
   const [form, setForm] = useState(INITIAL_FORM);
   const [imageFile, setImageFile] = useState(null);
   const [status, setStatus] = useState("idle");
   const [error, setError] = useState(null);
   const [errors, setErrors] = useState({});
+  const { used, limit, resetsAt, isLoading: usageLoading, isLimitReached, refetch: refetchUsage } = useUploadUsage(userId);
 
   function setField(key, value) {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -173,6 +189,7 @@ export function AddProductForm() {
         file: imageFile,
         title: titleToUse,
         jewellery_type: form.jewellery_type || undefined,
+        wholesaler_id: userId,
       });
 
       setStatus("saving");
@@ -199,10 +216,16 @@ export function AddProductForm() {
       }
 
       setStatus("done");
+      await refetchUsage();
       router.push("/dashboard/wholesaler/add-product/success");
     } catch (err) {
+      if (err.status === 429) {
+        await refetchUsage();
+        setError("Daily upload limit reached. Please try again tomorrow.");
+      } else {
+        setError(err.message);
+      }
       setStatus("error");
-      setError(err.message);
     }
   }
 
@@ -237,6 +260,45 @@ export function AddProductForm() {
           Enter the details below to create a sparkling new listing.
         </p>
       </div>
+
+      {/* Daily Upload Limit Banner */}
+      {usageLoading ? (
+        <div className="w-full bg-gray-50 border border-gray-100 rounded-xl p-4 animate-pulse flex flex-col gap-2">
+          <div className="h-4 bg-gray-200 rounded w-1/3"></div>
+          <div className="h-1.5 bg-gray-200 rounded-full w-full"></div>
+        </div>
+      ) : limit && limit !== Infinity ? (
+        isLimitReached ? (
+          <div className="w-full bg-[#FFFDF5] border border-[#FBEFBE] rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-fade-in">
+            <div className="flex items-start gap-3">
+              <span className="text-amber-600 text-lg mt-0.5">⚠️</span>
+              <div>
+                <h4 className="text-sm font-semibold text-[#856404] font-gilroy">Daily upload limit reached</h4>
+                <p className="text-xs text-[#856404]/80 font-gilroy mt-0.5">
+                  You have used all {limit} uploads for today.
+                  {resetsAt && ` Resets at ${formatResetTime(resetsAt)}.`}
+                </p>
+              </div>
+            </div>
+            <span className="text-xs font-bold text-[#856404] bg-[#FBEFBE]/60 px-2.5 py-1 rounded-full shrink-0 font-gilroy self-start sm:self-center">
+              {used} / {limit} Used
+            </span>
+          </div>
+        ) : (
+          <div className="w-full bg-white border border-[#e5e5e5] rounded-xl p-4 flex flex-col gap-3 animate-fade-in">
+            <div className="flex justify-between items-center text-sm font-gilroy">
+              <span className="text-[#374151] font-medium">Daily Upload Progress</span>
+              <span className="text-[#6B7280] font-medium">{used} / {limit} uploads used today</span>
+            </div>
+            <div className="w-full bg-gray-100 h-1.5 rounded-full overflow-hidden">
+              <div 
+                className="bg-black h-full transition-all duration-500 ease-out" 
+                style={{ width: `${Math.min(100, (used / limit) * 100)}%` }}
+              />
+            </div>
+          </div>
+        )
+      ) : null}
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-6 md:gap-10">
 
@@ -510,7 +572,12 @@ export function AddProductForm() {
           <div className="flex flex-col gap-3 md:hidden pb-10">
             <button
               type="submit"
-              className="w-full bg-black text-white py-3.5 rounded-full font-medium cursor-pointer hover:bg-black/90 transition-colors font-gilroy text-base"
+              disabled={isLimitReached}
+              className={`w-full py-3.5 rounded-full font-medium transition-colors font-gilroy text-base ${
+                isLimitReached
+                  ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                  : "bg-black text-white cursor-pointer hover:bg-black/90"
+              }`}
             >
               Submit
             </button>
@@ -526,7 +593,12 @@ export function AddProductForm() {
             </p>
             <button
               type="submit"
-              className="bg-black text-white px-7 py-3 rounded-lg font-medium cursor-pointer hover:bg-black/90 transition-colors font-gilroy"
+              disabled={isLimitReached}
+              className={`px-7 py-3 rounded-lg font-medium transition-colors font-gilroy ${
+                isLimitReached
+                  ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                  : "bg-black text-white cursor-pointer hover:bg-black/90"
+              }`}
             >
               Submit
             </button>

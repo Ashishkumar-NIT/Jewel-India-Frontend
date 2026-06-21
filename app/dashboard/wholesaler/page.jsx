@@ -70,6 +70,26 @@ export default async function WholesalerDashboardPage() {
   const chatsCount = unreadConversations ? unreadConversations.length : 0;
   const hasNewChats = chatsCount > 0;
 
+  // 5. Fetch daily upload usage from FastAPI backend
+  let usedUploads = 0;
+  let uploadLimit = Infinity;
+  if (user?.id) {
+    try {
+      const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+      const usageRes = await fetch(
+        `${API_BASE}/api/upload-usage?wholesaler_id=${encodeURIComponent(user.id)}`,
+        { cache: "no-store" }
+      );
+      if (usageRes.ok) {
+        const usageData = await usageRes.json();
+        usedUploads = usageData.used ?? 0;
+        uploadLimit = usageData.limit ?? Infinity;
+      }
+    } catch (err) {
+      console.error("[WholesalerDashboardPage] Failed to fetch upload usage:", err);
+    }
+  }
+
   return (
     <main className="min-h-screen bg-white pb-20">
       {/* Header */}
@@ -84,6 +104,8 @@ export default async function WholesalerDashboardPage() {
         hasNewOrders={hasNewOrders}
         chatsCount={chatsCount || 0}
         hasNewChats={hasNewChats}
+        usedUploads={usedUploads}
+        uploadLimit={uploadLimit}
       />
       <CatalogueSection />
     </main>

@@ -1,13 +1,25 @@
 import Image from "next/image";
 import { BottomStatCard } from "./StatCard";
 
-export default function OverviewSection({ productCount = 0, pendingCount = 0, hasNewOrders = false, chatsCount = 0, hasNewChats = false }) {
+export default function OverviewSection({
+  productCount = 0,
+  pendingCount = 0,
+  hasNewOrders = false,
+  chatsCount = 0,
+  hasNewChats = false,
+  usedUploads = 0,
+  uploadLimit = Infinity,
+}) {
+  const uploadValue = uploadLimit && uploadLimit !== Infinity
+    ? `${usedUploads}/${uploadLimit}`
+    : `${usedUploads}`;
+
   return (
     <section className="px-4 md:px-6 py-6 md:py-10">
       <div className="mx-auto max-w-7xl">
         <h2 className="font-cirka text-4xl text-celestique-dark mb-6">Insights</h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
           <BottomStatCard
             icon={<Image src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777024605/live_products_nfjmtr.svg" alt="Live Products" width={16} height={16} loading="lazy" />}
             title="Live Products"
@@ -31,6 +43,14 @@ export default function OverviewSection({ productCount = 0, pendingCount = 0, ha
             value={chatsCount}
             href="/dashboard/wholesaler/queries"
             showBadge={hasNewChats}
+          />
+          <BottomStatCard
+            icon={<svg className="w-4 h-4 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+            </svg>}
+            title="Uploads Today"
+            value={uploadValue}
+            href="/dashboard/wholesaler/upload-history"
           />
         </div>
       </div>

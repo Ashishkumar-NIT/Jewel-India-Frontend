@@ -78,6 +78,7 @@ export default async function CataloguePage({ searchParams }) {
         initialCount={initialCount}
         initialCategory={initialCategory}
         dynamicCategories={dynamicCategories}
+        userId={user.id}
       />
     </Suspense>
   );

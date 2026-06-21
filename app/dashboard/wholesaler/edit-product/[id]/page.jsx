@@ -7,7 +7,7 @@ import { SignOutButton } from "../../../../../components/auth/SignOutButton";
 
 export const metadata = { title: "Edit Product — Celestique" };
 
-export default async function EditProductPage({ params }) {
+export default async function EditProductPage({ params, searchParams }) {
   const user = await getAuthUser();
   if (!user) redirect("/signin");
 
@@ -30,11 +30,19 @@ export default async function EditProductPage({ params }) {
     redirect("/dashboard/wholesaler/catalogue");
   }
 
+  const from = (await searchParams)?.from;
+  const backUrl = from === "upload-history"
+    ? "/dashboard/wholesaler/upload-history"
+    : "/dashboard/wholesaler";
+  const backLabel = from === "upload-history"
+    ? "Back to uploads"
+    : "Back to dashboard";
+
   return (
     <div className="min-h-screen bg-white flex flex-col">
       <header className="sticky top-0 z-50 flex items-center justify-between border-b border-[#e5e5e5] bg-white px-4 md:px-10 py-2.5">
         {/* Left - Back to dashboard */}
-        <BackToDashboardButton />
+        <BackToDashboardButton href={backUrl} label={backLabel} />
         {/* Right - User info and sign out */}
         <div className="flex flex-row items-center gap-4">
           <span className="hidden md:inline text-[13px] text-[#6B7280] font-sfpro">{user.email}</span>
