@@ -9,7 +9,7 @@ import { clearProductImages } from "../../../lib/actions/products";
 import { reprocessProduct, pollForResult } from "../../../lib/api/products";
 
 // ── Product Detail Modal ──────────────────────────────────────────────────────
-function ProductDetailModal({ product, onClose, onUpdate, wholesalerId }) {
+function ProductDetailModal({ product, onClose, onUpdate, wholesalerId, isLimitReached }) {
   if (!product) return null;
 
   // TODO: replace with Supabase product/processed/{product.sku} fetch once SKU is available
@@ -279,13 +279,13 @@ function ProductDetailModal({ product, onClose, onUpdate, wholesalerId }) {
           <div className="mt-auto mb-4 pt-4 border-t border-[#f0f0f0]">
             <button
               onClick={() => setShowConfirm(true)}
-              disabled={isReprocessing}
+              disabled={isReprocessing || isLimitReached}
               className="w-full py-3 rounded-xl border border-[#111] hover:bg-[#111] hover:text-white text-[#111] text-[14px] font-semibold transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
               </svg>
-              Re-upload to AI
+              {isLimitReached ? "Daily upload limit reached" : "Re-upload to AI"}
             </button>
           </div>
 
@@ -488,6 +488,7 @@ export default function CatalogueGrid({
   activeCategory = "All",
   onUpdateProduct,
   wholesalerId,
+  isLimitReached = false,
 }) {
   const router = useRouter();
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -566,6 +567,7 @@ export default function CatalogueGrid({
             onUpdateProduct?.(updatedProduct);
           }}
           wholesalerId={wholesalerId}
+          isLimitReached={isLimitReached}
         />
       )}
     </>
