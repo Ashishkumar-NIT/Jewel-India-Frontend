@@ -221,6 +221,7 @@ export default function FullImageViewer({
     <div
       ref={containerRef}
       className="fixed inset-0 z-[300] bg-black/95 backdrop-blur-xl select-none overflow-hidden transition-all duration-300 ease-out"
+      style={{ touchAction: "none" }}
       onClick={(e) => {
         e.stopPropagation();
         onClose();
@@ -316,7 +317,7 @@ export default function FullImageViewer({
             <ProtectedImage
               src={currentImageUrl}
               alt="Jewelry artwork details"
-              className="max-w-full max-h-full object-contain pointer-events-none drop-shadow-[0_10px_30px_rgba(255,255,255,0.05)] transition-all duration-300"
+              className="max-w-full max-h-full object-contain pointer-events-none drop-shadow-[0_10px_30px_rgba(255,255,255,0.05)] transition-opacity duration-300"
             />
           ) : (
             <div className="text-white/40 text-[14px]">Loading Premium Design...</div>
