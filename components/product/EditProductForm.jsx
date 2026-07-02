@@ -102,9 +102,6 @@ export function EditProductForm({ product }) {
     setError(null);
     const newErrors = {};
 
-    if (!imgUrl) {
-      newErrors.image = "Product does not have a valid image in the database.";
-    }
     if (!form.title || !form.title.trim()) {
       newErrors.title = "Product title is required.";
     }
@@ -216,13 +213,20 @@ export function EditProductForm({ product }) {
       </div>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-6 md:gap-10">
-        {imgUrl && (
-           <div className="flex flex-col items-center justify-center mb-4">
-             <div className="relative w-[200px] h-[200px] rounded-xl overflow-hidden bg-[#F5F5F5] border border-[#e5e5e5]">
-               <Image src={imgUrl} alt={form.title || "Product"} fill className="object-cover mix-blend-multiply" />
-             </div>
-           </div>
-        )}
+        <div className="flex flex-col items-center justify-center mb-4">
+          <div className="relative w-[200px] h-[200px] rounded-xl overflow-hidden bg-[#F5F5F5] border border-[#e5e5e5] flex flex-col items-center justify-center">
+            {imgUrl ? (
+              <Image src={imgUrl} alt={form.title || "Product"} fill className="object-cover mix-blend-multiply" />
+            ) : (
+              <div className="flex flex-col items-center justify-center text-[#999] gap-2 p-4 text-center">
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-10 h-10" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M6.5 2h11l4 6-9.5 14L2.5 8l4-6z" />
+                </svg>
+                <span className="text-[12px] font-medium font-gilroy">No Image Uploaded</span>
+              </div>
+            )}
+          </div>
+        </div>
 
         {/* ── Essential Details ── */}
         <div className="flex flex-col gap-4">

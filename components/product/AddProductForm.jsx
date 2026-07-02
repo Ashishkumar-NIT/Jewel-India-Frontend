@@ -7,7 +7,7 @@ import { Input } from "../ui/Input";
 import { InputWithSuffix } from "../ui/InputWithSuffix";
 import { ImageUpload } from "./ImageUpload";
 import { uploadProduct } from "../../lib/api/products";
-import { saveProduct } from "../../lib/actions/products";
+import { saveProduct, insertProduct } from "../../lib/actions/products";
 import { useRouter } from "next/navigation";
 import { useUploadUsage } from "../../lib/hooks/useUploadUsage";
 
@@ -113,11 +113,11 @@ export function AddProductForm({ userId }) {
     }
   }
 
-  async function handleSubmit(e) {
+  async function handleSubmit(e, uploadLater = false) {
     e.preventDefault();
     const newErrors = {};
 
-    if (!imageFile) {
+    if (!uploadLater && !imageFile) {
       newErrors.image = "Please upload a product image.";
     }
     if (!form.title || !form.title.trim()) {
@@ -180,6 +180,71 @@ export function AddProductForm({ userId }) {
     setErrors({});
 
     try {
+      if (uploadLater) {
+        if (imageFile) {
+          setStatus("uploading");
+          const titleToUse = form.title ||
+            JEWELLERY_TYPES.find((t) => t.value === form.jewellery_type)?.label ||
+            undefined;
+
+          const { product_id, raw_image_url } = await uploadProduct({
+            file: imageFile,
+            title: titleToUse,
+            jewellery_type: form.jewellery_type || undefined,
+            wholesaler_id: userId,
+          });
+
+          setStatus("saving");
+          const saveResult = await saveProduct({
+            product_id,
+            title: form.title || JEWELLERY_TYPES.find((t) => t.value === form.jewellery_type)?.label || "Untitled",
+            jewellery_type: form.jewellery_type || null,
+            category: form.category || null,
+            style: form.style || null,
+            size: form.size || null,
+            stock_available: form.stockAvailable,
+            is_published: false,
+            make_to_order_days: form.makeToOrderDays || null,
+            metal_purity: form.metalPurity || null,
+            net_weight: form.netWeight || null,
+            gross_weight: form.grossWeight || null,
+            stone_weight: form.stoneWeight || null,
+            raw_image_url: raw_image_url || null,
+            processed_image_url: null,
+            generated_image_urls: null,
+          });
+
+          if (saveResult?.error) {
+            throw new Error(saveResult.error);
+          }
+        } else {
+          setStatus("saving");
+          const saveResult = await insertProduct({
+            title: form.title || JEWELLERY_TYPES.find((t) => t.value === form.jewellery_type)?.label || "Untitled",
+            jewellery_type: form.jewellery_type || null,
+            category: form.category || null,
+            style: form.style || null,
+            size: form.size || null,
+            stock_available: form.stockAvailable,
+            is_published: false,
+            make_to_order_days: form.makeToOrderDays || null,
+            metal_purity: form.metalPurity || null,
+            net_weight: form.netWeight || null,
+            gross_weight: form.grossWeight || null,
+            stone_weight: form.stoneWeight || null,
+          });
+
+          if (saveResult?.error) {
+            throw new Error(saveResult.error);
+          }
+        }
+
+        setStatus("done");
+        await refetchUsage();
+        router.push("/dashboard/wholesaler/catalogue");
+        return;
+      }
+
       setStatus("uploading");
       const titleToUse = form.title ||
         JEWELLERY_TYPES.find((t) => t.value === form.jewellery_type)?.label ||
@@ -581,6 +646,13 @@ export function AddProductForm({ userId }) {
             >
               Submit
             </button>
+            <button
+              type="button"
+              onClick={(e) => handleSubmit(e, true)}
+              className="w-full py-3.5 rounded-full font-medium transition-colors font-gilroy text-base border border-black text-black bg-white hover:bg-gray-50 cursor-pointer"
+            >
+              Save & Upload Later
+            </button>
             <p className="text-[10px] font-bold text-[#000000] text-center font-gilroy">
               *By submitting, you allow us to display your product details and<br />images to retailers on the platform.
             </p>
@@ -591,6 +663,13 @@ export function AddProductForm({ userId }) {
             <p className="text-[8px] font-bold text-[#000000] max-w-[500px] font-gilroy mt-6.5">
               *By submitting, you allow us to display your product details <br />and images to retailers on the platform.
             </p>
+            <button
+              type="button"
+              onClick={(e) => handleSubmit(e, true)}
+              className="px-7 py-3 rounded-lg font-medium transition-colors font-gilroy border border-black text-black bg-white hover:bg-gray-50 cursor-pointer"
+            >
+              Save & Upload Later
+            </button>
             <button
               type="submit"
               disabled={isLimitReached}

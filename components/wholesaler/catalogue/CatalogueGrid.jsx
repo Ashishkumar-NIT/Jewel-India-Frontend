@@ -14,7 +14,7 @@ function ProductDetailModal({ product, onClose, onUpdate, wholesalerId, isLimitR
 
   // TODO: replace with Supabase product/processed/{product.sku} fetch once SKU is available
   const images = Array.from(new Set([
-    product.processed_image_url || product.image_url,
+    product.processed_image_url || product.image_url || product.raw_image_url,
     ...(product.generated_image_urls || []),
   ].filter(Boolean)));
 
@@ -358,7 +358,7 @@ function ProductDetailModal({ product, onClose, onUpdate, wholesalerId, isLimitR
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
               </svg>
-              {isLimitReached ? "Daily upload limit reached" : "Re-upload to AI"}
+              {isLimitReached ? "Daily upload limit reached" : (!hasImages ? "Upload Image to AI" : "Re-upload to AI")}
             </button>
           </div>
 
@@ -408,9 +408,13 @@ function ProductDetailModal({ product, onClose, onUpdate, wholesalerId, isLimitR
             </div>
             
             <div className="flex flex-col gap-1">
-              <h4 className="text-[18px] font-bold text-[#1A1A1A] font-sans">Re-upload to AI?</h4>
+              <h4 className="text-[18px] font-bold text-[#1A1A1A] font-sans">
+                {!hasImages ? "Upload Image to AI" : "Re-upload to AI?"}
+              </h4>
               <p className="text-[13px] text-[#666] leading-relaxed">
-                This will clear the current processed results. You can optionally replace the base image below.
+                {!hasImages
+                  ? "Select a base photo below to start the AI processing pipeline for this product."
+                  : "This will clear the current processed results. You can optionally replace the base image below."}
               </p>
             </div>
 
@@ -437,7 +441,9 @@ function ProductDetailModal({ product, onClose, onUpdate, wholesalerId, isLimitR
                   </svg>
                   <div className="text-center px-4">
                     <p className="text-[12px] font-semibold text-[#333]">Drag new image here, or browse</p>
-                    <p className="text-[11px] text-[#888] mt-0.5">JPEG, PNG, or WebP. Leave blank to keep current photo.</p>
+                    <p className="text-[11px] text-[#888] mt-0.5">
+                      {!hasImages ? "JPEG, PNG, or WebP is required." : "JPEG, PNG, or WebP. Leave blank to keep current photo."}
+                    </p>
                   </div>
                 </div>
               ) : (
@@ -485,9 +491,10 @@ function ProductDetailModal({ product, onClose, onUpdate, wholesalerId, isLimitR
               </button>
               <button
                 onClick={handleReprocess}
-                className="flex-1 py-3 rounded-full bg-[#1A1A1A] text-white hover:bg-black text-[14px] font-semibold cursor-pointer transition-colors"
+                disabled={!hasImages && !newImageFile}
+                className="flex-1 py-3 rounded-full bg-[#1A1A1A] text-white hover:bg-black text-[14px] font-semibold cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {newImageFile ? "Upload & Process" : "Re-upload"}
+                {!hasImages ? "Upload & Process" : (newImageFile ? "Upload & Process" : "Re-upload")}
               </button>
             </div>
           </div>
@@ -523,8 +530,8 @@ const CatalogueProductCard = memo(function CatalogueProductCard({ product, onCli
   const [isInStock, setIsInStock] = useState(product.stock_available ?? false);
   const [isUpdating, setIsUpdating] = useState(false);
 
-  // Use the best available image URL (never raw)
-  const imgUrl = product.processed_image_url || product.generated_image_urls?.[0] || product.image_url;
+  // Use the best available image URL
+  const imgUrl = product.processed_image_url || product.generated_image_urls?.[0] || product.image_url || product.raw_image_url;
 
   const title = product.title || (product.jewellery_type ? product.jewellery_type.charAt(0).toUpperCase() + product.jewellery_type.slice(1) : "Jewelry Piece");
   const weight = product.net_weight ? `${product.net_weight}g` : "";
@@ -569,10 +576,11 @@ const CatalogueProductCard = memo(function CatalogueProductCard({ product, onCli
             onError={() => setImgError(true)}
           />
         ) : (
-          <div className="absolute inset-0 flex items-center justify-center text-[#999]">
-            <svg xmlns="http://www.w3.org/2000/svg" className="w-8 h-8" viewBox="0 0 24 24" fill="currentColor">
+          <div className="absolute inset-0 flex flex-col items-center justify-center text-[#999] gap-2 bg-[#f5f5f5]">
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-8 h-8 text-gray-300" viewBox="0 0 24 24" fill="currentColor">
               <path d="M6.5 2h11l4 6-9.5 14L2.5 8l4-6z" />
             </svg>
+            <span className="text-[10px] tracking-wider uppercase font-bold text-gray-400 bg-gray-100 px-2 py-0.5 rounded">No Image</span>
           </div>
         )}
       </div>

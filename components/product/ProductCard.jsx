@@ -32,7 +32,7 @@ export function ProductCard({ product, index = 0 }) {
   const variants =
     Array.isArray(product.generated_image_urls) && product.generated_image_urls.length > 0
       ? product.generated_image_urls
-      : [product.processed_image_url || product.image_url].filter(Boolean);
+      : [product.processed_image_url || product.image_url || product.raw_image_url].filter(Boolean);
 
   const hasMultiple = variants.length > 1;
   const activeUrl   = variants[variantIdx] ?? null;
