@@ -53,6 +53,54 @@ export default function OverviewSection({
             href="/dashboard/wholesaler/upload-history"
           />
         </div>
+
+        {/* Chamak Coming Soon Elongated Card */}
+        <div className="mt-6 w-full">
+          <div className="relative w-full overflow-hidden rounded-2xl bg-gradient-to-r from-[#bb8651] to-[#f6e0a7] p-6 md:p-8 flex flex-row items-center justify-between border border-[#e4cc8f]/30 transition-all duration-200 hover:shadow-lg hover:scale-[1.01] min-h-[220px] md:min-h-[200px]">
+            {/* Left Side: Content */}
+            <div className="flex flex-col gap-3 z-10 max-w-[60%] sm:max-w-[65%] md:max-w-[70%]">
+              <h3 className="font-cirka text-3xl md:text-4xl text-white font-bold leading-none tracking-normal">
+                Chamak
+              </h3>
+              <p className="font-manrope text-xs md:text-sm text-white/95 leading-relaxed font-medium">
+                Review products with low engagement and Replace with better designs
+              </p>
+              <div className="mt-2 self-start">
+                <div className="relative border border-[#e4cc8f] bg-black px-5 py-2.5 rounded-lg shadow-[0px_4px_4px_rgba(0,0,0,0.25)] flex items-center justify-center">
+                  <span className="font-manrope text-sm font-semibold text-white tracking-wide">
+                    Coming soon
+                  </span>
+                  <div className="absolute inset-0 pointer-events-none rounded-lg shadow-[inset_2px_2px_4px_rgba(228,204,143,0.3)]" />
+                </div>
+              </div>
+            </div>
+
+            {/* Right Side: Masked Necklace Image */}
+            <div className="absolute right-0 top-0 bottom-0 w-[45%] md:w-[35%] overflow-hidden pointer-events-none select-none z-0">
+              <div
+                className="absolute right-[-10px] md:right-[-20px] top-1/2 -translate-y-1/2 w-[180px] h-[220px] md:w-[220px] md:h-[260px] lg:w-[240px] lg:h-[280px]"
+                style={{
+                  maskImage: "url('/image/chamak_mask.svg')",
+                  WebkitMaskImage: "url('/image/chamak_mask.svg')",
+                  maskSize: "100% 100%",
+                  WebkitMaskSize: "100% 100%",
+                  maskRepeat: "no-repeat",
+                  WebkitMaskRepeat: "no-repeat",
+                  maskPosition: "center",
+                  WebkitMaskPosition: "center",
+                }}
+              >
+                <Image
+                  src="/image/chamak_necklace.png"
+                  alt="Chamak Necklace"
+                  fill
+                  className="object-cover object-right"
+                  priority
+                />
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   );
