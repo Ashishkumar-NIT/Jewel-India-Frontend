@@ -42,23 +42,48 @@ export async function POST(request) {
       );
     }
 
-    // ── Referral Link Expiration ──────────────────────────────────
+    // ── Referral Link Usage Tracking ──────────────────────────────
+    // Increment uses_count on each valid redemption and only deactivate
+    // the link once uses_count reaches max_uses (multi-use links must
+    // survive more than one redemption). max_uses === null means unlimited.
     if (referralCode) {
       try {
-        // Increment use count and expire the link immediately
-        await supabaseAdmin
+        const { data: link, error: linkFetchError } = await supabaseAdmin
           .from("referral_links")
-          .update({ 
-            is_active: false,
-            // We can also increment uses_count if we want to be thorough
-            // but is_active: false is enough to "expire" it.
-          })
-          .eq("code", referralCode);
-        
-        console.log(`[verify-otp] Expired referral code: ${referralCode}`);
+          .select("id, uses_count, max_uses, is_active")
+          .eq("code", referralCode)
+          .maybeSingle();
+
+        if (linkFetchError) {
+          console.error("[verify-otp] Failed to fetch referral code:", linkFetchError.message);
+        } else if (!link) {
+          console.warn(`[verify-otp] Referral code not found: ${referralCode}`);
+        } else if (!link.is_active || (link.max_uses !== null && link.uses_count >= link.max_uses)) {
+          // Already inactive or already at capacity — don't count this as a new use.
+          console.warn(`[verify-otp] Referral code already exhausted: ${referralCode}`);
+        } else {
+          const newUsesCount = (link.uses_count || 0) + 1;
+          const reachedLimit = link.max_uses !== null && newUsesCount >= link.max_uses;
+
+          const { error: linkUpdateError } = await supabaseAdmin
+            .from("referral_links")
+            .update({
+              uses_count: newUsesCount,
+              is_active: !reachedLimit,
+            })
+            .eq("id", link.id);
+
+          if (linkUpdateError) {
+            console.error("[verify-otp] Failed to update referral code usage:", linkUpdateError.message);
+          } else {
+            console.log(
+              `[verify-otp] Referral code ${referralCode} used (${newUsesCount}${link.max_uses !== null ? `/${link.max_uses}` : ""})${reachedLimit ? " — now exhausted" : ""}`
+            );
+          }
+        }
       } catch (err) {
-        console.error("[verify-otp] Failed to expire referral code:", err);
-        // Don't fail the whole login if just the referral expiration fails
+        console.error("[verify-otp] Failed to process referral code:", err);
+        // Don't fail the whole login if just the referral processing fails
       }
     }
 

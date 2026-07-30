@@ -73,7 +73,6 @@ export async function POST(request) {
           email: user.email,
           designation: "Admin",
           status: "active",
-          password_plain: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
         };
 
         // Try inserting with 'is_system_generated' column, fallback if column missing

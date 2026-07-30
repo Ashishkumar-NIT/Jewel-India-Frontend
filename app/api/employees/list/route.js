@@ -21,7 +21,9 @@ export async function GET() {
     }
     const { data: employees, error: fetchError } = await supabase
       .from("employees")
-      .select("*")
+      .select(
+        "id, retailer_id, auth_user_id, full_name, email, personal_email, phone, designation, status, is_active, is_system_generated, last_active_at, created_at, updated_at"
+      )
       .eq("retailer_id", retailer.id)
       .order("created_at", { ascending: false });
 
