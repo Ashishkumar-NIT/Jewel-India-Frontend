@@ -1,3 +1,4 @@
+import Link from "next/link";
 import Image from "next/image";
 import { BottomStatCard } from "./StatCard";
 
@@ -54,22 +55,33 @@ export default function OverviewSection({
           />
         </div>
 
-        {/* Chamak Coming Soon Elongated Card */}
+        {/* Chamak AI Fusion Promo Card */}
         <div className="mt-6 w-full">
-          <div className="relative w-full overflow-hidden rounded-2xl bg-gradient-to-r from-[#bb8651] to-[#f6e0a7] p-6 md:p-8 flex flex-row items-center justify-between border border-[#e4cc8f]/30 transition-all duration-200 hover:shadow-lg hover:scale-[1.01] min-h-[220px] md:min-h-[200px]">
+          <Link
+            href="/dashboard/wholesaler/chamak"
+            className="block group relative w-full overflow-hidden rounded-2xl bg-gradient-to-r from-[#bb8651] to-[#f6e0a7] p-6 md:p-8 border border-[#e4cc8f]/30 transition-all duration-200 hover:shadow-lg hover:scale-[1.01] min-h-[220px] md:min-h-[200px]"
+          >
             {/* Left Side: Content */}
             <div className="flex flex-col gap-3 z-10 max-w-[60%] sm:max-w-[65%] md:max-w-[70%]">
-              <h3 className="font-cirka text-3xl md:text-4xl text-white font-bold leading-none tracking-normal">
-                Chamak
-              </h3>
+              <div className="flex items-center gap-2">
+                <h3 className="font-cirka text-3xl md:text-4xl text-white font-bold leading-none tracking-normal">
+                  Chamak
+                </h3>
+                <span className="text-sm bg-white/20 backdrop-blur-xs text-white px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider text-[10px]">
+                  AI Fusion
+                </span>
+              </div>
               <p className="font-manrope text-xs md:text-sm text-white/95 leading-relaxed font-medium">
-                Review products with low engagement and Replace with better designs
+                Fuse two jewelry designs into one AI-generated creation with custom attribute sliders.
               </p>
               <div className="mt-2 self-start">
-                <div className="relative border border-[#e4cc8f] bg-black px-5 py-2.5 rounded-lg shadow-[0px_4px_4px_rgba(0,0,0,0.25)] flex items-center justify-center">
+                <div className="relative border border-[#e4cc8f] bg-black px-5 py-2.5 rounded-lg shadow-[0px_4px_4px_rgba(0,0,0,0.25)] flex items-center justify-center gap-2 group-hover:bg-[#1f1f1f] transition-colors">
                   <span className="font-manrope text-sm font-semibold text-white tracking-wide">
-                    Coming soon
+                    Explore Fusion
                   </span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="transition-transform group-hover:translate-x-1">
+                    <path d="M5 12h14m-7-7l7 7-7 7" />
+                  </svg>
                   <div className="absolute inset-0 pointer-events-none rounded-lg shadow-[inset_2px_2px_4px_rgba(228,204,143,0.3)]" />
                 </div>
               </div>
@@ -94,12 +106,12 @@ export default function OverviewSection({
                   src="/image/chamak_necklace.png"
                   alt="Chamak Necklace"
                   fill
-                  className="object-cover object-right"
+                  className="object-cover object-right transition-transform duration-500 group-hover:scale-105"
                   priority
                 />
               </div>
             </div>
-          </div>
+          </Link>
         </div>
       </div>
     </section>
