@@ -3,6 +3,7 @@ import { getAuthUser } from "../../../lib/supabase/queries";
 import HeroUploadSection from "../../../components/wholesaler/HeroUploadSection";
 import OverviewSection from "../../../components/wholesaler/OverviewSection";
 import WeeklyReviewBanner from "../../../components/wholesaler/WeeklyReviewBanner";
+import CatalogueSection from "../../../components/wholesaler/CatalogueSection";
 import CreditBadge from "../../../components/wholesaler/CreditBadge";
 
 export default async function WholesalerDashboardPage() {

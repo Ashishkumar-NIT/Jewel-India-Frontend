@@ -6,9 +6,23 @@ import { useCredits } from "../../context/CreditsContext";
 export default function TreasureChestCard() {
   const { wallet, isLoading } = useCredits();
 
-  if (isLoading || !wallet) {
+  // Only show shimmer when actively loading; if wallet is null after load, backend isn't ready yet
+  if (isLoading) {
     return (
-      <div className="w-full h-32 rounded-2xl bg-celestique-taupe/30 border border-celestique-taupe skeleton-shimmer mb-6" />
+      <div className="w-full h-32 rounded-2xl bg-celestique-taupe/30 border border-celestique-taupe animate-pulse mb-6" />
+    );
+  }
+
+  if (!wallet) {
+    return (
+      <div className="mb-6 w-full rounded-2xl bg-gradient-to-r from-[#FAF8F5] via-[#F6F1E5] to-[#F1E8D5] p-5 border border-[#E6DFD3] flex items-center gap-4 opacity-60">
+        <div className="w-12 h-12 rounded-2xl bg-white border border-[#E6DFD3] flex items-center justify-center text-2xl shrink-0">🪙</div>
+        <div className="flex flex-col">
+          <span className="text-xs font-bold uppercase tracking-wider text-[#997A15]">Treasure Chest</span>
+          <span className="font-cirka text-2xl font-bold text-celestique-dark/40 mt-0.5">— credits</span>
+          <span className="text-[11px] text-celestique-muted mt-0.5">Balance unavailable</span>
+        </div>
+      </div>
     );
   }
 
