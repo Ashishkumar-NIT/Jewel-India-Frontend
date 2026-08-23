@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { BottomStatCard } from "./StatCard";
+import TreasureChestCard from "./TreasureChestCard";
 
 export default function OverviewSection({
   productCount = 0,
@@ -18,6 +19,8 @@ export default function OverviewSection({
   return (
     <section className="px-4 md:px-6 py-6 md:py-10">
       <div className="mx-auto max-w-7xl">
+        <TreasureChestCard />
+
         <h2 className="font-cirka text-4xl text-celestique-dark mb-6">Insights</h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full">

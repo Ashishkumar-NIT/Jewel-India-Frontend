@@ -8,6 +8,8 @@ import ChamakSliderForm from "./ChamakSliderForm";
 import ChamakResultStep from "./ChamakResultStep";
 import ChamakGalleryStep from "./ChamakGalleryStep";
 import ChamakFeedbackModal from "./ChamakFeedbackModal";
+import InsufficientCreditsModal from "./InsufficientCreditsModal";
+import CreditBadge from "../CreditBadge";
 
 export default function ChamakPage({ wholesalerId, userId }) {
   const flow = useChamakFlow(wholesalerId, userId);
@@ -40,6 +42,8 @@ export default function ChamakPage({ wholesalerId, userId }) {
 
         {/* Step-aware Right Actions */}
         <div className="flex items-center gap-3">
+          <CreditBadge />
+
           {flow.step !== "gallery" && (
             <button
               type="button"
@@ -148,6 +152,15 @@ export default function ChamakPage({ wholesalerId, userId }) {
         isSubmitting={flow.feedbackState.isSubmitting}
         error={flow.feedbackState.error}
         submitted={flow.feedbackState.submitted}
+      />
+
+      {/* Insufficient Credits 402 Modal */}
+      <InsufficientCreditsModal
+        isOpen={flow.insufficientCredits.isOpen}
+        onClose={flow.closeInsufficientCreditsModal}
+        required={flow.insufficientCredits.required}
+        balance={flow.insufficientCredits.balance}
+        shortBy={flow.insufficientCredits.shortBy}
       />
     </div>
   );

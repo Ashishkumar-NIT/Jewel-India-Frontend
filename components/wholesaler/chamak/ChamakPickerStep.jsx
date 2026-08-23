@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useRef } from "react";
 import Image from "next/image";
+import { useCredits } from "../../../context/CreditsContext";
 
 const CATEGORIES = [
   { id: "all", label: "All Items" },
@@ -25,12 +26,10 @@ export default function ChamakPickerStep({
   canStartAnalysis,
   uploadError,
   errorMessage,
-  isQuotaUnlimited,
-  remainingQuota,
-  totalQuota,
   onViewGallery,
   galleryCount = 0,
 }) {
+  const { wallet } = useCredits();
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [activeUploadSlot, setActiveUploadSlot] = useState(null); // 1 or 2 when upload modal is open
@@ -361,15 +360,9 @@ export default function ChamakPickerStep({
         {/* Action Trigger Bar inside Stage */}
         <div className="relative z-10 flex flex-col sm:flex-row items-center justify-between gap-4 mt-6 pt-5 border-t border-celestique-taupe/80">
           <div className="flex items-center gap-2 text-xs text-celestique-muted">
-            {isQuotaUnlimited ? (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FEF9E7] text-[#997A15] font-bold border border-[#E9DFBE]">
-                ✦ Unlimited Fusion Account
-              </span>
-            ) : (
-              <span className="font-medium text-celestique-dark">
-                {remainingQuota} / {totalQuota} credits remaining
-              </span>
-            )}
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FEF9E7] text-[#997A15] font-bold border border-[#E9DFBE]">
+              🪙 Treasure Chest: {wallet?.available ?? 0} credits
+            </span>
             <span className="hidden md:inline">• Stage 1: Vision Analysis</span>
           </div>
 

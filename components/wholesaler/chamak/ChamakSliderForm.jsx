@@ -1,6 +1,7 @@
 "use client";
 
 import ChamakSlider from "./ChamakSlider";
+import { useCredits } from "../../../context/CreditsContext";
 
 export default function ChamakSliderForm({
   currentGeneration,
@@ -12,9 +13,10 @@ export default function ChamakSliderForm({
   onBackToPicker,
   isSubmitting,
   errorMessage,
-  isQuotaUnlimited,
-  remainingQuota,
 }) {
+  const { wallet, costOf } = useCredits();
+  const fuseCost = costOf("chamak.generate");
+  const available = wallet?.available ?? 0;
   const analysis = currentGeneration?.vision_analysis_json || {};
 
   // Extract analysis fields with fallbacks
@@ -272,9 +274,7 @@ export default function ChamakSliderForm({
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-celestique-taupe">
         <div className="flex items-center gap-2">
           <span className="text-xs text-celestique-muted">
-            {isQuotaUnlimited
-              ? "Unlimited generation quota active"
-              : `Costs 1 credit (${remainingQuota} remaining today)`}
+            Treasure Chest: <strong className="text-celestique-dark font-bold">{available} credits</strong> available
           </span>
         </div>
 
@@ -295,7 +295,7 @@ export default function ChamakSliderForm({
             </>
           ) : (
             <>
-              <span>✦ Fuse Designs</span>
+              <span>✦ Fuse Designs{fuseCost ? ` · ${fuseCost} credits` : ""}</span>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14m-7-7l7 7-7 7" />
               </svg>

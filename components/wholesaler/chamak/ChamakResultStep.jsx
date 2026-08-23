@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useCredits } from "../../../context/CreditsContext";
 
 export default function ChamakResultStep({
   step,
@@ -11,6 +12,8 @@ export default function ChamakResultStep({
   onOpenFeedback,
   errorMessage,
 }) {
+  const { costOf } = useCredits();
+  const rerollCost = costOf("chamak.reroll");
   const [showTraceability, setShowTraceability] = useState(false);
   const isFailed = step === "failed";
 
@@ -114,7 +117,7 @@ export default function ChamakResultStep({
             onClick={onReviseAndRetry}
             className="px-4 py-2 rounded-xl bg-celestique-cream hover:bg-celestique-taupe/60 text-celestique-dark border border-celestique-taupe text-xs font-semibold tracking-wide transition-all"
           >
-            Adjust & Re-fuse
+            Adjust & Re-fuse{rerollCost ? ` · ${rerollCost} credits` : ""}
           </button>
           <button
             type="button"

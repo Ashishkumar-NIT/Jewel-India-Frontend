@@ -50,7 +50,13 @@ export default function Sidebar() {
       name: "Chamak",
       icon: "chamak",
       href: "/dashboard/wholesaler/chamak",
-      isCustomIcon: true,
+      isCustomIcon: "chamak",
+    },
+    {
+      name: "Treasure Chest",
+      icon: "treasure-chest",
+      href: "/dashboard/wholesaler/treasure-chest",
+      isCustomIcon: "treasure",
     },
   ];
 
@@ -75,7 +81,7 @@ export default function Sidebar() {
           zIndex: 50,
         }}
       >
-        <div className="sidebar-icon-stack" style={{ display: "flex", flexDirection: "column", marginTop: "96px", marginBottom: "auto" }}>
+        <div className="sidebar-icon-stack" style={{ display: "flex", flexDirection: "column", marginTop: "72px", marginBottom: "auto" }}>
           {navItems.map((item) => {
             // Exact match for home to prevent it from being active on all sub-routes
             const isActive =
@@ -102,7 +108,7 @@ export default function Sidebar() {
                 }}
                 className="sidebar-item"
               >
-                {item.isCustomIcon ? (
+                {item.isCustomIcon === "chamak" ? (
                   <svg
                     width="26"
                     height="26"
@@ -118,6 +124,22 @@ export default function Sidebar() {
                     <path d="M22 5h-4" />
                     <path d="M4 17v2" />
                     <path d="M5 18H3" />
+                  </svg>
+                ) : item.isCustomIcon === "treasure" ? (
+                  <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="#000000"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <rect x="2" y="6" width="20" height="15" rx="2" />
+                    <path d="M2 11h20" />
+                    <path d="M10 11v3h4v-3" />
+                    <path d="M6 6V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v2" />
                   </svg>
                 ) : (
                   <Image
@@ -231,6 +253,19 @@ export default function Sidebar() {
       {isMoreOpen && (
         <div className="bottom-nav-popover" onClick={() => setIsMoreOpen(false)}>
           <div className="bottom-nav-popover-content" onClick={(e) => e.stopPropagation()}>
+            <Link 
+              href="/dashboard/wholesaler/treasure-chest" 
+              onClick={() => setIsMoreOpen(false)}
+              className="popover-item"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#000000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                <rect x="2" y="6" width="20" height="15" rx="2" />
+                <path d="M2 11h20" />
+                <path d="M10 11v3h4v-3" />
+                <path d="M6 6V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v2" />
+              </svg>
+              <span>Treasure Chest</span>
+            </Link>
             <Link 
               href="/dashboard/wholesaler/chamak" 
               onClick={() => setIsMoreOpen(false)}

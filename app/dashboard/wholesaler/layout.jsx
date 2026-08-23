@@ -1,4 +1,5 @@
 import Sidebar from "../../../components/wholesaler/Sidebar";
+import { CreditsProvider } from "../../../context/CreditsContext";
 
 export const metadata = {
   title: "Wholesaler Dashboard",
@@ -7,11 +8,13 @@ export const metadata = {
 
 export default async function WholesalerLayout({ children }) {
   return (
-    <div className="theme-wholesaler" style={{ display: "flex", minHeight: "100vh" }}>
-      <Sidebar />
-      <main className="wholesaler-main-content">
-        {children}
-      </main>
-    </div>
+    <CreditsProvider>
+      <div className="theme-wholesaler" style={{ display: "flex", minHeight: "100vh" }}>
+        <Sidebar />
+        <main className="wholesaler-main-content">
+          {children}
+        </main>
+      </div>
+    </CreditsProvider>
   );
 }
