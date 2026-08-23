@@ -48,10 +48,12 @@ export default function TreasureChestPage() {
       const kindParam = activeFilter === "all" ? null : activeFilter;
       const offset = (page - 1) * limit;
       const res = await fetchLedger({ limit, offset, kind: kindParam });
-      setLedger(res.data);
-      setLedgerCount(res.count);
+      setLedger(Array.isArray(res?.data) ? res.data : []);
+      setLedgerCount(typeof res?.count === "number" ? res.count : 0);
     } catch (err) {
       console.error("[TreasureChestPage] Failed to load ledger:", err);
+      setLedger([]);
+      setLedgerCount(0);
     } finally {
       setIsLedgerLoading(false);
     }
@@ -69,7 +71,7 @@ export default function TreasureChestPage() {
   const isLowBalance = Boolean(wallet?.low_balance);
 
   // Filter out rate card items that cost 0 credits for display
-  const nonZeroRates = rateCardList.filter((item) => item.credits > 0);
+  const nonZeroRates = (Array.isArray(rateCardList) ? rateCardList : []).filter((item) => item?.credits > 0);
 
   return (
     <div className="min-h-screen bg-[#FEFEFE] pb-20">

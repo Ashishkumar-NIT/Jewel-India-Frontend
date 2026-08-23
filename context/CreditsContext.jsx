@@ -3,10 +3,39 @@
 import { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { fetchWallet, fetchRateCard } from "../lib/supabase/credits-queries";
 
-const CreditsContext = createContext(null);
+const defaultCreditsState = {
+  wallet: {
+    ok: true,
+    available: 0,
+    lifetime_granted: 0,
+    lifetime_spent: 0,
+    lifetime_expired: 0,
+    expiring_soon: 0,
+    next_expiry: null,
+    low_balance: false,
+  },
+  rateCard: {},
+  rateCardList: [],
+  isLoading: false,
+  error: null,
+  refresh: async () => {},
+  costOf: () => null,
+  feature: () => null,
+};
+
+const CreditsContext = createContext(defaultCreditsState);
 
 export function CreditsProvider({ children }) {
-  const [wallet, setWallet] = useState(null);
+  const [wallet, setWallet] = useState({
+    ok: true,
+    available: 0,
+    lifetime_granted: 0,
+    lifetime_spent: 0,
+    lifetime_expired: 0,
+    expiring_soon: 0,
+    next_expiry: null,
+    low_balance: false,
+  });
   const [rateCard, setRateCard] = useState({});
   const [rateCardList, setRateCardList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -19,16 +48,16 @@ export function CreditsProvider({ children }) {
 
       const [walletData, pricesData] = await Promise.all([
         fetchWallet().catch((err) => {
-          console.error("[CreditsContext] Failed to fetch wallet:", err);
+          console.warn("[CreditsContext] Wallet fetch notice:", err?.message);
           return null;
         }),
         fetchRateCard().catch((err) => {
-          console.error("[CreditsContext] Failed to fetch rate card:", err);
+          console.warn("[CreditsContext] Rate card fetch notice:", err?.message);
           return [];
         }),
       ]);
 
-      if (walletData) {
+      if (walletData && typeof walletData === "object") {
         setWallet(walletData);
       }
 
@@ -36,15 +65,15 @@ export function CreditsProvider({ children }) {
         setRateCardList(pricesData);
         const map = {};
         pricesData.forEach((item) => {
-          if (item.feature_key) {
+          if (item?.feature_key) {
             map[item.feature_key] = item;
           }
         });
         setRateCard(map);
       }
     } catch (err) {
-      console.error("[CreditsContext] Refresh error:", err);
-      setError(err.message || "Failed to load credits.");
+      console.warn("[CreditsContext] Refresh notice:", err?.message);
+      setError(err?.message || "Failed to load credits.");
     } finally {
       setIsLoading(false);
     }
@@ -61,7 +90,7 @@ export function CreditsProvider({ children }) {
   const costOf = useCallback(
     (featureKey) => {
       if (!featureKey || !rateCard[featureKey]) return null;
-      return rateCard[featureKey].credits;
+      return rateCard[featureKey]?.credits ?? null;
     },
     [rateCard]
   );
@@ -92,8 +121,5 @@ export function CreditsProvider({ children }) {
 
 export function useCredits() {
   const context = useContext(CreditsContext);
-  if (!context) {
-    throw new Error("useCredits must be used within a CreditsProvider");
-  }
-  return context;
+  return context || defaultCreditsState;
 }
