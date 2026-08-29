@@ -5,23 +5,23 @@ import ChamakPage from "../../../../components/wholesaler/chamak/ChamakPage";
 import { CHAMAK_PIPELINES } from "../../../../lib/api/chamak";
 
 export const metadata = {
-  title: "Chamak 2.0 (OpenAI) — Jewel India",
-  description:
-    "The same design fusion rendered by OpenAI, with both source designs sent as reference images.",
+  title: "Chamak (Legacy Nanobana) — Jewel India",
+  description: "The original Nanobana-rendered fusion, kept for comparison.",
 };
 
 /**
- * Chamak 2.0 — identical flow to Chamak, different renderer.
+ * The original Chamak renderer, deliberately unlinked.
  *
- * Reuses ChamakPage rather than forking it: every step of the flow is the
- * same (upload, vision analysis, sliders, note, result), and the only
- * difference is which vendor draws the final image. Forking the UI would
- * make the two drift apart and defeat the comparison this route exists for.
+ * Nanobana's fusion path sends only `source_image_1_url`, so Design 2 never
+ * reaches the image model — it survives only as text in the compiled prompt,
+ * which is why its output tracked Design 1 regardless of the sliders. OpenAI
+ * receives both designs and is now what /dashboard/wholesaler/chamak serves.
  *
- * The wholesaler-resolution block below is duplicated verbatim from the
- * Chamak route, matching the existing convention in Set Creation.
+ * This route is kept so the two can still be compared on the same inputs.
+ * It is reachable only by typing the URL: nothing in the sidebar, the mobile
+ * menu, or the dashboard links here, so wholesalers will not find it.
  */
-export default async function Chamak2DashboardPage() {
+export default async function ChamakLegacyDashboardPage() {
   const user = await getAuthUser();
 
   if (!user) {
@@ -55,7 +55,7 @@ export default async function Chamak2DashboardPage() {
     <ChamakPage
       wholesalerId={wholesalerId}
       userId={user.id}
-      pipeline={CHAMAK_PIPELINES.OPENAI}
+      pipeline={CHAMAK_PIPELINES.NANOBANA}
     />
   );
 }

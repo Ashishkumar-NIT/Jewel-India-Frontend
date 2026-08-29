@@ -12,13 +12,18 @@ import InsufficientCreditsModal from "./InsufficientCreditsModal";
 import CreditBadge from "../CreditBadge";
 import { CHAMAK_PIPELINES } from "../../../lib/api/chamak";
 
+// OpenAI is the default renderer. Nanobana's path only ever received one of
+// the two designs, so its fusions came back looking like Design 1 whatever
+// the sliders said; OpenAI receives both. The Nanobana route is kept intact
+// and reachable at /dashboard/wholesaler/chamak-legacy for comparison, but
+// nothing in the navigation points at it.
 export default function ChamakPage({
   wholesalerId,
   userId,
-  pipeline = CHAMAK_PIPELINES.NANOBANA,
+  pipeline = CHAMAK_PIPELINES.OPENAI,
 }) {
   const flow = useChamakFlow(wholesalerId, userId, pipeline);
-  const isV2 = pipeline === CHAMAK_PIPELINES.OPENAI;
+  const isLegacy = pipeline === CHAMAK_PIPELINES.NANOBANA;
 
   return (
     <div className="min-h-screen bg-[#FEFEFE] flex flex-col">
@@ -39,15 +44,16 @@ export default function ChamakPage({
           <div className="h-4 w-px bg-celestique-taupe hidden sm:block" />
 
           <div className="flex items-center gap-2">
-            <span className="text-base">{isV2 ? "🧪" : "✨"}</span>
+            <span className="text-base">✨</span>
             <span className="font-cirka font-bold text-base md:text-lg text-celestique-dark">
-              {isV2 ? "Chamak 2.0" : "Chamak AI"}
+              Chamak AI
             </span>
-            {/* Which renderer drew the image is the whole point of 2.0, so it
-                is labelled in the chrome rather than buried in traceability. */}
-            {isV2 && (
-              <span className="hidden sm:inline text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full bg-[#10B981]/10 text-[#047857] border border-[#10B981]/30">
-                OpenAI · 2 images
+            {/* Only the hidden legacy route is badged. The customer-facing
+                page names no vendor — which model renders the image is an
+                implementation detail, not a product feature. */}
+            {isLegacy && (
+              <span className="hidden sm:inline text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full bg-[#F59E0B]/10 text-[#92400E] border border-[#F59E0B]/30">
+                Legacy · Nanobana
               </span>
             )}
           </div>
