@@ -1,11 +1,34 @@
 "use client";
 
+import { useState } from "react";
 import { SET_BACKDROPS } from "../../../lib/supabase/set-creation-queries";
+import SetCreationLightbox from "./SetCreationLightbox";
 
 export default function SetCreationResultStep({ flow }) {
   const gen = flow.currentGeneration;
   const failed = flow.step === "failed";
   const backdrop = SET_BACKDROPS.find((b) => b.id === gen?.set_backdrop);
+  const [lightboxAt, setLightboxAt] = useState(null);
+
+  // Output first so it is index 0, then the two sources. Opening a source
+  // lands in compare mode against the output.
+  const previewImages = [
+    flow.signedOutputImageUrl && {
+      src: flow.signedOutputImageUrl,
+      label: "Generated set",
+      kind: "output",
+    },
+    gen?.source_image_1_url && {
+      src: gen.source_image_1_url,
+      label: "Piece 1",
+      kind: "source",
+    },
+    gen?.source_image_2_url && {
+      src: gen.source_image_2_url,
+      label: "Piece 2",
+      kind: "source",
+    },
+  ].filter(Boolean);
 
   if (failed) {
     return (
@@ -48,11 +71,21 @@ export default function SetCreationResultStep({ flow }) {
 
       <div className="rounded-2xl overflow-hidden border border-celestique-taupe bg-celestique-cream/40 mb-5">
         {flow.signedOutputImageUrl ? (
-          <img
-            src={flow.signedOutputImageUrl}
-            alt="Generated jewellery set"
-            className="w-full h-auto"
-          />
+          <button
+            type="button"
+            onClick={() => setLightboxAt(0)}
+            className="block w-full group relative cursor-zoom-in"
+            title="Open full screen"
+          >
+            <img
+              src={flow.signedOutputImageUrl}
+              alt="Generated jewellery set"
+              className="w-full h-auto"
+            />
+            <span className="absolute top-3 right-3 px-2.5 py-1.5 rounded-lg bg-black/55 text-white text-[11px] font-bold opacity-0 group-hover:opacity-100 transition-opacity">
+              View full screen
+            </span>
+          </button>
         ) : (
           <div className="aspect-[3/4] flex items-center justify-center text-sm text-celestique-dark/45">
             Loading image…
@@ -66,13 +99,19 @@ export default function SetCreationResultStep({ flow }) {
           From
         </span>
         {[gen?.source_image_1_url, gen?.source_image_2_url].filter(Boolean).map((u, i) => (
-          <img
+          <button
             key={i}
-            src={u}
-            alt=""
-            className="w-12 h-12 rounded-lg object-cover border border-celestique-taupe"
-          />
+            type="button"
+            onClick={() => setLightboxAt(i + 1)}
+            className="relative w-12 h-12 rounded-lg overflow-hidden border border-celestique-taupe hover:border-celestique-dark transition-colors cursor-zoom-in"
+            title="Compare against the generated set"
+          >
+            <img src={u} alt={`Piece ${i + 1}`} className="w-full h-full object-cover" />
+          </button>
         ))}
+        <span className="text-[11px] text-celestique-dark/40 ml-1">
+          tap to compare
+        </span>
       </div>
 
       <div className="flex flex-wrap items-center gap-3">
@@ -110,6 +149,14 @@ export default function SetCreationResultStep({ flow }) {
           </p>
           <p className="text-xs text-celestique-dark/75">{gen.note_text}</p>
         </div>
+      )}
+
+      {lightboxAt !== null && previewImages.length > 0 && (
+        <SetCreationLightbox
+          images={previewImages}
+          startIndex={lightboxAt}
+          onClose={() => setLightboxAt(null)}
+        />
       )}
     </div>
   );
