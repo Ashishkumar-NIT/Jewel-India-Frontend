@@ -10,9 +10,15 @@ import ChamakGalleryStep from "./ChamakGalleryStep";
 import ChamakFeedbackModal from "./ChamakFeedbackModal";
 import InsufficientCreditsModal from "./InsufficientCreditsModal";
 import CreditBadge from "../CreditBadge";
+import { CHAMAK_PIPELINES } from "../../../lib/api/chamak";
 
-export default function ChamakPage({ wholesalerId, userId }) {
-  const flow = useChamakFlow(wholesalerId, userId);
+export default function ChamakPage({
+  wholesalerId,
+  userId,
+  pipeline = CHAMAK_PIPELINES.NANOBANA,
+}) {
+  const flow = useChamakFlow(wholesalerId, userId, pipeline);
+  const isV2 = pipeline === CHAMAK_PIPELINES.OPENAI;
 
   return (
     <div className="min-h-screen bg-[#FEFEFE] flex flex-col">
@@ -33,10 +39,17 @@ export default function ChamakPage({ wholesalerId, userId }) {
           <div className="h-4 w-px bg-celestique-taupe hidden sm:block" />
 
           <div className="flex items-center gap-2">
-            <span className="text-base">✨</span>
+            <span className="text-base">{isV2 ? "🧪" : "✨"}</span>
             <span className="font-cirka font-bold text-base md:text-lg text-celestique-dark">
-              Chamak AI
+              {isV2 ? "Chamak 2.0" : "Chamak AI"}
             </span>
+            {/* Which renderer drew the image is the whole point of 2.0, so it
+                is labelled in the chrome rather than buried in traceability. */}
+            {isV2 && (
+              <span className="hidden sm:inline text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full bg-[#10B981]/10 text-[#047857] border border-[#10B981]/30">
+                OpenAI · 2 images
+              </span>
+            )}
           </div>
         </div>
 

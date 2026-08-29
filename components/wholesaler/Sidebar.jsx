@@ -53,6 +53,15 @@ export default function Sidebar() {
       isCustomIcon: "chamak",
     },
     {
+      // Same fusion flow, rendered by OpenAI instead of Nanobana. Reuses the
+      // "chamak" icon deliberately — they are the same feature, and the icon
+      // ternary in this file only knows a fixed set of keys.
+      name: "Chamak 2.0",
+      icon: "chamak",
+      href: "/dashboard/wholesaler/chamak-2",
+      isCustomIcon: "chamak",
+    },
+    {
       name: "Set Creation",
       icon: "set-creation",
       href: "/dashboard/wholesaler/set-creation",
@@ -297,8 +306,18 @@ export default function Sidebar() {
               </svg>
               <span>Chamak AI Fusion</span>
             </Link>
-            <Link 
-              href="/dashboard/wholesaler/set-creation" 
+            <Link
+              href="/dashboard/wholesaler/chamak-2"
+              onClick={() => setIsMoreOpen(false)}
+              className="popover-item"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#000000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z" />
+              </svg>
+              <span>Chamak 2.0 (OpenAI)</span>
+            </Link>
+            <Link
+              href="/dashboard/wholesaler/set-creation"
               onClick={() => setIsMoreOpen(false)}
               className="popover-item"
             >
