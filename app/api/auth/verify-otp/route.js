@@ -1,10 +1,9 @@
 import { NextResponse } from "next/server";
 import { createClient } from "../../../../lib/supabase/server";
-import { supabaseAdmin } from "../../../../lib/supabase/admin";
 
 export async function POST(request) {
   try {
-    const { identity, token, referralCode } = await request.json();
+    const { identity, token } = await request.json();
 
     if (!identity || !token) {
       return NextResponse.json({ error: "Identity and token are required." }, { status: 400 });
@@ -42,50 +41,9 @@ export async function POST(request) {
       );
     }
 
-    // ── Referral Link Usage Tracking ──────────────────────────────
-    // Increment uses_count on each valid redemption and only deactivate
-    // the link once uses_count reaches max_uses (multi-use links must
-    // survive more than one redemption). max_uses === null means unlimited.
-    if (referralCode) {
-      try {
-        const { data: link, error: linkFetchError } = await supabaseAdmin
-          .from("referral_links")
-          .select("id, uses_count, max_uses, is_active")
-          .eq("code", referralCode)
-          .maybeSingle();
-
-        if (linkFetchError) {
-          console.error("[verify-otp] Failed to fetch referral code:", linkFetchError.message);
-        } else if (!link) {
-          console.warn(`[verify-otp] Referral code not found: ${referralCode}`);
-        } else if (!link.is_active || (link.max_uses !== null && link.uses_count >= link.max_uses)) {
-          // Already inactive or already at capacity — don't count this as a new use.
-          console.warn(`[verify-otp] Referral code already exhausted: ${referralCode}`);
-        } else {
-          const newUsesCount = (link.uses_count || 0) + 1;
-          const reachedLimit = link.max_uses !== null && newUsesCount >= link.max_uses;
-
-          const { error: linkUpdateError } = await supabaseAdmin
-            .from("referral_links")
-            .update({
-              uses_count: newUsesCount,
-              is_active: !reachedLimit,
-            })
-            .eq("id", link.id);
-
-          if (linkUpdateError) {
-            console.error("[verify-otp] Failed to update referral code usage:", linkUpdateError.message);
-          } else {
-            console.log(
-              `[verify-otp] Referral code ${referralCode} used (${newUsesCount}${link.max_uses !== null ? `/${link.max_uses}` : ""})${reachedLimit ? " — now exhausted" : ""}`
-            );
-          }
-        }
-      } catch (err) {
-        console.error("[verify-otp] Failed to process referral code:", err);
-        // Don't fail the whole login if just the referral processing fails
-      }
-    }
+    // A valid OTP must never consume an invitation. A user can retry OTP or
+    // abandon onboarding; the link is claimed atomically only after a retailer
+    // record has been submitted successfully.
 
     // Check if the user is completely new (has no role assigned yet).
     // A returning user will have 'wholesaler' or 'retailer' set from the SetPassword logic or an invite.

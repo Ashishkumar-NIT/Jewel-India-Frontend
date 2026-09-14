@@ -1,5 +1,5 @@
 import { supabaseAdmin } from "../../../../lib/supabase/admin.js";
-import { createClient } from "../../../../lib/supabase/server.js";
+import { getRequestUser } from "../../../../lib/supabase/request-user.js";
 import { NextResponse } from "next/server";
 
 export const runtime = "nodejs";
@@ -28,18 +28,14 @@ function buildReferralCode(businessName) {
  *
  * Authenticated route — only verified wholesalers can generate links.
  *
- * Body (JSON): { max_uses?: number }   — omit for unlimited
+ * Body (JSON): { source?: "web" | "ios" }
  *
- * Returns: { id, code, link, created_at }
+ * Returns: { id, code, link, expires_at, created_at }
  */
 export async function POST(req) {
   try {
     // ── 1. Auth check ─────────────────────────────────────────────
-    const supabaseServer = await createClient();
-    const {
-      data: { user },
-      error: authError,
-    } = await supabaseServer.auth.getUser();
+    const { user, error: authError } = await getRequestUser(req);
 
     if (authError || !user) {
       return NextResponse.json({ error: "Unauthorized — please sign in." }, { status: 401 });
@@ -67,16 +63,18 @@ export async function POST(req) {
       );
     }
 
-    // ── 3. Parse optional body params ─────────────────────────────
-    let max_uses = null;
+    // ── 3. Record which first-party client generated the link ─────
+    let source = "web";
     try {
       const body = await req.json();
-      if (body?.max_uses && Number.isInteger(body.max_uses) && body.max_uses > 0) {
-        max_uses = body.max_uses;
+      if (body?.source === "ios") {
+        source = "ios";
       }
     } catch {
       // Body is optional — ignore parse errors
     }
+
+    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
 
     // ── 4. Generate unique code (retry up to 5 times on collision) ─
     let code = "";
@@ -91,10 +89,12 @@ export async function POST(req) {
         .insert({
           wholesaler_id: wholesaler.id,
           code,
-          max_uses,
+          max_uses: 1,
           is_active: true,
+          expires_at: expiresAt,
+          source,
         })
-        .select("id, code, max_uses, uses_count, is_active, created_at")
+        .select("id, code, max_uses, uses_count, is_active, expires_at, created_at")
         .single();
 
       if (!result.error) {
@@ -135,6 +135,7 @@ export async function POST(req) {
       max_uses: inserted.max_uses,
       uses_count: inserted.uses_count,
       is_active: inserted.is_active,
+      expires_at: inserted.expires_at,
       created_at: inserted.created_at,
     });
   } catch (err) {

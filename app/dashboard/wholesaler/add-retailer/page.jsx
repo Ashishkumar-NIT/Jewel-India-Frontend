@@ -35,7 +35,7 @@ export default async function AddRetailerPage() {
 
   const { data: rawLinks } = await supabaseAdmin
     .from("referral_links")
-    .select("id, code, uses_count, max_uses, is_active, created_at")
+    .select("id, code, uses_count, max_uses, is_active, expires_at, accepted_at, rewarded_at, created_at")
     .eq("wholesaler_id", wholesaler.id)
     .order("created_at", { ascending: false });
 
@@ -53,7 +53,7 @@ export default async function AddRetailerPage() {
             Referral
           </h1>
           <p className={styles.subtitle}>
-            Grow your retailer network by sharing a simple invite link. Every signup is automatically linked to you.
+            Invite a new retailer to Jewel India. Each link works once, expires in 7 days, and earns you 1,000 credits after admin verification.
           </p>
         </div>
 
@@ -83,7 +83,7 @@ export default async function AddRetailerPage() {
           <div className={styles.step}>
              <Image src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777306586/signup_vlrosz.svg" alt="Signup" width={40} height={40} loading="lazy" className={styles.stepIcon} />
              <h3 className={styles.stepTitle}>2. Signup</h3>
-             <p className={styles.stepDesc}>They join using your link and get linked to your account.</p>
+             <p className={styles.stepDesc}>They install the iOS app and complete retailer onboarding.</p>
           </div>
 
           <div className={styles.verticalArrow}></div>
@@ -91,8 +91,8 @@ export default async function AddRetailerPage() {
           {/* Step 3 */}
           <div className={styles.step}>
              <Image src="https://res.cloudinary.com/dcs0vuzwg/image/upload/v1777306585/retailerShop_iashfb.svg" alt="Retailer shop setup" width={40} height={40} loading="lazy" className={styles.stepIcon} />
-             <h3 className={styles.stepTitle}>3. Retailer shop setup</h3>
-             <p className={styles.stepDesc}>Retailers complete their store setup and go live.</p>
+             <h3 className={styles.stepTitle}>3. Admin verification</h3>
+             <p className={styles.stepDesc}>Once approved, they enter the global catalogue and your reward is issued.</p>
           </div>
 
         </div>

@@ -11,12 +11,14 @@ export default function ReferralManager({ initialLinks = [] }) {
   const [copiedId, setCopiedId] = useState(null);
   const [activeLink, setActiveLink] = useState("");
 
-  const validLinks = links.filter(l => {
-    const d = new Date(l.created_at);
-    const diffTime = Math.abs(new Date() - d);
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays <= 30;
-  });
+  function linkStatus(link) {
+    if (link.rewarded_at) return { label: "Rewarded", color: "#7C3AED", bg: "#EDE9FE" };
+    if (link.accepted_at || link.uses_count >= 1) return { label: "Used", color: "#2563EB", bg: "#DBEAFE" };
+    if (!link.is_active || !link.expires_at || new Date(link.expires_at) <= new Date()) {
+      return { label: "Expired", color: "#6B7280", bg: "#F3F4F6" };
+    }
+    return { label: "Active", color: "#16A34A", bg: "#DCFCE7" };
+  }
 
   const handleGenerate = useCallback(async () => {
     setGenerating(true);
@@ -62,6 +64,11 @@ export default function ReferralManager({ initialLinks = [] }) {
     }
   }, []);
 
+  const handleWhatsApp = useCallback((link) => {
+    const message = `You are invited to join Jewel India as a retailer. Open this link on your iPhone: ${link}`;
+    window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, "_blank", "noopener,noreferrer");
+  }, []);
+
   function formatDate(iso) {
     const d = new Date(iso);
     const day = String(d.getDate()).padStart(2, '0');
@@ -78,7 +85,7 @@ export default function ReferralManager({ initialLinks = [] }) {
           Link to referral program
         </h2>
         <p className={styles.subtitle}>
-          Create and share your referral link to start onboarding retailers instantly.
+          Create a secure, single-use invitation. It expires automatically after 7 days.
         </p>
 
         <div className={styles.inputRow}>
@@ -177,24 +184,27 @@ export default function ReferralManager({ initialLinks = [] }) {
             PREVIOUS LINK
           </h3>
           <div style={{ display: "flex", flexDirection: "column" }}>
-            {validLinks.map((link, index) => (
+            {links.map((link) => {
+              const status = linkStatus(link);
+              const canShare = status.label === "Active";
+              return (
               <div
                 key={link.id}
                 className={styles.linkRow}
               >
-                <div style={{ width: "8px", height: "8px", borderRadius: "50%", backgroundColor: "#22C55E", marginRight: "16px", marginLeft: "4px", flexShrink: 0 }}></div>
+                <div style={{ width: "8px", height: "8px", borderRadius: "50%", backgroundColor: status.color, marginRight: "16px", marginLeft: "4px", flexShrink: 0 }}></div>
                 
                 <span style={{ 
                   padding: "4px 12px", 
-                  backgroundColor: "#DCFCE7", 
-                  color: "#16A34A", 
+                  backgroundColor: status.bg,
+                  color: status.color,
                   borderRadius: "16px", 
                   fontSize: "13px", 
                   fontWeight: 600,
                   marginRight: "24px",
                   flexShrink: 0
                 }}>
-                  Active
+                  {status.label}
                 </span>
 
                 <span className={styles.urlText}>
@@ -202,11 +212,13 @@ export default function ReferralManager({ initialLinks = [] }) {
                 </span>
 
                 <button
-                  onClick={() => handleCopy(link.id, link.link)}
+                  onClick={() => canShare && handleCopy(link.id, link.link)}
+                  disabled={!canShare}
                   style={{
                     background: "none",
                     border: "none",
-                    cursor: "pointer",
+                    cursor: canShare ? "pointer" : "not-allowed",
+                    opacity: canShare ? 1 : 0.35,
                     padding: "4px",
                     marginLeft: "16px",
                     marginRight: "24px",
@@ -229,6 +241,25 @@ export default function ReferralManager({ initialLinks = [] }) {
                   )}
                 </button>
 
+                <button
+                  onClick={() => canShare && handleWhatsApp(link.link)}
+                  disabled={!canShare}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    cursor: canShare ? "pointer" : "not-allowed",
+                    color: "#16A34A",
+                    fontSize: "12px",
+                    fontWeight: 700,
+                    opacity: canShare ? 1 : 0.35,
+                    marginRight: "16px",
+                    flexShrink: 0,
+                  }}
+                  title="Share on WhatsApp"
+                >
+                  WhatsApp
+                </button>
+
                 <span className={styles.dateBadge} style={{
                   padding: "6px 16px",
                   backgroundColor: "#F3F4F6",
@@ -238,10 +269,11 @@ export default function ReferralManager({ initialLinks = [] }) {
                   fontWeight: 500,
                   flexShrink: 0
                 }}>
-                  {formatDate(link.created_at)}
+                  {link.expires_at ? `Expires ${formatDate(link.expires_at)}` : formatDate(link.created_at)}
                 </span>
               </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}

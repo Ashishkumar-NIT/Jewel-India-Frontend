@@ -1,0 +1,16 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appIDs": ["J3BH2RPA7Y.com.jewelindia.app"],
+        "components": [
+          {
+            "/": "/join/*",
+            "comment": "Retailer acquisition invitation links"
+          }
+        ]
+      }
+    ]
+  }
+}

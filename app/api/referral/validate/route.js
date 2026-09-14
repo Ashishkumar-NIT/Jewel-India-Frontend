@@ -18,7 +18,7 @@ export async function GET(req) {
     // ── 1. Fetch referral link record (admin bypasses RLS) ─────────
     const { data: link, error: linkError } = await supabaseAdmin
       .from("referral_links")
-      .select("id, wholesaler_id, code, is_active, uses_count, max_uses")
+      .select("id, wholesaler_id, code, is_active, uses_count, max_uses, expires_at, accepted_by")
       .eq("code", code)
       .maybeSingle(); // maybeSingle returns null instead of error when no row
 
@@ -36,12 +36,21 @@ export async function GET(req) {
       return NextResponse.json({ valid: false, reason: "inactive" }, { status: 404 });
     }
 
-    // ── 3. Check usage limit ───────────────────────────────────────
-    if (link.max_uses !== null && link.uses_count >= link.max_uses) {
+    // ── 3. Check the seven-day validity window ────────────────────
+    if (!link.expires_at || new Date(link.expires_at).getTime() <= Date.now()) {
+      await supabaseAdmin
+        .from("referral_links")
+        .update({ is_active: false, updated_at: new Date().toISOString() })
+        .eq("id", link.id);
+      return NextResponse.json({ valid: false, reason: "expired" }, { status: 410 });
+    }
+
+    // ── 4. Check the single-use rule ──────────────────────────────
+    if (link.accepted_by || link.uses_count >= 1) {
       return NextResponse.json({ valid: false, reason: "maxed_out" }, { status: 404 });
     }
 
-    // ── 4. Fetch wholesaler info to display on landing page ─────────
+    // ── 5. Fetch wholesaler info to display on landing page ─────────
     const { data: wholesaler, error: wsError } = await supabaseAdmin
       .from("wholesalers")
       .select("full_name, business_name, business_logo_url, verification_status")
@@ -58,9 +67,18 @@ export async function GET(req) {
       return NextResponse.json({ valid: false, reason: "inactive" }, { status: 404 });
     }
 
+    // Analytics only. Redemption still happens later, after onboarding, in
+    // the atomic database function.
+    await supabaseAdmin
+      .from("referral_links")
+      .update({ opened_at: new Date().toISOString(), updated_at: new Date().toISOString() })
+      .eq("id", link.id)
+      .is("opened_at", null);
+
     return NextResponse.json({
       valid: true,
       code: link.code,
+      expires_at: link.expires_at,
       wholesaler_name: wholesaler.full_name,
       business_name: wholesaler.business_name,
       business_logo_url: wholesaler.business_logo_url || null,

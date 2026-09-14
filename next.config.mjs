@@ -44,6 +44,17 @@ const nextConfig = {
   serverActions: {
     allowedOrigins: ['app.jewelindia.shop', '*.jewelindia.shop', 'localhost:3000'],
   },
+  async headers() {
+    return [
+      {
+        source: '/.well-known/apple-app-site-association',
+        headers: [
+          { key: 'Content-Type', value: 'application/json' },
+          { key: 'Cache-Control', value: 'public, max-age=3600' },
+        ],
+      },
+    ];
+  },
   async redirects() {
     return [
       {

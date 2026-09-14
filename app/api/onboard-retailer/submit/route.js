@@ -31,20 +31,38 @@ export async function POST(req) {
     const gstCertificate = formData.get("gstCertificate");
     const businessLogo = formData.get("businessLogo");
 
-    // Resolve referred_by if a referral code exists
-    let referredBy = null;
-    let linkId = null;
-
+    // Reject dead invitations before uploading sensitive documents. The final
+    // claim still happens transactionally after the retailer row is written.
     if (referralCode) {
       const { data: link, error: linkError } = await supabaseAdmin
         .from("referral_links")
-        .select("id, wholesaler_id, max_uses, uses_count, is_active")
+        .select("id, expires_at, accepted_by, uses_count, is_active")
         .eq("code", referralCode)
         .maybeSingle();
 
-      if (link && link.is_active && (link.max_uses === null || link.uses_count < link.max_uses)) {
-        referredBy = link.wholesaler_id;
-        linkId = link.id;
+      const unavailable = linkError || !link || !link.is_active || link.accepted_by
+        || link.uses_count >= 1 || !link.expires_at
+        || new Date(link.expires_at).getTime() <= Date.now();
+
+      if (unavailable) {
+        return NextResponse.json(
+          { error: "This invitation is invalid, expired, or has already been used." },
+          { status: 410 }
+        );
+      }
+
+      const { data: existingRetailer } = await supabaseAdmin
+        .from("retailers")
+        .select("id, referred_by, referral_code")
+        .eq("user_id", uid)
+        .maybeSingle();
+
+      if (existingRetailer
+          && existingRetailer.referral_code !== referralCode) {
+        return NextResponse.json(
+          { error: "Existing retailer accounts cannot accept a new invitation." },
+          { status: 409 }
+        );
       }
     }
 
@@ -102,7 +120,6 @@ export async function POST(req) {
           pan_card_url: panCardUrl,
           gst_certificate_url: gstCertificateUrl,
           business_logo_url: businessLogoUrl,
-          referred_by: referredBy,
           referral_code: referralCode,
           verification_status: "pending",
         },
@@ -119,20 +136,24 @@ export async function POST(req) {
       );
     }
 
-    // Increment referral link usage count if valid
-    if (linkId) {
-      // Let's grab the current count and update
-      const { data: currentLink } = await supabaseAdmin
-        .from("referral_links")
-        .select("uses_count")
-        .eq("id", linkId)
-        .single();
-        
-      if(currentLink) {
+    if (referralCode) {
+      const { data: claim, error: claimError } = await supabaseAdmin.rpc(
+        "claim_retailer_referral",
+        { p_code: referralCode, p_retailer_user: uid }
+      );
+
+      if (claimError || !claim?.ok) {
+        console.error("Referral claim failed:", claimError?.message || claim?.error);
         await supabaseAdmin
-            .from("referral_links")
-            .update({ uses_count: currentLink.uses_count + 1 })
-            .eq("id", linkId);
+          .from("retailers")
+          .update({ referral_code: null })
+          .eq("user_id", uid)
+          .is("referred_by", null);
+
+        return NextResponse.json(
+          { error: "This invitation was just used or is no longer available." },
+          { status: 409 }
+        );
       }
     }
 
