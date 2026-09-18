@@ -1,25 +1,29 @@
 import { NextResponse } from "next/server";
 import { callStaffAccounts, staffAccountsResponse } from "../../../../lib/supabase/staff-accounts";
-import { validateIndianMobile } from "../../../../lib/utils/credentials";
+import { isValidEmailFormat, validateIndianMobile } from "../../../../lib/utils/credentials";
 
 export const runtime = 'nodejs';
 
 /**
- * POST /api/employees/create
- * Body: { full_name, username?, designation?, phone? }
+ * POST /api/employees/invite
+ * Body: { full_name, email, designation?, phone? }
  *
- * Creates a password login through the staff-accounts service, which runs
- * as the calling store owner. The password comes back once, in the reply,
- * and is stored nowhere.
- * Returns: { ok, employee, password } or { error }
+ * Invites a Google address to the store. The row waits as 'invited' until
+ * that person signs in with Google and claim_staff_invite() links it.
+ * Returns: { ok, employee } or { error }
  */
 export async function POST(request) {
   try {
-    const { full_name, username, designation, phone } = await request.json();
+    const { full_name, email, designation, phone } = await request.json();
 
     const fullName = typeof full_name === "string" ? full_name.trim() : "";
+    const emailValue = typeof email === "string" ? email.trim().toLowerCase() : "";
+
     if (!fullName) {
       return NextResponse.json({ error: "Full name is required" }, { status: 400 });
+    }
+    if (!isValidEmailFormat(emailValue)) {
+      return NextResponse.json({ error: "Enter the Google email address they sign in with." }, { status: 400 });
     }
 
     let phoneValue = null;
@@ -34,19 +38,15 @@ export async function POST(request) {
       phoneValue = mobileCheck.normalized;
     }
 
-    const payload = { full_name: fullName };
-    // The username is the part before the domain; the service appends its own.
-    if (typeof username === "string" && username.trim()) {
-      payload.username = username.trim().toLowerCase().split("@")[0];
-    }
+    const payload = { full_name: fullName, email: emailValue };
     if (typeof designation === "string" && designation.trim()) {
       payload.designation = designation.trim();
     }
     if (phoneValue) payload.phone = phoneValue;
 
-    return staffAccountsResponse(await callStaffAccounts("create", payload));
+    return staffAccountsResponse(await callStaffAccounts("invite_google", payload));
   } catch (error) {
-    console.error("Create employee error:", error);
+    console.error("Invite employee error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
