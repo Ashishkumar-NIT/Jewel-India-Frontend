@@ -55,14 +55,14 @@ export async function GET(request) {
 
     // No role: this account has not been through a door yet.
     if (!role) {
-      // Staff door — the invitation is matched on the Google address itself.
+      // Staff door — the invitation is matched on the provider's email address.
       if (isStaff) {
         const { error: claimError } = await supabase.rpc("claim_staff_invite");
         if (claimError) {
           // Nothing to link this account to; don't leave a roleless session behind.
           await supabase.auth.signOut();
           return redirectWithError(
-            messageForDbError(claimError, "We couldn't link this Google account to a store.")
+            messageForDbError(claimError, "We couldn't link this account to a store. Use the email address your store invited.")
           );
         }
         return NextResponse.redirect(`${origin}/dashboard/employee`);

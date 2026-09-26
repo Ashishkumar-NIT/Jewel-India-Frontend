@@ -50,6 +50,7 @@ export default async function CataloguePage({ searchParams }) {
      raw_image_url,
      processed_image_url,
      generated_image_urls,
+     showcase_image_urls,
      image_url,
      wholesaler_email,
      created_at`,

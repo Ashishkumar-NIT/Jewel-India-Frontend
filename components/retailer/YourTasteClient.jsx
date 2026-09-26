@@ -18,8 +18,9 @@ function ProductCard({ product, isSelected, onToggle, onClick }) {
   const [imgError, setImgError] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
 
-  const imageUrl = product.processed_image_url || 
-                   (product.generated_image_urls && product.generated_image_urls.length > 0 ? product.generated_image_urls[0] : null) || 
+  const imageUrl = (product.showcase_image_urls && product.showcase_image_urls.length > 0 ? product.showcase_image_urls[0] : null) ||
+                   (product.generated_image_urls && product.generated_image_urls.length > 0 ? product.generated_image_urls[0] : null) ||
+                   product.processed_image_url ||
                    product.raw_image_url;
   const title = product.title || product.jewellery_type || "Untitled";
 

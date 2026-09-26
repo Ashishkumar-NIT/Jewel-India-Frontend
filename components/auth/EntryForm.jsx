@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { initiateGoogleOAuth } from "../../lib/actions/oauth";
+import { initiateGoogleOAuth, initiateAppleOAuth } from "../../lib/actions/oauth";
 import { validateIndianMobile } from "../../lib/utils/credentials";
 import { useInviteCode } from "../../lib/hooks/useInviteCode";
 
@@ -82,6 +82,7 @@ export function EntryForm() {
   const [identity, setIdentity] = useState("");
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [appleLoading, setAppleLoading] = useState(false);
   const [error, setError] = useState(() => errorFromParams(searchParams.get("error")));
 
   // Checked live as it is typed; the retailer door only opens on a live code.
@@ -213,6 +214,16 @@ export function EntryForm() {
     if (result?.error) {
       setError(result.error);
       setGoogleLoading(false);
+    }
+  }
+
+  async function handleApple() {
+    setError(null);
+    setAppleLoading(true);
+    const result = await initiateAppleOAuth(callbackUrl());
+    if (result?.error) {
+      setError(result.error);
+      setAppleLoading(false);
     }
   }
 
@@ -362,7 +373,7 @@ export function EntryForm() {
           <button
             type="button"
             onClick={handleGoogle}
-            disabled={googleLoading}
+            disabled={googleLoading || appleLoading}
             style={{
               width: "100%",
               height: "52px",
@@ -389,7 +400,16 @@ export function EntryForm() {
               <path d="M10.176 28.04A14.41 14.41 0 0 1 9.6 24c0-1.404.24-2.768.576-4.04v-6.36H2.04A23.956 23.956 0 0 0 0 24c0 3.864.928 7.516 2.04 10.4l8.136-6.36z" fill="#FBBC05"/>
               <path d="M24 9.552c3.624 0 6.872 1.248 9.428 3.696l7.076-7.076C36.196 2.392 30.628 0 24 0 14.46 0 6.084 5.084 2.04 13.6l8.136 6.36C12.128 13.892 17.572 9.552 24 9.552z" fill="#EA4335"/>
             </svg>
-            {googleLoading ? "Redirecting..." : "Google"}
+            {googleLoading ? "Redirecting..." : "Continue with Google"}
+          </button>
+          <button
+            type="button"
+            onClick={handleApple}
+            disabled={googleLoading || appleLoading}
+            aria-label="Continue with Apple"
+            style={{ width: "100%", height: "52px", marginTop: "10px", border: "1px solid #000", borderRadius: "8px", background: "#000", color: "#fff", fontSize: "14px", fontWeight: 600, cursor: googleLoading || appleLoading ? "not-allowed" : "pointer", opacity: googleLoading || appleLoading ? 0.6 : 1 }}
+          >
+            {appleLoading ? "Redirecting..." : "Continue with Apple"}
           </button>
         </div>
       )}

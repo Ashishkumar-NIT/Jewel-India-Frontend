@@ -40,7 +40,8 @@ export async function GET(request) {
           id, wholesaler_id, title, jewellery_type, category, style, size,
           stock_available, make_to_order_days, metal_purity, net_weight,
           gross_weight, stone_weight, raw_image_url, processed_image_url,
-          image_url, generated_image_urls, image_variants, is_published, created_at
+          image_url, generated_image_urls, showcase_image_urls, image_variants,
+          is_published, created_at
         `)
         .eq("is_published", true)
         .order("created_at", { ascending: false }),

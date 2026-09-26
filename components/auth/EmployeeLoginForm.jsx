@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { signIn } from "../../lib/actions/auth";
-import { initiateGoogleOAuth } from "../../lib/actions/oauth";
+import { initiateGoogleOAuth, initiateAppleOAuth } from "../../lib/actions/oauth";
 
 // Staff usernames look like an email on this domain and are only usernames;
 // the store may have handed out just the part before the @.
@@ -33,6 +33,7 @@ export function EmployeeLoginForm() {
   const [error, setError] = useState(() => errorFromParams(searchParams.get("error")));
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [appleLoading, setAppleLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -66,6 +67,16 @@ export function EmployeeLoginForm() {
     if (result?.error) {
       setError(result.error);
       setGoogleLoading(false);
+    }
+  }
+
+  async function handleApple() {
+    setError(null);
+    setAppleLoading(true);
+    const result = await initiateAppleOAuth(`${window.location.origin}/auth/callback?staff=1`);
+    if (result?.error) {
+      setError(result.error);
+      setAppleLoading(false);
     }
   }
 
@@ -246,7 +257,7 @@ export function EmployeeLoginForm() {
       <button
         type="button"
         onClick={handleGoogle}
-        disabled={googleLoading}
+        disabled={googleLoading || appleLoading}
         className="w-full h-[44px] flex items-center justify-center gap-[10px] border-[1.5px] border-[#E5E7EB] rounded-[8px] bg-white text-[14px] font-medium text-[#111827] transition-colors hover:bg-[#F9FAFB] disabled:opacity-60 disabled:cursor-not-allowed"
       >
         <svg width="18" height="18" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -257,8 +268,16 @@ export function EmployeeLoginForm() {
         </svg>
         {googleLoading ? "Redirecting..." : "Continue with Google"}
       </button>
+      <button
+        type="button"
+        onClick={handleApple}
+        disabled={googleLoading || appleLoading}
+        className="w-full h-[44px] mt-[10px] flex items-center justify-center rounded-[8px] bg-black text-white text-[14px] font-semibold disabled:opacity-60 disabled:cursor-not-allowed"
+      >
+        {appleLoading ? "Redirecting..." : "Continue with Apple"}
+      </button>
       <p style={{ fontSize: "12px", color: "#9CA3AF", margin: "10px 0 0", lineHeight: 1.5 }}>
-        Invited by your store with your Google address? Sign in with that account.
+        Use the email address your store invited. For Apple, choose Share My Email.
       </p>
     </form>
   );
