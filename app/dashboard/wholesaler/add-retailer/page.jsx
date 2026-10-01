@@ -53,7 +53,7 @@ export default async function AddRetailerPage() {
             Referral
           </h1>
           <p className={styles.subtitle}>
-            Invite a new retailer to Jewel India. Each link works once, expires in 7 days, and earns you 1,000 credits after admin verification.
+            Invite a new retailer to Jewel India. Each link works once, expires in 7 days, and brings them into your retailer network after verification.
           </p>
         </div>
 

@@ -3,13 +3,22 @@ import withPWAInit from "@ducanh2912/next-pwa";
 
 const withPWA = withPWAInit({
   dest: "public",
-  cacheOnFrontEndNav: true,
-  aggressiveFrontEndNavCaching: true,
+  // Capability-protected pages must never enter the navigation cache.
+  cacheOnFrontEndNav: false,
+  aggressiveFrontEndNavCaching: false,
+  extendDefaultRuntimeCaching: true,
   reloadOnOnline: true,
   swcMinify: true,
   disable: process.env.NODE_ENV === "development",
   workboxOptions: {
     disableDevLogs: true,
+    runtimeCaching: [{
+      urlPattern: ({ url }) => url.pathname.startsWith("/share/") ||
+        url.pathname.startsWith("/api/shared-wishlist") ||
+        url.pathname.startsWith("/api/wishlist-shares") ||
+        url.pathname.startsWith("/api/wishlists"),
+      handler: "NetworkOnly",
+    }],
   },
 });
 
@@ -46,6 +55,14 @@ const nextConfig = {
   },
   async headers() {
     return [
+      {
+        source: '/share/:path*',
+        headers: [
+          { key: 'Cache-Control', value: 'private, no-store, max-age=0' },
+          { key: 'Referrer-Policy', value: 'no-referrer' },
+          { key: 'X-Robots-Tag', value: 'noindex, nofollow, noarchive' },
+        ],
+      },
       {
         source: '/.well-known/apple-app-site-association',
         headers: [

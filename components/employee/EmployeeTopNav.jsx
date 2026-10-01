@@ -6,6 +6,11 @@ import { usePathname } from "next/navigation";
 
 const navItems = [
   {
+    name: "Wishlists",
+    href: "/dashboard/employee/wishlists",
+    icon: <span aria-hidden="true" className="text-lg">♡</span>,
+  },
+  {
     name: "Home",
     href: "/dashboard/employee",
     icon: (
@@ -64,6 +69,7 @@ const navItems = [
       </svg>
     )
   },
+  { name: "Daily credits", href: "/dashboard/employee/credits", icon: <span aria-hidden="true">◈</span> },
 ];
 
 export default function EmployeeBottomNav({ hasUnreadQueries = false, latestOrderUpdate = null, isRetailer = false }) {
